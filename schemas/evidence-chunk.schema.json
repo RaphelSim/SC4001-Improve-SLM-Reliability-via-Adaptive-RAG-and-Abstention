@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "RetrievalStage": {
+      "description": "Retrieval round label. Initial retrieval is round zero.",
+      "enum": [
+        "initial",
+        "follow_up"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A text unit with stable source identity and optional retrieval annotations.",
+  "properties": {
+    "document_id": {
+      "minLength": 1,
+      "title": "Document Id",
+      "type": "string"
+    },
+    "evidence_id": {
+      "minLength": 1,
+      "title": "Evidence Id",
+      "type": "string"
+    },
+    "retrieval_rank": {
+      "anyOf": [
+        {
+          "minimum": 1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retrieval Rank"
+    },
+    "retrieval_score": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Retrieval Score"
+    },
+    "retrieval_stage": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RetrievalStage"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "text": {
+      "minLength": 1,
+      "title": "Text",
+      "type": "string"
+    },
+    "title": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Title"
+    }
+  },
+  "required": [
+    "evidence_id",
+    "document_id",
+    "text"
+  ],
+  "title": "EvidenceChunk",
+  "type": "object"
+}

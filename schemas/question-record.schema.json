@@ -1,0 +1,66 @@
+{
+  "$defs": {
+    "DatasetSplit": {
+      "description": "A project-level data partition; test remains held out until settings freeze.",
+      "enum": [
+        "development",
+        "validation",
+        "test"
+      ],
+      "title": "DatasetSplit",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A question and its gold answer/support annotations for one split.",
+  "properties": {
+    "candidate_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Candidate Evidence Ids",
+      "type": "array"
+    },
+    "gold_answer": {
+      "minLength": 1,
+      "title": "Gold Answer",
+      "type": "string"
+    },
+    "gold_support_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Gold Support Ids",
+      "type": "array"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "question": {
+      "minLength": 1,
+      "title": "Question",
+      "type": "string"
+    },
+    "question_id": {
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "split": {
+      "$ref": "#/$defs/DatasetSplit"
+    }
+  },
+  "required": [
+    "question_id",
+    "question",
+    "gold_answer",
+    "split",
+    "gold_support_ids"
+  ],
+  "title": "QuestionRecord",
+  "type": "object"
+}

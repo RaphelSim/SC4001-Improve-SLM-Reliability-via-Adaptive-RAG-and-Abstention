@@ -1,0 +1,127 @@
+{
+  "$defs": {
+    "EvidenceChunk": {
+      "additionalProperties": false,
+      "description": "A text unit with stable source identity and optional retrieval annotations.",
+      "properties": {
+        "document_id": {
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "evidence_id": {
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "retrieval_rank": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Rank"
+        },
+        "retrieval_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Score"
+        },
+        "retrieval_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetrievalStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "document_id",
+        "text"
+      ],
+      "title": "EvidenceChunk",
+      "type": "object"
+    },
+    "RetrievalStage": {
+      "description": "Retrieval round label. Initial retrieval is round zero.",
+      "enum": [
+        "initial",
+        "follow_up"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Validated output from a retriever for one request.",
+  "properties": {
+    "evidence": {
+      "items": {
+        "$ref": "#/$defs/EvidenceChunk"
+      },
+      "title": "Evidence",
+      "type": "array"
+    },
+    "query": {
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "question_id": {
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "stage": {
+      "$ref": "#/$defs/RetrievalStage"
+    },
+    "top_k": {
+      "minimum": 1,
+      "title": "Top K",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "question_id",
+    "query",
+    "stage",
+    "top_k"
+  ],
+  "title": "RetrievalResult",
+  "type": "object"
+}

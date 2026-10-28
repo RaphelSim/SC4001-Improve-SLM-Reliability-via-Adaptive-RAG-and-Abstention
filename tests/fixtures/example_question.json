@@ -1,0 +1,9 @@
+{
+  "question_id": "lost-gravity-country",
+  "question": "What country is the manufacturer of Lost Gravity based in?",
+  "gold_answer": "Germany",
+  "split": "development",
+  "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+  "candidate_evidence_ids": ["lost-gravity::0", "mack-rides::0", "park-distractor::0"],
+  "metadata": {"fixture_only": true, "hops": 2}
+}
