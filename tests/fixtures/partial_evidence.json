@@ -1,0 +1,8 @@
+{
+  "question_id": "lost-gravity-country",
+  "condition": "partially_incomplete",
+  "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+  "evidence": [
+    {"evidence_id": "lost-gravity::0", "document_id": "lost-gravity", "title": "Lost Gravity", "text": "Lost Gravity was manufactured by Mack Rides."}
+  ]
+}

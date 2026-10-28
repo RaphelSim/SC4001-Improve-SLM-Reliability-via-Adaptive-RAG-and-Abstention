@@ -1,0 +1,488 @@
+{
+  "$defs": {
+    "AbstentionReason": {
+      "description": "Reason recorded when the answering system intentionally abstains.",
+      "enum": [
+        "insufficient_evidence",
+        "retrieval_failed",
+        "invalid_model_output",
+        "max_retrieval_rounds_reached"
+      ],
+      "title": "AbstentionReason",
+      "type": "string"
+    },
+    "AdaptiveRoundRecord": {
+      "additionalProperties": false,
+      "description": "One retrieval and sufficiency decision within the bounded experiment flow.",
+      "properties": {
+        "retrieval": {
+          "$ref": "#/$defs/RetrievalResult"
+        },
+        "round_index": {
+          "maximum": 1,
+          "minimum": 0,
+          "title": "Round Index",
+          "type": "integer"
+        },
+        "sufficiency_decision": {
+          "$ref": "#/$defs/SufficiencyDecision"
+        }
+      },
+      "required": [
+        "round_index",
+        "retrieval",
+        "sufficiency_decision"
+      ],
+      "title": "AdaptiveRoundRecord",
+      "type": "object"
+    },
+    "AnswerResult": {
+      "additionalProperties": false,
+      "description": "A substantive answer or a typed abstention with evidence provenance.",
+      "properties": {
+        "abstained": {
+          "title": "Abstained",
+          "type": "boolean"
+        },
+        "abstention_reason": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AbstentionReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "answer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Answer"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "used_evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Used Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "question_id",
+        "abstained"
+      ],
+      "title": "AnswerResult",
+      "type": "object"
+    },
+    "DatasetSplit": {
+      "description": "A project-level data partition; test remains held out until settings freeze.",
+      "enum": [
+        "development",
+        "validation",
+        "test"
+      ],
+      "title": "DatasetSplit",
+      "type": "string"
+    },
+    "EvidenceChunk": {
+      "additionalProperties": false,
+      "description": "A text unit with stable source identity and optional retrieval annotations.",
+      "properties": {
+        "document_id": {
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "evidence_id": {
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "retrieval_rank": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Rank"
+        },
+        "retrieval_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Score"
+        },
+        "retrieval_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetrievalStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "document_id",
+        "text"
+      ],
+      "title": "EvidenceChunk",
+      "type": "object"
+    },
+    "EvidenceCondition": {
+      "description": "Controlled evidence state presented at the start of an experiment case.",
+      "enum": [
+        "complete",
+        "partially_incomplete",
+        "fully_incomplete",
+        "distractor_heavy"
+      ],
+      "title": "EvidenceCondition",
+      "type": "string"
+    },
+    "EvidenceSet": {
+      "additionalProperties": false,
+      "description": "Evidence visible to the SLM at a specific point in the pipeline.",
+      "properties": {
+        "condition": {
+          "$ref": "#/$defs/EvidenceCondition"
+        },
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceChunk"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "gold_support_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Gold Support Ids",
+          "type": "array"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question_id",
+        "condition",
+        "gold_support_ids"
+      ],
+      "title": "EvidenceSet",
+      "type": "object"
+    },
+    "QuestionRecord": {
+      "additionalProperties": false,
+      "description": "A question and its gold answer/support annotations for one split.",
+      "properties": {
+        "candidate_evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Evidence Ids",
+          "type": "array"
+        },
+        "gold_answer": {
+          "minLength": 1,
+          "title": "Gold Answer",
+          "type": "string"
+        },
+        "gold_support_ids": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Gold Support Ids",
+          "type": "array"
+        },
+        "metadata": {
+          "additionalProperties": true,
+          "title": "Metadata",
+          "type": "object"
+        },
+        "question": {
+          "minLength": 1,
+          "title": "Question",
+          "type": "string"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "split": {
+          "$ref": "#/$defs/DatasetSplit"
+        }
+      },
+      "required": [
+        "question_id",
+        "question",
+        "gold_answer",
+        "split",
+        "gold_support_ids"
+      ],
+      "title": "QuestionRecord",
+      "type": "object"
+    },
+    "RetrievalResult": {
+      "additionalProperties": false,
+      "description": "Validated output from a retriever for one request.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceChunk"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/RetrievalStage"
+        },
+        "top_k": {
+          "minimum": 1,
+          "title": "Top K",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question_id",
+        "query",
+        "stage",
+        "top_k"
+      ],
+      "title": "RetrievalResult",
+      "type": "object"
+    },
+    "RetrievalStage": {
+      "description": "Retrieval round label. Initial retrieval is round zero.",
+      "enum": [
+        "initial",
+        "follow_up"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    },
+    "SufficiencyDecision": {
+      "additionalProperties": false,
+      "description": "Concise model assessment; this stores a decision, not hidden reasoning.",
+      "properties": {
+        "missing_information": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Information"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search Query"
+        },
+        "status": {
+          "$ref": "#/$defs/SufficiencyStatus"
+        },
+        "supporting_evidence_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Supporting Evidence Ids",
+          "type": "array"
+        }
+      },
+      "required": [
+        "question_id",
+        "status"
+      ],
+      "title": "SufficiencyDecision",
+      "type": "object"
+    },
+    "SufficiencyStatus": {
+      "description": "The model's structured assessment of the current evidence.",
+      "enum": [
+        "sufficient",
+        "need_more_evidence"
+      ],
+      "title": "SufficiencyStatus",
+      "type": "string"
+    },
+    "SystemVariant": {
+      "description": "A named system configuration used for comparison.",
+      "enum": [
+        "standard_rag",
+        "rag_abstention",
+        "adaptive_retrieval",
+        "adaptive_retrieval_abstention"
+      ],
+      "title": "SystemVariant",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Canonical raw per-case result; aggregate metrics belong in separate outputs.",
+  "properties": {
+    "condition": {
+      "$ref": "#/$defs/EvidenceCondition"
+    },
+    "experiment_id": {
+      "minLength": 1,
+      "title": "Experiment Id",
+      "type": "string"
+    },
+    "final_answer": {
+      "$ref": "#/$defs/AnswerResult"
+    },
+    "final_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Final Evidence Ids",
+      "type": "array"
+    },
+    "gold_sufficient_finally": {
+      "title": "Gold Sufficient Finally",
+      "type": "boolean"
+    },
+    "gold_sufficient_initially": {
+      "title": "Gold Sufficient Initially",
+      "type": "boolean"
+    },
+    "initial_evidence": {
+      "$ref": "#/$defs/EvidenceSet"
+    },
+    "metadata": {
+      "additionalProperties": true,
+      "title": "Metadata",
+      "type": "object"
+    },
+    "model_predicted_sufficient_finally": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Predicted Sufficient Finally"
+    },
+    "model_predicted_sufficient_initially": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Model Predicted Sufficient Initially"
+    },
+    "question": {
+      "$ref": "#/$defs/QuestionRecord"
+    },
+    "rounds": {
+      "items": {
+        "$ref": "#/$defs/AdaptiveRoundRecord"
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "title": "Rounds",
+      "type": "array"
+    },
+    "system_variant": {
+      "$ref": "#/$defs/SystemVariant"
+    }
+  },
+  "required": [
+    "experiment_id",
+    "question",
+    "condition",
+    "system_variant",
+    "initial_evidence",
+    "rounds",
+    "final_evidence_ids",
+    "final_answer",
+    "gold_sufficient_initially",
+    "gold_sufficient_finally"
+  ],
+  "title": "ExperimentRecord",
+  "type": "object"
+}

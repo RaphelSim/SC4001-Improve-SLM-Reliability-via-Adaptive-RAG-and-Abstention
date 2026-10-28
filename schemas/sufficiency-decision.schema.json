@@ -1,0 +1,63 @@
+{
+  "$defs": {
+    "SufficiencyStatus": {
+      "description": "The model's structured assessment of the current evidence.",
+      "enum": [
+        "sufficient",
+        "need_more_evidence"
+      ],
+      "title": "SufficiencyStatus",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Concise model assessment; this stores a decision, not hidden reasoning.",
+  "properties": {
+    "missing_information": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Missing Information"
+    },
+    "question_id": {
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "search_query": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Search Query"
+    },
+    "status": {
+      "$ref": "#/$defs/SufficiencyStatus"
+    },
+    "supporting_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Supporting Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "question_id",
+    "status"
+  ],
+  "title": "SufficiencyDecision",
+  "type": "object"
+}

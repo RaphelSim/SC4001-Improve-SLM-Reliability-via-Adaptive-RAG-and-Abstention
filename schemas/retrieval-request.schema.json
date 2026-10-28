@@ -1,0 +1,51 @@
+{
+  "$defs": {
+    "RetrievalStage": {
+      "description": "Retrieval round label. Initial retrieval is round zero.",
+      "enum": [
+        "initial",
+        "follow_up"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One retriever invocation; one request corresponds to one retrieval round.",
+  "properties": {
+    "exclude_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Exclude Evidence Ids",
+      "type": "array"
+    },
+    "query": {
+      "minLength": 1,
+      "title": "Query",
+      "type": "string"
+    },
+    "question_id": {
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "stage": {
+      "$ref": "#/$defs/RetrievalStage"
+    },
+    "top_k": {
+      "minimum": 1,
+      "title": "Top K",
+      "type": "integer"
+    }
+  },
+  "required": [
+    "question_id",
+    "query",
+    "stage",
+    "top_k"
+  ],
+  "title": "RetrievalRequest",
+  "type": "object"
+}

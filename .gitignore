@@ -1,0 +1,41 @@
+# Python environments and tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local secrets and machine-specific settings
+.env
+.env.*
+!.env.example
+
+# Data, model weights, caches, and experiment output
+data/raw/**
+!data/raw/.gitkeep
+data/processed/**
+!data/processed/.gitkeep
+cache/**
+!cache/README.md
+outputs/**
+!outputs/README.md
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.h5
+*.model
+*.bin
+
+# OS/editor files
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,65 @@
+{
+  "$defs": {
+    "AbstentionReason": {
+      "description": "Reason recorded when the answering system intentionally abstains.",
+      "enum": [
+        "insufficient_evidence",
+        "retrieval_failed",
+        "invalid_model_output",
+        "max_retrieval_rounds_reached"
+      ],
+      "title": "AbstentionReason",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "A substantive answer or a typed abstention with evidence provenance.",
+  "properties": {
+    "abstained": {
+      "title": "Abstained",
+      "type": "boolean"
+    },
+    "abstention_reason": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AbstentionReason"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "answer": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Answer"
+    },
+    "question_id": {
+      "minLength": 1,
+      "title": "Question Id",
+      "type": "string"
+    },
+    "used_evidence_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Used Evidence Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "question_id",
+    "abstained"
+  ],
+  "title": "AnswerResult",
+  "type": "object"
+}

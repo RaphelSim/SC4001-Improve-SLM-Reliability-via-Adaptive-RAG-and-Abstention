@@ -1,0 +1,36 @@
+# Convenient local development profile; values remain provisional.
+project_seed: 42
+data_root: data
+cache_root: cache
+output_root: outputs
+
+dataset:
+  dataset_name: synthetic_fixture_only
+  development_split: development
+  validation_split: validation
+  test_split: test
+  development_path: tests/fixtures/example_question.json
+  validation_path: null
+  test_path: null
+
+retrieval:
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  initial_top_k: 3
+  followup_top_k: 3
+  max_total_retrieval_rounds: 2
+  similarity_metric: cosine
+  deduplicate_evidence: true
+
+slm:
+  model_id: mock
+  runtime: mock
+  quantization: null
+  max_input_tokens: 4096
+  max_new_tokens: 128
+  temperature: 0.0
+  do_sample: false
+
+experiment:
+  system_variant: adaptive_retrieval_abstention
+  evidence_condition: partially_incomplete
+  run_id: development
