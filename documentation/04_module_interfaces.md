@@ -23,3 +23,9 @@ Member 2 now provides `SLMSufficiencyAssessor` and `SLMAnswerGenerator` implemen
 - Preserve stable IDs through merges and record the evidence used to answer.
 - Use mocks implementing the same Protocols so work can proceed before other modules exist.
 - A shared field or signature change needs team agreement and a matching docs/schema/test update.
+
+Member 1's dense retriever uses the existing `Retriever` signature. Its index is
+built from the complete permitted corpus, while `EvidenceSet` construction
+controls the evidence visible in round 0. A follow-up caller supplies
+`RetrievalStage.FOLLOW_UP` and any IDs to exclude; the retriever does not decide
+when adaptation occurs.
