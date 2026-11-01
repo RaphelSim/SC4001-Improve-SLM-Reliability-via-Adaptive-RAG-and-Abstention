@@ -47,4 +47,4 @@ python scripts/generate_json_schemas.py
 python scripts/validate_jsonl.py --schema experiment-record tests/fixtures/example_experiment.jsonl
 ```
 
-Read the [documentation index](documentation/README.md) for setup details and team contracts. Research modules are intentionally still stubs at this foundation stage; no real dataset, retrieval, inference, adaptive algorithm, or final evaluation has been implemented.
+Read the [documentation index](documentation/README.md) for setup details and team contracts. The Member 2 evidence sufficiency, grounded answer, and RAG-abstention baseline are implemented with injectable SLM clients. Real dataset processing/retrieval and the adaptive controller remain unimplemented.

@@ -16,6 +16,9 @@ def test_base_config_loads_with_development_defaults() -> None:
     assert settings.retrieval.max_total_retrieval_rounds == 2
     assert settings.slm.temperature == 0
     assert settings.slm.do_sample is False
+    assert settings.slm.prompt_version == "v1"
+    assert settings.slm.format_retry_limit == 1
+    assert settings.slm.sufficiency_prompt_path.name == "sufficiency_v1.txt"
 
 
 def test_documented_environment_overrides_apply() -> None:

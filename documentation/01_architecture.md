@@ -8,9 +8,9 @@ src/reliable_rag/
 ├── config/      YAML parsing and typed shared settings
 ├── data/        Future dataset and split handling
 ├── retrieval/   Future retriever implementations
-├── model/       Future SLM runtime, sufficiency, and answer adapters
+├── model/       SLM client, evidence-only sufficiency, grounded answer, and abstention adapters
 ├── adaptive/    Future controller implementation
-├── evaluation/  Future metric implementation after protocol freeze
+├── evaluation/  Shared sufficiency/abstention metrics; remaining metrics after protocol freeze
 └── io/          Validated JSONL exchange
 ```
 
@@ -51,4 +51,4 @@ Concrete implementations depend on shared contracts. The controller depends on a
 
 ## Adaptation boundary
 
-An adaptive controller may inspect a structured insufficiency decision and pass its search query to `Retriever`. It may merge and deduplicate returned evidence according to the agreed data policy. The contract establishes the maximum of two retrieval rounds, but the research algorithm and prompt wording are intentionally unimplemented.
+An adaptive controller may inspect a structured insufficiency decision and pass its search query to `Retriever`. It may merge and deduplicate returned evidence according to the agreed data policy. The contract establishes the maximum of two retrieval rounds. The adaptive research algorithm and validation-tuned final prompt wording remain future work.

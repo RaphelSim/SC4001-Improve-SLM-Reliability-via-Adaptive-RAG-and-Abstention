@@ -1,1 +1,1 @@
-"""Evaluation protocols are documented; finalized metrics await team decisions."""
+"""Shared baseline metrics; final answer normalization and recovery aggregation remain future work."""

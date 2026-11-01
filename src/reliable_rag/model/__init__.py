@@ -1,1 +1,16 @@
-"""Concrete SLM runtimes and prompt parsing will be added after the foundation."""
+"""Member 2 evidence sufficiency, grounded answering, and abstention components."""
+
+from reliable_rag.model.abstention import RAGAbstentionResponder
+from reliable_rag.model.answer import SLMAnswerGenerator
+from reliable_rag.model.errors import ModelOutputError
+from reliable_rag.model.slm import MLXLMClient, SLMClient
+from reliable_rag.model.sufficiency import SLMSufficiencyAssessor
+
+__all__ = [
+    "MLXLMClient",
+    "ModelOutputError",
+    "RAGAbstentionResponder",
+    "SLMAnswerGenerator",
+    "SLMClient",
+    "SLMSufficiencyAssessor",
+]

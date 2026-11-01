@@ -1,0 +1,112 @@
+{
+  "fixture_only": true,
+  "description": "Synthetic Member 2 development cases; these are contract tests, not experimental data.",
+  "cases": [
+    {
+      "case_id": "obviously_sufficient",
+      "expected_status": "sufficient",
+      "question": {
+        "question_id": "mack-rides-country-complete",
+        "question": "What country is Mack Rides based in?",
+        "gold_answer": "Germany",
+        "split": "development",
+        "gold_support_ids": ["mack-country::0"],
+        "candidate_evidence_ids": ["mack-country::0"],
+        "metadata": {"fixture_only": true}
+      },
+      "evidence": {
+        "question_id": "mack-rides-country-complete",
+        "condition": "complete",
+        "gold_support_ids": ["mack-country::0"],
+        "evidence": [
+          {"evidence_id": "mack-country::0", "document_id": "mack-rides", "title": "Mack Rides", "text": "Mack Rides is headquartered in Germany."}
+        ]
+      }
+    },
+    {
+      "case_id": "obviously_insufficient",
+      "expected_status": "need_more_evidence",
+      "question": {
+        "question_id": "mack-rides-country-insufficient",
+        "question": "What country is Mack Rides based in?",
+        "gold_answer": "Germany",
+        "split": "development",
+        "gold_support_ids": ["mack-country::0"],
+        "candidate_evidence_ids": ["mack-industry::0", "mack-country::0"],
+        "metadata": {"fixture_only": true}
+      },
+      "evidence": {
+        "question_id": "mack-rides-country-insufficient",
+        "condition": "fully_incomplete",
+        "gold_support_ids": ["mack-country::0"],
+        "evidence": [
+          {"evidence_id": "mack-industry::0", "document_id": "mack-rides", "title": "Mack Rides", "text": "Mack Rides manufactures roller coasters."}
+        ]
+      }
+    },
+    {
+      "case_id": "multi_hop_partial",
+      "expected_status": "need_more_evidence",
+      "question": {
+        "question_id": "lost-gravity-country",
+        "question": "What country is the manufacturer of Lost Gravity based in?",
+        "gold_answer": "Germany",
+        "split": "development",
+        "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+        "candidate_evidence_ids": ["lost-gravity::0", "mack-rides::0"],
+        "metadata": {"fixture_only": true, "hops": 2}
+      },
+      "evidence": {
+        "question_id": "lost-gravity-country",
+        "condition": "partially_incomplete",
+        "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+        "evidence": [
+          {"evidence_id": "lost-gravity::0", "document_id": "lost-gravity", "title": "Lost Gravity", "text": "Lost Gravity was manufactured by Mack Rides."}
+        ]
+      }
+    },
+    {
+      "case_id": "multi_hop_complete",
+      "expected_status": "sufficient",
+      "question": {
+        "question_id": "lost-gravity-country",
+        "question": "What country is the manufacturer of Lost Gravity based in?",
+        "gold_answer": "Germany",
+        "split": "development",
+        "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+        "candidate_evidence_ids": ["lost-gravity::0", "mack-rides::0"],
+        "metadata": {"fixture_only": true, "hops": 2}
+      },
+      "evidence": {
+        "question_id": "lost-gravity-country",
+        "condition": "complete",
+        "gold_support_ids": ["lost-gravity::0", "mack-rides::0"],
+        "evidence": [
+          {"evidence_id": "lost-gravity::0", "document_id": "lost-gravity", "title": "Lost Gravity", "text": "Lost Gravity was manufactured by Mack Rides."},
+          {"evidence_id": "mack-rides::0", "document_id": "mack-rides", "title": "Mack Rides", "text": "Mack Rides is headquartered in Germany."}
+        ]
+      }
+    },
+    {
+      "case_id": "parametric_knowledge_trap",
+      "expected_status": "need_more_evidence",
+      "question": {
+        "question_id": "france-capital-insufficient",
+        "question": "What is the capital of France?",
+        "gold_answer": "Paris",
+        "split": "development",
+        "gold_support_ids": ["france-capital::0"],
+        "candidate_evidence_ids": ["france-geography::0", "france-capital::0"],
+        "metadata": {"fixture_only": true, "parametric_knowledge_trap": true}
+      },
+      "evidence": {
+        "question_id": "france-capital-insufficient",
+        "condition": "fully_incomplete",
+        "gold_support_ids": ["france-capital::0"],
+        "evidence": [
+          {"evidence_id": "france-geography::0", "document_id": "france", "title": "France", "text": "France is a country in Western Europe."}
+        ]
+      }
+    }
+  ]
+}

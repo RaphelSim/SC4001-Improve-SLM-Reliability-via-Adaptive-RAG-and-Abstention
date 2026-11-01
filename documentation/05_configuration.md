@@ -9,10 +9,12 @@
 | General | `project_seed`, `data_root`, `cache_root`, `output_root` | Seed defaults to 42. Every stochastic component must derive its seed from it. |
 | Dataset | `dataset_name`, split names, optional `development_path`, `validation_path`, `test_path` | Names are labels; paths are optional and dataset-specific. |
 | Retrieval | `embedding_model`, `initial_top_k`, `followup_top_k`, `max_total_retrieval_rounds`, `similarity_metric`, `deduplicate_evidence` | Current top-k 3, MiniLM, and cosine are development defaults, not validated final values. Maximum total rounds is 2. |
-| SLM | `model_id`, `runtime`, `quantization`, `max_input_tokens`, `max_new_tokens`, `temperature`, `do_sample` | Runtime-neutral placeholders. Deterministic defaults are temperature 0 and sampling disabled. Final choices must be frozen before test. |
+| SLM | `model_id`, `runtime`, `quantization`, `max_input_tokens`, `max_new_tokens`, `temperature`, `do_sample`, `prompt_version`, `sufficiency_prompt_path`, `final_answer_prompt_path`, `structured_retry_prompt_path`, `format_retry_limit` | Runtime-neutral placeholders. Deterministic defaults are temperature 0 and sampling disabled. Prompt defaults select Member 2 v1 templates; at most one format retry is permitted. Final choices must be frozen before test. |
 | Experiment | `system_variant`, `evidence_condition`, `run_id` | Enum strings must match `contracts/enums.py`. |
 
 `configs/base.yaml` provides the shared provisional baseline. `configs/development.yaml` points only to a synthetic fixture and mock model label for local wiring.
+
+Member 2 uses the configured prompt version and paths rather than embedding prompt filenames in model code. `format_retry_limit` is constrained to zero or one. The optional `MLXLMClient` requires `runtime: mlx` (or `auto` on an MLX host) and does not load weights unless explicitly constructed by a caller.
 
 ## Loading and overrides
 

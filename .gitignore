@@ -15,6 +15,7 @@ dist/
 .env
 .env.*
 !.env.example
+configs/local.yaml
 
 # Data, model weights, caches, and experiment output
 data/raw/**

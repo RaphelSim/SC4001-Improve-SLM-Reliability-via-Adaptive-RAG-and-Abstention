@@ -1,8 +1,8 @@
 # Metric definitions
 
-Metrics should be computed from raw `ExperimentRecord` observations after the per-run records are validated. Keep aggregate values out of each record. `supporting_evidence_recall_at_k`, `answer_coverage`, and the two unsupported-answer rates below have small implementations in `evaluation/metrics.py`; other metrics remain protocol definitions until their implementation and normalization choices are agreed. Freeze those choices using validation data before test evaluation.
+Metrics should be computed from raw `ExperimentRecord` observations after the per-run records are validated. Keep aggregate values out of each record. `supporting_evidence_recall_at_k`, sufficiency classification accuracy/precision/recall/F1 and error rates, answer coverage, unsupported-answer rates, and abstention rates have implementations in `evaluation/metrics.py`. Answer EM/F1 and recovery-rate aggregation remain future work until normalization and eligibility inputs are fixed. Freeze those choices using validation data before test evaluation.
 
-Let (N) be the evaluated case set, (A_i) a model answer, (G_i) the gold answer, (S_i) the final controlled evidence sufficiency label, and (P_i) the model's predicted sufficiency. Define `gold_sufficient` as true/false and the insufficiency-positive target as `NEED_MORE_EVIDENCE`.
+Let $N$ be the evaluated case set, $A_i$ a model answer, $G_i$ the gold answer, $S_i$ the final controlled evidence sufficiency label, and $P_i$ the model's predicted sufficiency. Define `gold_sufficient` as true/false and the insufficiency-positive target as `NEED_MORE_EVIDENCE`.
 
 ## Answer quality
 
@@ -14,6 +14,7 @@ Let (N) be the evaluated case set, (A_i) a model answer, (G_i) the gold answer, 
 - **Supporting Evidence Recall@k:** for a retrieval result with ranked top-k items, `recallᵢ@k = |top_k_idsᵢ ∩ gold_support_idsᵢ| / |gold_support_idsᵢ|`. Report `mean_i(recallᵢ@k)` over evaluated questions and specify the retrieval stage (initial or follow-up); empty support sets are invalid in this project.
 - **Sufficiency Detection Accuracy:** `number of correct SufficiencyDecision.status labels / number of decisions included`. Report initial and post-recovery decisions separately where applicable.
 - **Sufficiency Detection Precision / Recall / F1:** treat `NEED_MORE_EVIDENCE` as the positive class. `precision = TP/(TP+FP)`, `recall = TP/(TP+FN)`, and `F1 = 2PR/(P+R)`, where TP means the model predicted insufficient and controlled gold evidence is insufficient. State the aggregation method if macro/weighted variants are added.
+- **False sufficiency rate:** among gold-insufficient cases, the fraction predicted `SUFFICIENT` (`FN / (TP + FN)`). **False insufficiency rate:** among gold-sufficient cases, the fraction predicted `NEED_MORE_EVIDENCE` (`FP / (FP + TN)`).
 
 ## Recovery and safety
 
@@ -24,4 +25,4 @@ Let (N) be the evaluated case set, (A_i) a model answer, (G_i) the gold answer, 
 - **False Abstention Rate / Over-abstention Rate:** `count(abstained and final evidence sufficient) / count(final evidence sufficient)`.
 - **Answer Coverage:** `count(not abstained) / count(all evaluated cases)`.
 
-For any zero denominator, report `N/A` with the numerator and denominator rather than silently substituting zero. These are definitions only; the final metric implementation and any answer normalization remain future work.
+For any zero denominator, report `N/A` with the numerator and denominator rather than silently substituting zero. Implemented rate helpers return `value=None` for a zero denominator so callers can report it explicitly. Final answer normalization and recovery-rate aggregation remain future work.

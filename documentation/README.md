@@ -18,5 +18,6 @@ Start with the scope, then use the contract and protocol pages as the shared ref
 | [11_team_workflow.md](11_team_workflow.md) | Branch and review workflow | Everyone | Team integration practices change |
 | [12_integration_and_handoffs.md](12_integration_and_handoffs.md) | Example records and member-to-member handoffs | All three members | Handoffs or examples change with the contracts |
 | [13_decision_log.md](13_decision_log.md) | Initial project decisions and rationale | Everyone | A recorded decision changes or a new one is made |
+| [member2_sufficiency_abstention.md](member2_sufficiency_abstention.md) | Member 2 model, parsing, abstention, tests, and Member 3 handoff | Members 2 and 3 | Member 2 behavior, prompt/config keys, or handoff changes |
 
 Quick lookup: terminology → `02`; record field definitions → `03`; module contracts → `04`; dependencies and installation → `06`; experiment rules → `07`; metric denominators → `08`; team coordination → `11` and `12`.

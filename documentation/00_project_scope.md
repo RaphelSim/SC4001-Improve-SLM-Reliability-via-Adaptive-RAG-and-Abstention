@@ -12,7 +12,7 @@ The central path is **incomplete evidence → detection → adaptive evidence re
 
 ## Foundation scope
 
-This repository stage establishes shared data records, enums, module interfaces, configuration, JSONL and schema validation, synthetic fixtures, tests, development commands, and team documentation. Research components are stubs only.
+The shared foundation establishes data records, enums, module interfaces, configuration, JSONL and schema validation, synthetic fixtures, tests, development commands, and team documentation. Member 2's evidence-only sufficiency, answer, and abstention layer is now implemented. Member 1's real dataset/retrieval work and Member 3's adaptive controller/final experiment orchestration remain future work.
 
 ## Excluded at this stage
 

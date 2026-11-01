@@ -13,6 +13,8 @@ The structural interfaces live in `contracts/interfaces.py` as Python Protocols.
 
 The controller receives implementations through interfaces. It must not know whether retrieval uses cosine similarity, FAISS, or another index, or whether a model uses MLX, Transformers, or a mock. The contract establishes no more than two total retrieval calls. This foundation does not choose when or how the follow-up query is generated beyond the structured decision fields.
 
+Member 2 now provides `SLMSufficiencyAssessor` and `SLMAnswerGenerator` implementations of the shared `SufficiencyAssessor` and `AnswerGenerator` Protocols. Both receive an injected `SLMClient`, and neither imports or calls a retriever. `RAGAbstentionResponder` is a local baseline policy; it is not the adaptive controller.
+
 ## Integration rules
 
 - Keep each member's internal types behind its adapter and exchange canonical records at module boundaries.

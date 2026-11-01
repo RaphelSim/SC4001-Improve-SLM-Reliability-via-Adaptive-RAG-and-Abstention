@@ -59,6 +59,11 @@ class SLMSettings(StrictSettings):
     max_new_tokens: int = Field(ge=1)
     temperature: float = Field(ge=0.0)
     do_sample: bool = False
+    prompt_version: str = Field(default="v1", min_length=1)
+    sufficiency_prompt_path: Path = Path("prompts/sufficiency_v1.txt")
+    final_answer_prompt_path: Path = Path("prompts/final_answer_v1.txt")
+    structured_retry_prompt_path: Path = Path("prompts/structured_retry_v1.txt")
+    format_retry_limit: int = Field(default=1, ge=0, le=1)
 
 
 class ExperimentSettings(StrictSettings):
