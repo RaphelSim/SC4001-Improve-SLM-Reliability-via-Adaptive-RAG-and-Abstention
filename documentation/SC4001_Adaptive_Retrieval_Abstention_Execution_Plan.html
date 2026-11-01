@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SC4001 Execution Plan — Adaptive Retrieval and Abstention under Incomplete Evidence</title>
+<style>
+body{margin:0;background:#f5f7fb;color:#1f2937;font-family:Arial,Helvetica,sans-serif;line-height:1.52}
+main{max-width:1080px;margin:28px auto;background:#fff;border:1px solid #d8dee8;border-radius:14px;padding:38px 44px}
+h1{font-size:30px;margin:0 0 6px}
+.subtitle{color:#64748b;font-size:15px;margin-bottom:24px}
+h2{font-size:20px;margin-top:30px;border-bottom:1px solid #d8dee8;padding-bottom:6px}
+h3{font-size:16px;margin:18px 0 7px}
+p{margin:7px 0}
+ul,ol{margin:7px 0 7px 22px;padding:0}
+li{margin:4px 0}
+.box{background:#f8fafc;border:1px solid #d8dee8;border-left:4px solid #334155;padding:13px 15px;border-radius:8px;margin:11px 0}
+pre{background:#0f172a;color:#f8fafc;padding:15px 16px;border-radius:8px;white-space:pre-wrap;overflow:auto;font-size:13px;line-height:1.45}
+code{background:#eef2f7;padding:1px 5px;border-radius:4px;font-family:"Courier New",monospace}
+table{width:100%;border-collapse:collapse;margin:10px 0 15px;font-size:14px}
+th,td{border:1px solid #d8dee8;padding:8px 9px;text-align:left;vertical-align:top}
+th{background:#f1f5f9}
+.tag{display:inline-block;border:1px solid #d8dee8;border-radius:999px;padding:3px 8px;margin:2px 4px 2px 0;background:#fafafa;font-size:12px}
+.small{font-size:13px;color:#64748b}
+@media print{body{background:#fff}main{margin:0;border:0;border-radius:0;max-width:none;padding:24px 28px}table,pre,.box{page-break-inside:avoid}h2{page-break-after:avoid}}
+</style>
+</head>
+<body>
+<main>
+
+<h1>SC4001 Detailed Execution Plan</h1>
+<div class="subtitle">Research Question: Can adaptive retrieval and abstention improve the reliability of a small language model when retrieved evidence is incomplete?</div>
+
+<h2>1. Exact Project Focus</h2>
+<div class="box">
+<strong>Main research question:</strong><br>
+Can adaptive retrieval and abstention improve the reliability of a small language model when retrieved evidence is incomplete?
+</div>
+
+<p>This project is specifically about <strong>reliability under incomplete retrieval</strong>. The central problem is:</p>
+
+<pre>A question requires multiple pieces of evidence.
+
+Initial RAG retrieval returns only part of the required evidence.
+
+What should the SLM do?
+
+1. Detect that the evidence is incomplete.
+2. Identify what information is missing.
+3. Retrieve again using a targeted follow-up query.
+4. Answer only if sufficient evidence is recovered.
+5. Otherwise abstain instead of producing an unsupported answer.</pre>
+
+<p>The intended behaviour is therefore:</p>
+<p>
+<span class="tag">Detect incompleteness</span>
+<span class="tag">Recover missing evidence</span>
+<span class="tag">Answer when supported</span>
+<span class="tag">Abstain when unsupported</span>
+</p>
+
+<p><strong>Inference cost is not the main research objective.</strong> Retrieval count, latency, or token use may be recorded as secondary observations, but the primary outcome is whether unsupported answers are reduced while useful answer coverage is maintained.</p>
+
+<h2>2. Main Hypothesis</h2>
+<div class="box">
+<strong>Hypothesis:</strong><br>
+Compared with standard RAG, an SLM equipped with evidence-sufficiency checking, adaptive follow-up retrieval, and abstention will produce fewer unsupported answers when the initially retrieved evidence is incomplete.
+</div>
+
+<p>The expected trade-off is:</p>
+<pre>Standard RAG:
+Incomplete evidence → still answers → higher risk of unsupported answer
+
+RAG + Abstention:
+Incomplete evidence → detects insufficiency → refuses
+Reliable, but may lose answer coverage
+
+Adaptive RAG + Abstention:
+Incomplete evidence → detect → retrieve missing evidence
+                      ↓
+                recovered? yes → answer
+                           no  → abstain
+
+Goal:
+Lower unsupported-answer rate while preserving more answer coverage than simple abstention.</pre>
+
+<h2>3. Systems to Compare</h2>
+
+<table>
+<tr>
+<th>System</th>
+<th>Detects Insufficient Evidence?</th>
+<th>Retrieves Again?</th>
+<th>Can Abstain?</th>
+<th>Purpose</th>
+</tr>
+<tr>
+<td><strong>A. Standard RAG</strong></td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Baseline. Always answers from initially retrieved evidence.</td>
+</tr>
+<tr>
+<td><strong>B. RAG + Abstention</strong></td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>Measures whether simply refusing on incomplete evidence improves reliability.</td>
+</tr>
+<tr>
+<td><strong>C. Adaptive Retrieval only</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Measures whether follow-up retrieval can recover missing evidence, but still forces an answer.</td>
+</tr>
+<tr>
+<td><strong>D. Adaptive Retrieval + Abstention</strong></td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Main proposed system. Recover evidence when possible; otherwise abstain.</td>
+</tr>
+</table>
+
+<p>This 4-system setup allows the team to separately measure the contribution of <strong>adaptive retrieval</strong> and <strong>abstention</strong>.</p>
+
+<h2>4. End-to-End Architecture</h2>
+
+<pre>                         USER QUESTION
+                              |
+                              v
+                     INITIAL RETRIEVAL
+                              |
+                           Top-k
+                              |
+                              v
+                  EVIDENCE SUFFICIENCY CHECK
+                        /             \
+                  SUFFICIENT       INSUFFICIENT
+                      |                 |
+                      v                 v
+                    ANSWER       IDENTIFY MISSING FACT
+                                        |
+                                        v
+                              GENERATE FOLLOW-UP QUERY
+                                        |
+                                        v
+                                   RETRIEVE AGAIN
+                                        |
+                                        v
+                                MERGE NEW EVIDENCE
+                                        |
+                                        v
+                              SUFFICIENCY CHECK AGAIN
+                                  /             \
+                            SUFFICIENT       INSUFFICIENT
+                                |                 |
+                                v                 v
+                              ANSWER             ABSTAIN</pre>
+
+<p><strong>Important:</strong> the Python application controls all retrieval actions. The SLM only returns structured decisions such as:</p>
+
+<pre>{
+  "status": "NEED_MORE_EVIDENCE",
+  "missing_information": "The country where Mack Rides is based",
+  "search_query": "Mack Rides headquarters country"
+}</pre>
+
+<h2>5. Recommended Dataset and Evidence Construction</h2>
+
+<h3>Primary dataset: HotpotQA</h3>
+<p>Use HotpotQA because many questions require multiple supporting facts. This lets the team deliberately construct incomplete evidence conditions in a controlled manner.</p>
+
+<p>For each question, preserve:</p>
+<ul>
+<li>Question ID</li>
+<li>Question text</li>
+<li>Gold answer</li>
+<li>Gold supporting documents / supporting facts</li>
+<li>Candidate paragraphs</li>
+</ul>
+
+<h3>Evidence conditions</h3>
+
+<table>
+<tr>
+<th>Condition</th>
+<th>Construction</th>
+<th>Expected Reliable Behaviour</th>
+</tr>
+<tr>
+<td><strong>Complete evidence</strong></td>
+<td>All required gold supporting evidence is included.</td>
+<td>Answer.</td>
+</tr>
+<tr>
+<td><strong>Partially incomplete</strong></td>
+<td>One required supporting item is removed.</td>
+<td>Detect insufficiency → retrieve missing evidence → answer if recovered.</td>
+</tr>
+<tr>
+<td><strong>Fully incomplete</strong></td>
+<td>All required supporting evidence is removed.</td>
+<td>Attempt recovery; abstain if support remains unavailable.</td>
+</tr>
+<tr>
+<td><strong>Distractor-heavy</strong> (optional)</td>
+<td>Correct support is mixed with several irrelevant passages.</td>
+<td>Ignore irrelevant context and avoid unsupported conclusions.</td>
+</tr>
+</table>
+
+<h2>6. Recommended Technical Stack</h2>
+
+<table>
+<tr><th>Component</th><th>Recommended Choice</th></tr>
+<tr><td>Dataset</td><td>HotpotQA</td></tr>
+<tr><td>SLM</td><td>Qwen3-1.7B for development; Qwen3-4B if final runtime permits</td></tr>
+<tr><td>Local inference</td><td>MLX / MLX-LM on M1 MacBook</td></tr>
+<tr><td>Final experiments</td><td>Google Colab, same runtime/configuration for every compared system</td></tr>
+<tr><td>Embedding model</td><td>all-MiniLM-L6-v2</td></tr>
+<tr><td>Retrieval</td><td>Cosine similarity initially; FAISS only if needed</td></tr>
+<tr><td>Maximum retrieval rounds</td><td>2</td></tr>
+<tr><td>Primary research variables</td><td>Adaptive retrieval + abstention</td></tr>
+</table>
+
+<h2>7. Parallel Work Split for 3 Members</h2>
+
+<h3>Member 1 — Dataset, Retrieval, and Incomplete-Evidence Construction</h3>
+<p><strong>Research role:</strong> create the evidence environment in which incomplete retrieval can be studied reliably.</p>
+
+<ul>
+<li>Load HotpotQA and preserve gold supporting facts.</li>
+<li>Create fixed development, validation, and test splits.</li>
+<li>Implement paragraph embeddings.</li>
+<li>Implement Top-k dense retrieval.</li>
+<li>Measure supporting-evidence Recall@k.</li>
+<li>Create complete, partially incomplete, and fully incomplete evidence conditions.</li>
+<li>Optionally create distractor-heavy conditions.</li>
+<li>Cache initial retrieval results.</li>
+</ul>
+
+<p><strong>Required interface:</strong></p>
+
+<pre>retrieve(query, top_k=3) -> [
+  {
+    "id": "doc_123",
+    "text": "...",
+    "score": 0.83
+  }
+]</pre>
+
+<p><strong>Main outputs:</strong></p>
+<ul>
+<li><code>retriever.py</code></li>
+<li><code>evidence_conditions.py</code></li>
+<li><code>initial_retrieval.jsonl</code></li>
+<li>Recall@k results</li>
+</ul>
+
+<h3>Member 2 — Evidence Sufficiency Detection and Abstention</h3>
+<p><strong>Research role:</strong> determine whether the SLM can recognise that current evidence is insufficient and avoid unsupported answering.</p>
+
+<ul>
+<li>Set up the SLM.</li>
+<li>Implement Standard RAG baseline.</li>
+<li>Design the evidence-sufficiency prompt.</li>
+<li>Use structured JSON output.</li>
+<li>Implement the RAG + Abstention system.</li>
+<li>Evaluate:
+  <ul>
+    <li>True sufficient → correctly answer</li>
+    <li>True incomplete → correctly detect insufficiency</li>
+    <li>False sufficiency</li>
+    <li>False insufficiency</li>
+  </ul>
+</li>
+</ul>
+
+<p><strong>Required interface:</strong></p>
+
+<pre>assess_evidence(question, evidence) -> {
+  "status": "SUFFICIENT" | "NEED_MORE_EVIDENCE",
+  "missing_information": "...",
+  "search_query": "..."
+}</pre>
+
+<p><strong>Main outputs:</strong></p>
+<ul>
+<li><code>slm.py</code></li>
+<li><code>sufficiency.py</code></li>
+<li><code>abstention.py</code></li>
+<li>Sufficiency detection metrics</li>
+</ul>
+
+<h3>Member 3 — Adaptive Evidence Recovery and Overall Evaluation</h3>
+<p><strong>Research role:</strong> determine whether the system can recover missing evidence before deciding to abstain.</p>
+
+<ul>
+<li>Consume the SLM's <code>NEED_MORE_EVIDENCE</code> decision.</li>
+<li>Use the generated <code>search_query</code> for a second retrieval.</li>
+<li>Merge and deduplicate evidence.</li>
+<li>Re-run the sufficiency check.</li>
+<li>Implement:
+  <ul>
+    <li>Adaptive Retrieval only</li>
+    <li>Adaptive Retrieval + Abstention</li>
+  </ul>
+</li>
+<li>Measure missing-evidence recovery rate.</li>
+<li>Build shared evaluation scripts.</li>
+<li>Produce final result tables and plots.</li>
+</ul>
+
+<p><strong>Controller logic:</strong></p>
+
+<pre>evidence = retrieve(question)
+
+decision = assess_evidence(question, evidence)
+
+if decision["status"] == "SUFFICIENT":
+    return answer(question, evidence)
+
+new_docs = retrieve(decision["search_query"])
+evidence = merge_and_deduplicate(evidence, new_docs)
+
+decision = assess_evidence(question, evidence)
+
+if decision["status"] == "SUFFICIENT":
+    return answer(question, evidence)
+
+return ABSTAIN</pre>
+
+<h2>8. How the 3 Members Can Work Independently</h2>
+
+<ol>
+<li><strong>Agree on interfaces first.</strong> Every module must have fixed input/output formats before implementation.</li>
+<li><strong>Use mock data.</strong> Member 2 can test sufficiency using manually prepared evidence. Member 3 can test the controller using fake retriever/model outputs.</li>
+<li><strong>Use cached JSONL handoffs.</strong> No person needs another person's code running continuously.</li>
+<li><strong>Create a common development set of 20–30 questions.</strong> Everyone tests against the same examples.</li>
+<li><strong>Integrate early.</strong> Connect minimal working versions before polishing individual modules.</li>
+</ol>
+
+<h3>Suggested cached handoff files</h3>
+
+<pre>Member 1:
+initial_retrieval.jsonl
+        |
+        v
+Member 2:
+sufficiency_results.jsonl
+        |
+        v
+Member 3:
+adaptive_results.jsonl</pre>
+
+<h2>9. Shared Experimental Output Format</h2>
+
+<pre>{
+  "question_id": "q123",
+  "condition": "partially_incomplete",
+  "system": "adaptive_rag_abstention",
+
+  "question": "...",
+  "gold_answer": "Germany",
+  "gold_support_ids": ["A", "B"],
+
+  "initial_retrieved_ids": ["A", "C"],
+  "initial_sufficient": false,
+
+  "missing_information": "Country of Mack Rides",
+  "followup_query": "Mack Rides headquarters country",
+
+  "second_retrieved_ids": ["B", "D"],
+  "final_sufficient": true,
+
+  "prediction": "Germany",
+  "abstained": false
+}</pre>
+
+<h2>10. Core Metrics</h2>
+
+<h3>A. Answer correctness</h3>
+<ul>
+<li>Exact Match (EM)</li>
+<li>Answer F1</li>
+</ul>
+
+<h3>B. Evidence-sufficiency detection</h3>
+<ul>
+<li>Accuracy</li>
+<li>Precision</li>
+<li>Recall</li>
+<li>F1</li>
+</ul>
+
+<h3>C. Retrieval quality</h3>
+<ul>
+<li>Supporting-evidence Recall@k</li>
+</ul>
+
+<h3>D. Missing-evidence recovery</h3>
+<div class="box">
+<strong>Recovery Rate:</strong><br>
+Among cases where initial evidence is incomplete, what fraction successfully recover the missing gold support after adaptive retrieval?
+</div>
+
+<h3>E. Reliability</h3>
+<ul>
+<li><strong>Unsupported Answer Rate:</strong> how often the system answers even though available evidence is insufficient.</li>
+<li><strong>Correct Abstention Rate:</strong> how often the system correctly refuses when support remains insufficient.</li>
+<li><strong>Answer Coverage:</strong> how often the system is able to provide an answer instead of abstaining.</li>
+</ul>
+
+<p>The main trade-off should be analysed as:</p>
+
+<pre>Reliability ↑
+Unsupported answers ↓
+while
+Useful answer coverage remains high</pre>
+
+<h2>11. Main Experimental Comparisons</h2>
+
+<table>
+<tr>
+<th>Method</th>
+<th>Answer F1 ↑</th>
+<th>Unsupported Answer Rate ↓</th>
+<th>Correct Abstention ↑</th>
+<th>Coverage ↑</th>
+</tr>
+<tr><td>Standard RAG</td><td>...</td><td>...</td><td>—</td><td>100%</td></tr>
+<tr><td>RAG + Abstention</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+<tr><td>Adaptive Retrieval only</td><td>...</td><td>...</td><td>—</td><td>100%</td></tr>
+<tr><td><strong>Adaptive Retrieval + Abstention</strong></td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+</table>
+
+<h3>Component-level analysis</h3>
+
+<table>
+<tr><th>Component</th><th>Question Being Answered</th><th>Metric</th></tr>
+<tr><td>Initial retriever</td><td>Was required support retrieved initially?</td><td>Recall@k</td></tr>
+<tr><td>Sufficiency checker</td><td>Can the SLM recognise incomplete evidence?</td><td>Detection F1</td></tr>
+<tr><td>Follow-up query generation</td><td>Can the SLM identify what information is missing?</td><td>Recovery Rate</td></tr>
+<tr><td>Adaptive retrieval</td><td>Does the second retrieval recover the missing support?</td><td>Second-round Recall@k</td></tr>
+<tr><td>Abstention</td><td>Does the model refuse when support remains insufficient?</td><td>Correct Abstention Rate</td></tr>
+<tr><td>Final system</td><td>Is overall reliability improved?</td><td>Answer F1 + Unsupported Answer Rate + Coverage</td></tr>
+</table>
+
+<h2>12. Development / Validation / Test Protocol</h2>
+
+<ol>
+<li><strong>Development set:</strong> used for debugging and prompt construction.</li>
+<li><strong>Validation set:</strong> used to choose Top-k, prompt wording, controller rules, and evidence formatting.</li>
+<li><strong>Test set:</strong> untouched until the system is frozen.</li>
+<li>Use the same SLM, quantisation, decoding settings, and runtime for all final systems.</li>
+<li>Do not change prompts after viewing final test results.</li>
+<li>Cache all final outputs for reproducibility.</li>
+</ol>
+
+<h2>13. Recommended Repository Structure</h2>
+
+<pre>project/
+|
+├── data/
+│   ├── hotpotqa.py
+│   ├── prepare_splits.py
+│   └── evidence_conditions.py
+|
+├── retrieval/
+│   ├── embedder.py
+│   └── retriever.py
+|
+├── model/
+│   ├── slm.py
+│   ├── sufficiency.py
+│   ├── abstention.py
+│   └── answer.py
+|
+├── adaptive/
+│   ├── query_generator.py
+│   └── controller.py
+|
+├── evaluation/
+│   ├── metrics.py
+│   ├── evaluate.py
+│   └── plots.py
+|
+├── cache/
+│   ├── initial_retrieval.jsonl
+│   ├── sufficiency_results.jsonl
+│   └── final_results.jsonl
+|
+├── tests/
+│   └── dev_examples.json
+|
+├── requirements.txt
+└── README.md</pre>
+
+<h2>14. Timeline and Parallel Execution</h2>
+
+<table>
+<tr>
+<th>Phase</th>
+<th>Member 1</th>
+<th>Member 2</th>
+<th>Member 3</th>
+<th>Team Checkpoint</th>
+</tr>
+<tr>
+<td><strong>Phase 1 — Independent Prototypes</strong></td>
+<td>HotpotQA loader, evidence labels, basic retriever</td>
+<td>SLM setup, sufficiency prompt, abstention logic using manual examples</td>
+<td>Adaptive controller using mock functions</td>
+<td>All modules run independently</td>
+</tr>
+<tr>
+<td><strong>Phase 2 — First Integration</strong></td>
+<td>Expose final <code>retrieve()</code></td>
+<td>Expose <code>assess_evidence()</code> and answer/abstain functions</td>
+<td>Connect modules</td>
+<td>20–30 shared dev examples run end-to-end</td>
+</tr>
+<tr>
+<td><strong>Phase 3 — Validation</strong></td>
+<td>Validate retrieval and evidence conditions</td>
+<td>Refine sufficiency and abstention prompts</td>
+<td>Refine adaptive recovery and evaluation</td>
+<td>Freeze architecture and prompts</td>
+</tr>
+<tr>
+<td><strong>Phase 4 — Final Test</strong></td>
+<td>Verify evidence labels and cached retrieval</td>
+<td>Run fixed SLM configuration</td>
+<td>Run all 4 systems and compute metrics</td>
+<td>No further tuning</td>
+</tr>
+<tr>
+<td><strong>Phase 5 — Analysis / Report</strong></td>
+<td>Retrieval failure analysis</td>
+<td>Sufficiency/abstention failure analysis</td>
+<td>Adaptive recovery + final comparison</td>
+<td>Combine findings into report and presentation</td>
+</tr>
+</table>
+
+<h2>15. Failure Cases to Analyse</h2>
+
+<ul>
+<li><strong>False sufficiency:</strong> model believes incomplete evidence is enough and answers anyway.</li>
+<li><strong>False insufficiency:</strong> model asks for more evidence although support is already sufficient.</li>
+<li><strong>Wrong missing-information diagnosis:</strong> model identifies the wrong fact as missing.</li>
+<li><strong>Poor follow-up query:</strong> the generated query does not target the missing evidence.</li>
+<li><strong>Good query but retrieval failure:</strong> query is appropriate, but the retriever does not recover the gold support.</li>
+<li><strong>Evidence recovered but answer still wrong:</strong> retrieval succeeds but reasoning fails.</li>
+<li><strong>Over-abstention:</strong> model refuses despite having sufficient support.</li>
+</ul>
+
+<h2>16. Scope Control</h2>
+
+<ul>
+<li>Do not fine-tune the SLM for the initial project.</li>
+<li>Do not make inference cost the main objective.</li>
+<li>Do not add GraphRAG to the core experiment.</li>
+<li>Keep contradiction detection as optional future work.</li>
+<li>Use one primary dataset first.</li>
+<li>Use one SLM family for the main comparison.</li>
+<li>Limit adaptive retrieval to one follow-up round.</li>
+</ul>
+
+<h2>17. Optional Extensions</h2>
+
+<ul>
+<li>Compare 1.7B vs 4B SLMs on evidence-sufficiency detection.</li>
+<li>Add contradiction-aware handling after the core project is complete.</li>
+<li>Add a reranker to test whether better evidence selection reduces false insufficiency.</li>
+<li>Test robustness to increasing distractor evidence.</li>
+<li>Record latency/tokens only as secondary engineering metrics.</li>
+</ul>
+
+<h2>18. Final Expected Contribution</h2>
+
+<div class="box">
+<strong>Problem:</strong> Standard RAG can still produce unsupported answers when required evidence is missing.<br><br>
+<strong>Method:</strong> detect evidence insufficiency, generate a targeted follow-up query, retrieve missing evidence, and abstain if sufficient support still cannot be obtained.<br><br>
+<strong>Research question answered:</strong> does combining adaptive retrieval and abstention make an SLM more reliable under incomplete evidence?<br><br>
+<strong>Main evidence of improvement:</strong> lower unsupported-answer rate, high correct-abstention rate, successful missing-evidence recovery, and useful answer coverage.
+</div>
+
+<p class="small">This version is intentionally centred only on incomplete evidence, adaptive recovery, abstention, and reliability.</p>
+
+</main>
+</body>
+</html>
