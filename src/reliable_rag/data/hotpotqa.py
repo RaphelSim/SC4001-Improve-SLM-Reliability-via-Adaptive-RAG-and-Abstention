@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
-import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -91,9 +91,11 @@ def normalize_hotpotqa_example(
     if not question_id or not question_text or not gold_answer:
         raise ValueError("HotpotQA records require _id, question, and answer")
     if isinstance(context, dict) and {"title", "sentences"} <= context.keys():
-        context = list(zip(context["title"], context["sentences"]))
+        context = list(zip(context["title"], context["sentences"], strict=True))
     if isinstance(supporting_facts, dict) and {"title", "sent_id"} <= supporting_facts.keys():
-        supporting_facts = list(zip(supporting_facts["title"], supporting_facts["sent_id"]))
+        supporting_facts = list(
+            zip(supporting_facts["title"], supporting_facts["sent_id"], strict=True)
+        )
     if not isinstance(context, list) or not isinstance(supporting_facts, list):
         raise ValueError("HotpotQA records require context and supporting_facts collections")
 
@@ -111,7 +113,7 @@ def normalize_hotpotqa_example(
     document_ids = _unique_document_ids(titles)
     evidence: list[EvidenceChunk] = []
     support_ids: list[str] = []
-    for paragraph, document_id in zip(context, document_ids):
+    for paragraph, document_id in zip(context, document_ids, strict=True):
         if not isinstance(paragraph, (list, tuple)) or len(paragraph) != 2:
             raise ValueError(f"HotpotQA record {question_id} has an invalid context paragraph")
         title, sentences = paragraph
@@ -126,8 +128,7 @@ def normalize_hotpotqa_example(
         )
         evidence.append(chunk)
         has_support = any(
-            location_title == title
-            and 0 <= location_index < len(sentences)
+            location_title == title and 0 <= location_index < len(sentences)
             for location_title, location_index in support_locations
         )
         if has_support:

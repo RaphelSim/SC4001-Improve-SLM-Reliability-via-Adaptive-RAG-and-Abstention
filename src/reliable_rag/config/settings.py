@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
 
-from reliable_rag.contracts.enums import EvidenceCondition, SystemVariant
+from reliable_rag.contracts.enums import SystemVariant
+
+DEFAULT_PROJECT_SEED = 88
 
 
 class StrictSettings(BaseModel):
@@ -19,26 +21,34 @@ class StrictSettings(BaseModel):
 
 
 class DatasetSettings(StrictSettings):
-    """Dataset name and optional paths for each named project split."""
+    """Pinned HotpotQA source, deterministic sample and project partition."""
 
-    dataset_name: str = Field(min_length=1)
-    development_split: str = "development"
-    validation_split: str = "validation"
-    test_split: str = "test"
-    development_path: Path | None = None
-    validation_path: Path | None = None
-    test_path: Path | None = None
+    dataset_name: str = "hotpotqa/hotpot_qa"
+    dataset_config: str = "distractor"
+    source_split: str = "train"
+    revision: str | None = None
+    subset_size: int | None = Field(default=500, ge=1)
+    project_split: str = "development"
+    input_path: Path | None = None
+
+    @field_validator("project_split")
+    @classmethod
+    def known_split(cls, value: str) -> str:
+        if value not in {"development", "validation", "test"}:
+            raise ValueError("project_split must be development, validation or test")
+        return value
 
 
 class RetrievalSettings(StrictSettings):
-    """Provisional retrieval values shared by future implementations."""
+    """Model selection and bounded retrieval settings."""
 
     embedding_model: str = Field(min_length=1)
+    embedding_revision: str | None = None
+    embedding_device: str = "cpu"
     initial_top_k: int = Field(ge=1)
     followup_top_k: int = Field(ge=1)
     max_total_retrieval_rounds: int = Field(default=2, ge=1, le=2)
     similarity_metric: str = "cosine"
-    deduplicate_evidence: bool = True
 
     @field_validator("similarity_metric")
     @classmethod
@@ -50,22 +60,28 @@ class RetrievalSettings(StrictSettings):
 
 
 class SLMSettings(StrictSettings):
-    """Runtime-neutral SLM selection and generation placeholders."""
+    """Model selection, structured generation, and prompt settings."""
 
     model_id: str = Field(min_length=1)
+    revision: str | None = None
     runtime: str = Field(default="auto", min_length=1)
     quantization: str | None = None
     max_input_tokens: int = Field(ge=1)
     max_new_tokens: int = Field(ge=1)
     temperature: float = Field(ge=0.0)
     do_sample: bool = False
+    enable_thinking: Literal[False] = False
+    prompt_version: str = Field(default="v1", min_length=1)
+    sufficiency_prompt_path: Path = Path("prompts/sufficiency_v1.txt")
+    final_answer_prompt_path: Path = Path("prompts/final_answer_v1.txt")
+    structured_retry_prompt_path: Path = Path("prompts/structured_retry_v1.txt")
+    format_retry_limit: int = Field(default=1, ge=0, le=1)
 
 
 class ExperimentSettings(StrictSettings):
     """Per-run labels; final conditions must be frozen before test evaluation."""
 
     system_variant: SystemVariant
-    evidence_condition: EvidenceCondition
     run_id: str = Field(min_length=1)
 
 
@@ -80,6 +96,28 @@ class Settings(StrictSettings):
     retrieval: RetrievalSettings
     slm: SLMSettings
     experiment: ExperimentSettings
+
+    @property
+    def dataset_dir(self) -> Path:
+        size = self.dataset.subset_size if self.dataset.subset_size is not None else "all"
+        return self.data_root / "processed" / "hotpotqa" / f"subset-{size}-seed{self.project_seed}"
+
+    @property
+    def questions_path(self) -> Path:
+        return self.dataset_dir / f"questions-{self.dataset.project_split}.jsonl"
+
+    @property
+    def evidence_path(self) -> Path:
+        return self.dataset_dir / f"evidence-{self.dataset.project_split}.jsonl"
+
+    @property
+    def selection_path(self) -> Path:
+        return self.dataset_dir / f"subset-{self.dataset.project_split}.json"
+
+    @property
+    def index_path(self) -> Path:
+        size = self.dataset.subset_size if self.dataset.subset_size is not None else "all"
+        return self.cache_root / f"hotpotqa-subset-{size}-seed{self.project_seed}.npz"
 
     @model_validator(mode="after")
     def enforce_shared_round_limit(self) -> Settings:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 
 import numpy as np
 
@@ -19,6 +19,7 @@ class DenseRetriever:
         embedder: Embedder,
         *,
         embeddings: np.ndarray | None = None,
+        candidate_evidence_ids_by_question: Mapping[str, Sequence[str]] | None = None,
     ) -> None:
         if not evidence:
             raise ValueError("evidence corpus must not be empty")
@@ -33,6 +34,8 @@ class DenseRetriever:
             embeddings = np.asarray(embeddings, dtype=np.float32)
         if embeddings.ndim != 2 or embeddings.shape[0] != len(evidence):
             raise ValueError("embedder must return one vector per evidence chunk")
+        if embeddings.shape[1] < 1 or not np.isfinite(embeddings).all():
+            raise ValueError("evidence embeddings must contain finite, non-empty vectors")
         norms = np.linalg.norm(embeddings, axis=1)
         if np.any(norms == 0):
             raise ValueError("evidence embeddings must not contain zero vectors")
@@ -40,6 +43,13 @@ class DenseRetriever:
         self._by_id = {chunk.evidence_id: chunk for chunk in evidence}
         self._embeddings = embeddings / norms[:, None]
         self._embedder = embedder
+        self._candidate_ids = None
+        if candidate_evidence_ids_by_question is not None:
+            self._candidate_ids = {}
+            for question_id, candidates in candidate_evidence_ids_by_question.items():
+                if not set(candidates).issubset(self._by_id):
+                    raise ValueError(f"question {question_id} references unknown candidate IDs")
+                self._candidate_ids[question_id] = set(candidates) if candidates else set(ids)
 
     def retrieve(self, request: RetrievalRequest) -> RetrievalResult:
         """Return at most request.top_k ranked, non-excluded evidence chunks."""
@@ -60,17 +70,24 @@ class DenseRetriever:
                 raise ValueError("query vector has an incompatible shape")
             query_embedding = query_embedding.reshape(1, -1)
         query_norm = np.linalg.norm(query_embedding[0])
-        if query_norm == 0:
-            raise ValueError("query embedding must not be a zero vector")
-        candidate_ids = (
-            set(candidate_evidence_ids) if candidate_evidence_ids is not None else None
-        )
+        if query_norm == 0 or not np.isfinite(query_embedding).all():
+            raise ValueError("query embedding must be finite and must not be a zero vector")
+        candidate_ids = set(candidate_evidence_ids) if candidate_evidence_ids is not None else None
+        if candidate_ids is not None and not candidate_ids.issubset(self._by_id):
+            raise ValueError("retrieval candidate IDs are absent from the corpus")
+        if self._candidate_ids is not None:
+            if request.question_id not in self._candidate_ids:
+                raise ValueError("retrieval question_id has no configured candidate scope")
+            permitted = self._candidate_ids[request.question_id]
+            if candidate_ids is not None and not candidate_ids.issubset(permitted):
+                raise ValueError("retrieval candidate IDs exceed the question's configured scope")
+            candidate_ids = permitted if candidate_ids is None else candidate_ids
         scores = self._embeddings @ (query_embedding[0] / query_norm)
         excluded = set(request.exclude_evidence_ids)
         ranked = sorted(
             (
                 (float(score), chunk.evidence_id, index)
-                for index, (score, chunk) in enumerate(zip(scores, self._evidence))
+                for index, (score, chunk) in enumerate(zip(scores, self._evidence, strict=True))
                 if chunk.evidence_id not in excluded
                 and (candidate_ids is None or chunk.evidence_id in candidate_ids)
             ),

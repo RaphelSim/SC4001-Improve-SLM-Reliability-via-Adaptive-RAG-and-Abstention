@@ -7,6 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
+from reliable_rag.config import load_settings
 from reliable_rag.contracts.enums import DatasetSplit
 from reliable_rag.contracts.records import QuestionRecord
 from reliable_rag.data.splits import build_split_manifest, write_split_manifest
@@ -19,19 +20,31 @@ def main() -> int:
     parser.add_argument("questions", type=Path)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--source-split", default="train")
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--config", default="configs/base.yaml")
+    parser.add_argument("--seed", type=int, help="Override the shared project_seed")
     parser.add_argument("--development-fraction", type=float, default=0.8)
     parser.add_argument("--validation-fraction", type=float, default=0.1)
+    parser.add_argument("--force", action="store_true", help="Replace existing split files")
     args = parser.parse_args()
+    seed = load_settings(args.config).project_seed if args.seed is None else args.seed
 
     questions = read_jsonl(args.questions, QuestionRecord)
     manifest = build_split_manifest(
         [question.question_id for question in questions],
         source_split=args.source_split,
-        seed=args.seed,
+        seed=seed,
         development_fraction=args.development_fraction,
         validation_fraction=args.validation_fraction,
     )
+    targets = [
+        args.output_dir / f"{prefix}-{split.value}.jsonl"
+        for split in DatasetSplit
+        for prefix in ("questions", "manifest")
+    ]
+    if args.questions.resolve() in {path.resolve() for path in targets}:
+        raise ValueError("Split files must not overwrite their question input")
+    if not args.force and any(path.exists() for path in targets):
+        raise FileExistsError("Split output files exist; choose a new directory or use --force")
     assignments = {row["question_id"]: row["project_split"] for row in manifest}
     args.output_dir.mkdir(parents=True, exist_ok=True)
     for split in DatasetSplit:
@@ -41,15 +54,13 @@ def main() -> int:
             if assignments[question.question_id] == split.value
         ]
         write_jsonl(args.output_dir / f"questions-{split.value}.jsonl", split_questions)
-        split_manifest = [
-            row for row in manifest if row["project_split"] == split.value
-        ]
+        split_manifest = [row for row in manifest if row["project_split"] == split.value]
         write_split_manifest(args.output_dir / f"manifest-{split.value}.jsonl", split_manifest)
     counts = {
         split.value: sum(row["project_split"] == split.value for row in manifest)
         for split in DatasetSplit
     }
-    print(json.dumps({"seed": args.seed, "counts": counts}, sort_keys=True))
+    print(json.dumps({"seed": seed, "counts": counts}, sort_keys=True))
     return 0
 
 

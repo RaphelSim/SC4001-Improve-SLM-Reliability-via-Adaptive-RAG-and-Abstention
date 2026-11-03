@@ -41,3 +41,35 @@ def test_dense_retriever_ranks_excludes_and_stamps_results() -> None:
     assert result.evidence[0].retrieval_rank == 1
     assert result.evidence[0].retrieval_stage == RetrievalStage.FOLLOW_UP
     assert result.evidence[0].retrieval_score == pytest.approx(0.9701425)
+
+
+def test_protocol_retrieve_preserves_question_scope_on_follow_up():
+    evidence = [
+        EvidenceChunk(evidence_id="a::0", document_id="a", text="alpha"),
+        EvidenceChunk(evidence_id="b::0", document_id="b", text="beta"),
+        EvidenceChunk(evidence_id="g::0", document_id="g", text="gamma"),
+    ]
+    retriever = DenseRetriever(
+        evidence,
+        FakeEmbedder(),
+        candidate_evidence_ids_by_question={"q1": ["b::0", "g::0"]},
+    )
+    result = retriever.retrieve(
+        RetrievalRequest(
+            question_id="q1",
+            query="query",
+            stage=RetrievalStage.FOLLOW_UP,
+            top_k=3,
+            exclude_evidence_ids=["b::0"],
+        )
+    )
+    assert [chunk.evidence_id for chunk in result.evidence] == ["g::0"]
+    with pytest.raises(ValueError, match="scope"):
+        retriever.retrieve(
+            RetrievalRequest(
+                question_id="unknown",
+                query="query",
+                stage=RetrievalStage.INITIAL,
+                top_k=1,
+            )
+        )

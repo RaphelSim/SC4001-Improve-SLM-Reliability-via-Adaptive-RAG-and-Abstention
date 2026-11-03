@@ -1,4 +1,4 @@
-"""Plug-compatible module interfaces; concrete research implementations are future work."""
+"""Shared interfaces for retrieval, sufficiency assessment, answering and future control."""
 
 from typing import Protocol, runtime_checkable
 

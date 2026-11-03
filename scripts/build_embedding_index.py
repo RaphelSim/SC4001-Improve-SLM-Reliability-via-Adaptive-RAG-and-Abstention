@@ -1,83 +1,43 @@
 #!/usr/bin/env python3
-"""Build a persistent embedding cache for a prepared evidence JSONL file."""
-
-from __future__ import annotations
+"""Build or reuse the embedding index for the configured prepared dataset."""
 
 import argparse
-import hashlib
-import json
-import tempfile
+import logging
 from pathlib import Path
 
-import numpy as np
-
-from reliable_rag.contracts.records import EvidenceChunk
-from reliable_rag.io.jsonl import read_jsonl
-from reliable_rag.retrieval import SentenceTransformerEmbedder, save_embedding_cache
-
-
-def _corpus_fingerprint(evidence: list[EvidenceChunk]) -> str:
-    digest = hashlib.sha256()
-    for chunk in evidence:
-        digest.update(chunk.evidence_id.encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(chunk.text.encode("utf-8"))
-        digest.update(b"\0")
-    return digest.hexdigest()
+from reliable_rag.config import load_settings
+from reliable_rag.retrieval.embedder import prepare_embedding_index
 
 
 def main() -> int:
-    """Encode all evidence paragraphs in batches and persist provenance."""
+    logging.basicConfig(level=logging.INFO, format="%(message)s")
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("evidence", type=Path)
-    parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--model", default="sentence-transformers/all-MiniLM-L6-v2")
-    parser.add_argument("--dataset-revision", default="unspecified")
+    parser.add_argument("--config", default="configs/base.yaml")
+    parser.add_argument("--subset-size", type=int)
+    parser.add_argument("--seed", type=int)
+    parser.add_argument("--evidence", type=Path, help="Override the derived evidence JSONL")
+    parser.add_argument("--index", type=Path, help="Override the derived index location")
     parser.add_argument("--batch-size", type=int, default=64)
+    parser.add_argument("--force", action="store_true", help="Rebuild a compatible index too")
     args = parser.parse_args()
+    if args.subset_size is not None and args.subset_size < 1:
+        parser.error("--subset-size must be positive")
+    if args.seed is not None and args.seed < 0:
+        parser.error("--seed must be non-negative")
     if args.batch_size < 1:
-        raise ValueError("batch size must be at least 1")
-
-    evidence = read_jsonl(args.evidence, EvidenceChunk)
-    embedder = SentenceTransformerEmbedder(args.model)
-    if not evidence:
-        raise ValueError("evidence corpus must contain at least one chunk")
-
-    first_batch = embedder.encode([chunk.text for chunk in evidence[: args.batch_size]])
-    with tempfile.TemporaryDirectory(prefix="reliable-rag-embeddings-") as temp_dir:
-        memmap_path = Path(temp_dir) / "embeddings.dat"
-        embeddings = np.memmap(
-            memmap_path,
-            dtype=np.float32,
-            mode="w+",
-            shape=(len(evidence), first_batch.shape[1]),
-        )
-        embeddings[: len(first_batch)] = first_batch
-        encoded = len(first_batch)
-        print(f"Encoded {encoded}/{len(evidence)} evidence chunks", flush=True)
-        for start in range(encoded, len(evidence), args.batch_size):
-            batch = evidence[start : start + args.batch_size]
-            embeddings[start : start + len(batch)] = embedder.encode(
-                [chunk.text for chunk in batch]
-            )
-            encoded += len(batch)
-            if encoded % (args.batch_size * 10) == 0 or encoded == len(evidence):
-                print(f"Encoded {encoded}/{len(evidence)} evidence chunks", flush=True)
-        embeddings.flush()
-        metadata = {
-            "embedding_model": args.model,
-            "dataset_revision": args.dataset_revision,
-            "evidence_count": str(len(evidence)),
-            "embedding_dimension": str(embeddings.shape[1]),
-            "corpus_fingerprint": _corpus_fingerprint(evidence),
-        }
-        save_embedding_cache(
-            args.output,
-            evidence_ids=[chunk.evidence_id for chunk in evidence],
-            embeddings=embeddings,
-            metadata=metadata,
-        )
-    print(json.dumps(metadata, sort_keys=True))
+        parser.error("--batch-size must be positive")
+    settings = load_settings(args.config)
+    if args.subset_size is not None:
+        settings.dataset.subset_size = args.subset_size
+    if args.seed is not None:
+        settings.project_seed = args.seed
+    prepare_embedding_index(
+        settings,
+        args.evidence or settings.evidence_path,
+        args.index or settings.index_path,
+        batch_size=args.batch_size,
+        force=args.force,
+    )
     return 0
 
 

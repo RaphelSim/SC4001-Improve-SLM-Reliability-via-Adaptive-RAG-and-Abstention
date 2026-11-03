@@ -15,16 +15,13 @@ dist/
 .env
 .env.*
 !.env.example
+configs/local.yaml
 
 # Data, model weights, caches, and experiment output
 data/raw/**
-!data/raw/.gitkeep
 data/processed/**
-!data/processed/.gitkeep
 cache/**
-!cache/README.md
 outputs/**
-!outputs/README.md
 *.safetensors
 *.gguf
 *.pt
