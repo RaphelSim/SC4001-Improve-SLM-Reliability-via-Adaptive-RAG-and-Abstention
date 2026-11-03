@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import argparse
 import importlib.metadata
 import importlib.util
 import logging
@@ -27,6 +28,11 @@ CORE_PACKAGES = (
 def main() -> int:
     """Print an environment summary; missing optional packages are informational."""
     logging.basicConfig(level=logging.INFO, format="%(message)s")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--check-mlx", action="store_true", help="Also execute a small Metal operation"
+    )
+    args = parser.parse_args()
     system = platform.system()
     machine = platform.machine()
     if system == "Darwin" and machine.lower() in {"arm64", "aarch64"}:
@@ -60,6 +66,16 @@ def main() -> int:
             LOGGER.info("CUDA available: unknown (PyTorch import failed: %s)", exc)
     else:
         LOGGER.info("CUDA available: not checked (PyTorch is not installed)")
+    if args.check_mlx:
+        try:
+            import mlx.core as mx
+
+            mx.eval(mx.array([1]) + 1)
+            LOGGER.info("MLX device: %s", mx.default_device())
+            LOGGER.info("MLX-LM version: %s", importlib.metadata.version("mlx-lm"))
+        except (ImportError, RuntimeError, importlib.metadata.PackageNotFoundError) as exc:
+            LOGGER.error("MLX check failed: %s. Run with native ARM Python and Metal access.", exc)
+            return 1
     return 0
 
 

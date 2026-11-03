@@ -41,10 +41,12 @@ class FakeAnswerGenerator:
 
 
 def test_answer_generator_validates_answer_and_used_evidence(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_complete")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_complete"
+    )
     question, evidence = load_case(case)
     output = json.dumps(
         {
@@ -65,9 +67,11 @@ def test_answer_generator_validates_answer_and_used_evidence(
 
 
 def test_answer_parser_rejects_empty_answers_and_unknown_evidence(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_complete")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_complete"
+    )
     question, evidence = load_case(case)
     empty_answer = json.dumps(
         {
@@ -109,10 +113,12 @@ def test_answer_parser_rejects_empty_answers_and_unknown_evidence(
 
 
 def test_answer_generator_surfaces_empty_output_as_invalid_after_retry(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_complete")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_complete"
+    )
     question, evidence = load_case(case)
     settings = settings.model_copy(
         update={"slm": settings.slm.model_copy(update={"format_retry_limit": 0})}
@@ -134,9 +140,11 @@ def test_answer_generator_surfaces_empty_output_as_invalid_after_retry(
 
 
 def test_need_more_evidence_abstains_without_calling_answer_generator(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_partial")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_partial"
+    )
     question, evidence = load_case(case)
     decision = SufficiencyDecision(
         question_id=question.question_id,
@@ -158,9 +166,11 @@ def test_need_more_evidence_abstains_without_calling_answer_generator(
 
 
 def test_sufficient_evidence_calls_answer_generator(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_complete")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_complete"
+    )
     question, evidence = load_case(case)
     decision = SufficiencyDecision(
         question_id=question.question_id,
@@ -180,9 +190,11 @@ def test_sufficient_evidence_calls_answer_generator(
 
 
 def test_invalid_assessor_output_becomes_typed_invalid_output_abstention(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_partial")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_partial"
+    )
     question, evidence = load_case(case)
     error = ModelOutputError(
         task="sufficiency_assessment",

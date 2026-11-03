@@ -1,10 +1,13 @@
-"""Tests for Member 1 data normalization and evidence construction."""
+"""Tests for data and retrieval data normalization and evidence construction."""
+
+import pytest
 
 from reliable_rag.contracts.enums import DatasetSplit, EvidenceCondition
 from reliable_rag.data import (
     build_split_manifest,
     construct_evidence_set,
     normalize_hotpotqa_example,
+    select_subset_indices,
 )
 
 
@@ -96,3 +99,19 @@ def test_split_manifest_is_deterministic_and_mutually_exclusive() -> None:
     assert assignments.count("development") == 8
     assert assignments.count("validation") == 1
     assert assignments.count("test") == 1
+
+
+def test_subset_sampling_is_seeded_unique_nested_and_preserves_legacy_full_order():
+    first = select_subset_indices(1000, subset_size=500)
+    larger = select_subset_indices(1000, subset_size=700, seed=88)
+    assert len(first) == len(set(first)) == 500
+    assert first == select_subset_indices(1000, subset_size=500, seed=88)
+    assert first == larger[:500]
+    assert first != select_subset_indices(1000, subset_size=500, seed=89)
+    assert select_subset_indices(10) == list(range(10))
+
+
+@pytest.mark.parametrize("count,size,seed", [(0, None, 88), (10, 0, 88), (10, 11, 88), (10, 3, -1)])
+def test_subset_sampling_rejects_invalid_sizes_and_seeds(count, size, seed):
+    with pytest.raises(ValueError):
+        select_subset_indices(count, subset_size=size, seed=seed)

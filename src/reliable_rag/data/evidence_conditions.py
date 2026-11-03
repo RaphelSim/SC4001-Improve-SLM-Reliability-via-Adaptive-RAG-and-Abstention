@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import hashlib
 
+from reliable_rag.config.settings import DEFAULT_PROJECT_SEED
 from reliable_rag.contracts.enums import EvidenceCondition
 from reliable_rag.contracts.records import EvidenceSet
 from reliable_rag.data.hotpotqa import HotpotQAExample
 
 
 def _selected_support(question_id: str, support_ids: list[str], seed: int) -> str:
-    digest = hashlib.sha256(f"{seed}:{question_id}".encode("utf-8")).digest()
+    digest = hashlib.sha256(f"{seed}:{question_id}".encode()).digest()
     return support_ids[int.from_bytes(digest[:8], "big") % len(support_ids)]
 
 
@@ -18,7 +19,7 @@ def construct_evidence_set(
     example: HotpotQAExample,
     condition: EvidenceCondition,
     *,
-    seed: int = 42,
+    seed: int = DEFAULT_PROJECT_SEED,
 ) -> EvidenceSet:
     """Construct one controlled evidence state without changing the retrieval corpus."""
     support_ids = example.question.gold_support_ids
@@ -28,15 +29,11 @@ def construct_evidence_set(
         removed = _selected_support(example.question.question_id, support_ids, seed)
         visible_ids = set(support_ids) - {removed}
         visible_ids.update(
-            chunk.evidence_id
-            for chunk in example.evidence
-            if chunk.evidence_id not in support_ids
+            chunk.evidence_id for chunk in example.evidence if chunk.evidence_id not in support_ids
         )
     elif condition == EvidenceCondition.FULLY_INCOMPLETE:
         visible_ids = {
-            chunk.evidence_id
-            for chunk in example.evidence
-            if chunk.evidence_id not in support_ids
+            chunk.evidence_id for chunk in example.evidence if chunk.evidence_id not in support_ids
         }
     else:
         raise ValueError("distractor_heavy construction is not enabled in the foundation")

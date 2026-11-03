@@ -1,4 +1,4 @@
-"""Shared synthetic cases and fake SLM client for Member 2 tests."""
+"""Shared synthetic cases and fake SLM client for sufficiency and abstention tests."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from reliable_rag.config import Settings, load_settings
 from reliable_rag.contracts.enums import SufficiencyStatus
 from reliable_rag.contracts.records import EvidenceSet, QuestionRecord
 
-FIXTURE_PATH = Path(__file__).parents[1] / "fixtures" / "member2_sufficiency_cases.json"
+FIXTURE_PATH = Path(__file__).parents[1] / "fixtures" / "sufficiency_cases.json"
 ROOT = Path(__file__).parents[2]
 
 
@@ -33,15 +33,15 @@ class FakeSLMClient:
 
 
 @pytest.fixture
-def member2_cases() -> dict[str, Any]:
+def sufficiency_cases() -> dict[str, Any]:
     """Load the explicitly synthetic sufficiency case collection."""
     return json.loads(FIXTURE_PATH.read_text(encoding="utf-8"))
 
 
 @pytest.fixture
 def settings() -> Settings:
-    """Load the development config, which selects a mock runtime and prompt v1."""
-    return load_settings(ROOT / "configs" / "development.yaml", environ={})
+    """Load shared prompt settings; tests inject a fake client without model loading."""
+    return load_settings(ROOT / "configs" / "base.yaml", environ={})
 
 
 def load_case(case_data: dict[str, Any]) -> tuple[QuestionRecord, EvidenceSet]:

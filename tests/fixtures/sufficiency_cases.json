@@ -1,6 +1,6 @@
 {
   "fixture_only": true,
-  "description": "Synthetic Member 2 development cases; these are contract tests, not experimental data.",
+  "description": "Synthetic sufficiency development cases; these are contract tests, not experimental data.",
   "cases": [
     {
       "case_id": "obviously_sufficient",

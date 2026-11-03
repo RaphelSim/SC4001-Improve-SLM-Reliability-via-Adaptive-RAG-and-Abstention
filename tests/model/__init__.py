@@ -1,1 +1,1 @@
-"""Tests for the Member 2 sufficiency and abstention layer."""
+"""Tests for the sufficiency and abstention sufficiency and abstention layer."""

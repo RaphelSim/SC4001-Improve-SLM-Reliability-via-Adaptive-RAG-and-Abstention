@@ -25,9 +25,9 @@ def test_sufficiency_implementation_accepts_backend_neutral_fake(
 
 
 def test_valid_sufficient_and_insufficient_json_parse(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    cases = {case["case_id"]: case for case in member2_cases["cases"]}
+    cases = {case["case_id"]: case for case in sufficiency_cases["cases"]}
     question, evidence = load_case(cases["multi_hop_complete"])
     sufficient = parse_sufficiency_response(
         decision_response(question, evidence, SufficiencyStatus.SUFFICIENT),
@@ -50,9 +50,11 @@ def test_valid_sufficient_and_insufficient_json_parse(
 
 
 def test_parser_rejects_malformed_schema_invalid_and_wrong_question_id(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_partial")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_partial"
+    )
     question, evidence = load_case(case)
     with pytest.raises(StructuredOutputValidationError, match="invalid JSON"):
         parse_sufficiency_response("{bad json", question=question, evidence=evidence)
@@ -81,10 +83,10 @@ def test_parser_rejects_malformed_schema_invalid_and_wrong_question_id(
 
 
 def test_assessor_runs_synthetic_cases_and_prompt_excludes_gold_annotations(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
-    for case in member2_cases["cases"]:
+    for case in sufficiency_cases["cases"]:
         question, evidence = load_case(case)
         expected = SufficiencyStatus(case["expected_status"])
         client = FakeSLMClient(decision_response(question, evidence, expected))
@@ -101,10 +103,10 @@ def test_assessor_runs_synthetic_cases_and_prompt_excludes_gold_annotations(
 
 
 def test_same_assessor_can_reassess_updated_evidence_without_retrieval_state(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
-    case_by_id = {case["case_id"]: case for case in member2_cases["cases"]}
+    case_by_id = {case["case_id"]: case for case in sufficiency_cases["cases"]}
     partial_question, partial_evidence = load_case(case_by_id["multi_hop_partial"])
     complete_question, complete_evidence = load_case(case_by_id["multi_hop_complete"])
     client = FakeSLMClient(
@@ -128,10 +130,12 @@ def test_same_assessor_can_reassess_updated_evidence_without_retrieval_state(
 
 
 def test_assessor_uses_one_constrained_retry_then_returns_decision(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
-    case = next(item for item in member2_cases["cases"] if item["case_id"] == "multi_hop_partial")
+    case = next(
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "multi_hop_partial"
+    )
     question, evidence = load_case(case)
     client = FakeSLMClient(
         "not JSON",
@@ -146,11 +150,11 @@ def test_assessor_uses_one_constrained_retry_then_returns_decision(
 
 
 def test_assessor_surfaces_structured_failure_after_one_retry(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
     settings,
 ) -> None:
     case = next(
-        item for item in member2_cases["cases"] if item["case_id"] == "obviously_sufficient"
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "obviously_sufficient"
     )
     question, evidence = load_case(case)
     settings = settings.model_copy(
@@ -166,10 +170,10 @@ def test_assessor_surfaces_structured_failure_after_one_retry(
 
 
 def test_assessor_rejects_unknown_evidence_ids(
-    member2_cases: dict,  # type: ignore[type-arg]
+    sufficiency_cases: dict,  # type: ignore[type-arg]
 ) -> None:
     case = next(
-        item for item in member2_cases["cases"] if item["case_id"] == "obviously_sufficient"
+        item for item in sufficiency_cases["cases"] if item["case_id"] == "obviously_sufficient"
     )
     question, evidence = load_case(case)
     output = json.loads(decision_response(question, evidence, SufficiencyStatus.SUFFICIENT))

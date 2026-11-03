@@ -19,7 +19,8 @@ class FakeTokenizer:
 
 
 def test_mlx_adapter_is_injectable_and_uses_configured_limits() -> None:
-    settings = load_settings(ROOT / "configs" / "development.yaml", environ={})
+    settings = load_settings(ROOT / "configs" / "base.yaml", environ={})
+    settings.slm.model_id = "fake"
     calls: dict[str, Any] = {}
 
     def generate_fn(model, tokenizer, **kwargs):
@@ -45,7 +46,8 @@ def test_mlx_adapter_is_injectable_and_uses_configured_limits() -> None:
 
 
 def test_mlx_adapter_rejects_overlong_input_and_zero_output_limit() -> None:
-    settings = load_settings(ROOT / "configs" / "development.yaml", environ={})
+    settings = load_settings(ROOT / "configs" / "base.yaml", environ={})
+    settings.slm.model_id = "fake"
     settings.slm.max_input_tokens = 1
     client = MLXLMClient(
         model="fake-model",
@@ -61,8 +63,40 @@ def test_mlx_adapter_rejects_overlong_input_and_zero_output_limit() -> None:
 
 
 def test_remote_model_load_requires_explicit_opt_in() -> None:
-    settings = load_settings(ROOT / "configs" / "development.yaml", environ={})
+    settings = load_settings(ROOT / "configs" / "base.yaml", environ={})
     settings.slm.runtime = "mlx"
     settings.slm.model_id = "mlx-community/example-model"
     with pytest.raises(ValueError, match="allow_model_download=True"):
         MLXLMClient.from_settings(settings)
+
+
+@pytest.mark.parametrize("canonical_template", [False, True])
+def test_qwen3_legacy_and_canonical_templates_disable_thinking(canonical_template) -> None:
+    settings = load_settings(ROOT / "configs/base.yaml", environ={})
+    settings.slm.model_id = "/local/model-without-a-qwen-name"
+    calls = {}
+
+    class ChatTokenizer(FakeTokenizer):
+        chat_template = "fake-template"
+
+        def apply_chat_template(self, messages, **kwargs):
+            calls["template_kwargs"] = kwargs
+            prompt = "<|im_start|>assistant\n"
+            return prompt + "<think>\n\n</think>\n\n" if canonical_template else prompt
+
+    def generate_fn(*args, **kwargs):
+        calls["prompt"] = kwargs["prompt"]
+        return '{"ok":true}'
+
+    client = MLXLMClient(
+        model="fake",
+        tokenizer=ChatTokenizer(),
+        settings=settings.slm,
+        generate_fn=generate_fn,
+        sampler_factory=lambda **kwargs: kwargs,
+        model_type="qwen3",
+    )
+    assert client.generate("Return JSON") == '{"ok":true}'
+    assert calls["template_kwargs"]["enable_thinking"] is False
+    assert calls["prompt"].count("<think>") == 1
+    assert calls["prompt"].endswith("<think>\n\n</think>\n\n")

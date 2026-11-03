@@ -1,34 +1,37 @@
 # Shared DEVELOPMENT defaults. Select final values using validation data and freeze them before test.
-project_seed: 42
+project_seed: 88
 data_root: data
 cache_root: cache
 output_root: outputs
 
 dataset:
-  dataset_name: hotpotqa
-  development_split: development
-  validation_split: validation
-  test_split: test
-  development_path: null
-  validation_path: null
-  test_path: null
+  dataset_name: hotpotqa/hotpot_qa
+  dataset_config: distractor
+  source_split: train
+  revision: 1908d6afbbead072334abe2965f91bd2709910ab
+  subset_size: 500
+  project_split: development
+  input_path: null
 
 retrieval:
   embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  embedding_revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+  embedding_device: cpu
   initial_top_k: 3
   followup_top_k: 3
   max_total_retrieval_rounds: 2
   similarity_metric: cosine
-  deduplicate_evidence: true
 
 slm:
-  model_id: TBD
-  runtime: auto
-  quantization: null
-  max_input_tokens: 4096
-  max_new_tokens: 128
+  model_id: Qwen/Qwen3-1.7B-MLX-4bit
+  revision: 21457c6f51ed54a7c16e988c0844db973815c137
+  runtime: mlx
+  quantization: 4bit
+  max_input_tokens: 8192
+  max_new_tokens: 512
   temperature: 0.0
   do_sample: false
+  enable_thinking: false
   prompt_version: v1
   sufficiency_prompt_path: prompts/sufficiency_v1.txt
   final_answer_prompt_path: prompts/final_answer_v1.txt
@@ -36,6 +39,5 @@ slm:
   format_retry_limit: 1
 
 experiment:
-  system_variant: adaptive_retrieval_abstention
-  evidence_condition: partially_incomplete
+  system_variant: rag_abstention
   run_id: development

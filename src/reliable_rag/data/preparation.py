@@ -52,7 +52,9 @@ def prepare_split(
                 normalized_evidence.append(chunk)
                 continue
             suffix = hashlib.sha1(chunk.text.encode("utf-8")).hexdigest()[:10]
-            replacement_id = f"{chunk.document_id}--{suffix}::{chunk.evidence_id.rsplit('::', 1)[1]}"
+            replacement_id = (
+                f"{chunk.document_id}--{suffix}::{chunk.evidence_id.rsplit('::', 1)[1]}"
+            )
             replacement = chunk.model_copy(
                 update={
                     "document_id": f"{chunk.document_id}--{suffix}",

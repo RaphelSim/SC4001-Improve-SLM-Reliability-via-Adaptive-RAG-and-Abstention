@@ -12,8 +12,9 @@
 
 ## Validation
 
-- [ ] `pytest`
-- [ ] `ruff check .`
+- [ ] `python -m pytest -q`
+- [ ] `ruff check src scripts tests`
+- [ ] `ruff format --check src scripts tests`
 - [ ] Updated docs and generated schemas if shared contracts changed
 - [ ] No datasets, model weights, credentials, cache, or run outputs added
 

@@ -1,4 +1,3 @@
-"""Concrete retrieval implementations will be added after the shared foundation."""
 """Dense retrieval adapters."""
 
 from reliable_rag.retrieval.embedder import (

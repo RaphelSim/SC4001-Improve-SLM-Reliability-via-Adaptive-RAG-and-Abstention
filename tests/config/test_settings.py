@@ -11,7 +11,7 @@ ROOT = Path(__file__).parents[2]
 
 def test_base_config_loads_with_development_defaults() -> None:
     settings = load_settings(ROOT / "configs" / "base.yaml", environ={})
-    assert settings.project_seed == 42
+    assert settings.project_seed == 88
     assert settings.retrieval.initial_top_k == 3
     assert settings.retrieval.max_total_retrieval_rounds == 2
     assert settings.slm.temperature == 0
@@ -19,6 +19,12 @@ def test_base_config_loads_with_development_defaults() -> None:
     assert settings.slm.prompt_version == "v1"
     assert settings.slm.format_retry_limit == 1
     assert settings.slm.sufficiency_prompt_path.name == "sufficiency_v1.txt"
+    assert settings.retrieval.embedding_model == "sentence-transformers/all-MiniLM-L6-v2"
+    assert len(settings.retrieval.embedding_revision) == 40
+    assert settings.slm.model_id == "Qwen/Qwen3-1.7B-MLX-4bit"
+    assert len(settings.slm.revision) == 40
+    assert settings.slm.enable_thinking is False
+    assert settings.slm.runtime == "mlx"
 
 
 def test_documented_environment_overrides_apply() -> None:
@@ -36,7 +42,7 @@ def test_documented_environment_overrides_apply() -> None:
 def test_invalid_config_reports_field_and_fails(tmp_path: Path) -> None:
     invalid = tmp_path / "invalid.yaml"
     invalid.write_text(
-        "project_seed: 42\n"
+        "project_seed: 88\n"
         "dataset: {dataset_name: test}\n"
         "retrieval: {embedding_model: test, initial_top_k: 0, followup_top_k: 3}\n"
         "slm: {model_id: mock, max_input_tokens: 10, max_new_tokens: 2, temperature: 0}\n"

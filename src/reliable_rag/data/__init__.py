@@ -1,10 +1,14 @@
-"""Dataset and split helpers will be implemented by the data/retrieval workstream."""
 """Dataset normalization and controlled evidence construction."""
 
 from reliable_rag.data.evidence_conditions import construct_evidence_set
 from reliable_rag.data.hotpotqa import HotpotQAExample, load_hotpotqa, normalize_hotpotqa_example
 from reliable_rag.data.preparation import prepare_split
-from reliable_rag.data.splits import SplitManifestRow, build_split_manifest, write_split_manifest
+from reliable_rag.data.splits import (
+    SplitManifestRow,
+    build_split_manifest,
+    select_subset_indices,
+    write_split_manifest,
+)
 
 __all__ = [
     "HotpotQAExample",
@@ -14,5 +18,6 @@ __all__ = [
     "load_hotpotqa",
     "normalize_hotpotqa_example",
     "prepare_split",
+    "select_subset_indices",
     "write_split_manifest",
 ]

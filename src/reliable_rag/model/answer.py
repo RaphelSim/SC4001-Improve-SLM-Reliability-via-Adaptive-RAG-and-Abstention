@@ -144,5 +144,12 @@ class SLMAnswerGenerator(AnswerGeneratorProtocol):
                 self._settings.slm.prompt_version,
                 self._settings.slm.model_id,
             )
+            if attempt_index:
+                LOGGER.info(
+                    "Retry succeeded question_id=%s task=%s attempt=%s",
+                    question.question_id,
+                    TASK_NAME,
+                    attempt_index + 1,
+                )
             return result
         raise AssertionError("unreachable: retry loop returns or raises")

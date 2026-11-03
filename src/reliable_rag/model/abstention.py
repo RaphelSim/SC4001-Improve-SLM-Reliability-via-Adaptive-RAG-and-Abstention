@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass
 
 from reliable_rag.contracts.enums import AbstentionReason, SufficiencyStatus
 from reliable_rag.contracts.interfaces import AnswerGenerator, SufficiencyAssessor
@@ -17,6 +18,15 @@ from reliable_rag.model.errors import ModelOutputError
 LOGGER = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
+class RAGAbstentionOutcome:
+    """One sufficiency decision and answer, including a safe structured model failure."""
+
+    sufficiency_decision: SufficiencyDecision | None
+    answer: AnswerResult
+    error: ModelOutputError | None = None
+
+
 class RAGAbstentionResponder:
     """Answer when evidence is sufficient and abstain when it is not or output is invalid."""
 
@@ -29,7 +39,13 @@ class RAGAbstentionResponder:
         self._answer_generator = answer_generator
 
     def answer(self, question: QuestionRecord, evidence: EvidenceSet) -> AnswerResult:
-        """Run sufficiency then answer-or-abstain without any retrieval side effects."""
+        """Return only the answer for callers that do not need the sufficiency decision."""
+        return self.run(question, evidence).answer
+
+    def run(self, question: QuestionRecord, evidence: EvidenceSet) -> RAGAbstentionOutcome:
+        """Run sufficiency then answer-or-abstain once, without retrieval side effects."""
+        if question.question_id != evidence.question_id:
+            raise ValueError("question and EvidenceSet question_id values must match")
         try:
             decision = self._assessor.assess(question, evidence)
             if not isinstance(decision, SufficiencyDecision):
@@ -45,6 +61,13 @@ class RAGAbstentionResponder:
                     question_id=question.question_id,
                     attempts=1,
                     reason="decision question_id does not match input question",
+                )
+            if len(decision.supporting_evidence_ids) != len(set(decision.supporting_evidence_ids)):
+                raise ModelOutputError(
+                    task="sufficiency_assessment",
+                    question_id=question.question_id,
+                    attempts=1,
+                    reason="decision contains duplicate supporting evidence IDs",
                 )
             unknown_support_ids = set(decision.supporting_evidence_ids) - set(evidence.evidence_ids)
             if unknown_support_ids:
@@ -65,10 +88,14 @@ class RAGAbstentionResponder:
                     reason="sufficient decision did not cite supporting evidence",
                 )
         except ModelOutputError as exc:
-            return self._abstain(
-                question.question_id,
-                AbstentionReason.INVALID_MODEL_OUTPUT,
-                task=exc.task,
+            return RAGAbstentionOutcome(
+                sufficiency_decision=None,
+                answer=self._abstain(
+                    question.question_id,
+                    AbstentionReason.INVALID_MODEL_OUTPUT,
+                    task=exc.task,
+                ),
+                error=exc,
             )
 
         if decision.status == SufficiencyStatus.NEED_MORE_EVIDENCE:
@@ -78,12 +105,15 @@ class RAGAbstentionResponder:
                 decision.status.value,
                 AbstentionReason.INSUFFICIENT_EVIDENCE.value,
             )
-            return AnswerResult(
-                question_id=question.question_id,
-                answer=None,
-                abstained=True,
-                abstention_reason=AbstentionReason.INSUFFICIENT_EVIDENCE,
-                used_evidence_ids=[],
+            return RAGAbstentionOutcome(
+                sufficiency_decision=decision,
+                answer=AnswerResult(
+                    question_id=question.question_id,
+                    answer=None,
+                    abstained=True,
+                    abstention_reason=AbstentionReason.INSUFFICIENT_EVIDENCE,
+                    used_evidence_ids=[],
+                ),
             )
 
         try:
@@ -109,6 +139,13 @@ class RAGAbstentionResponder:
                     attempts=1,
                     reason="answer cited evidence IDs absent from supplied evidence",
                 )
+            if len(answer.used_evidence_ids) != len(set(answer.used_evidence_ids)):
+                raise ModelOutputError(
+                    task="final_answer",
+                    question_id=question.question_id,
+                    attempts=1,
+                    reason="answer contains duplicate used evidence IDs",
+                )
             if not answer.abstained and not answer.used_evidence_ids:
                 raise ModelOutputError(
                     task="final_answer",
@@ -116,12 +153,16 @@ class RAGAbstentionResponder:
                     attempts=1,
                     reason="substantive answer did not cite used evidence",
                 )
-            return answer
+            return RAGAbstentionOutcome(sufficiency_decision=decision, answer=answer)
         except ModelOutputError as exc:
-            return self._abstain(
-                question.question_id,
-                AbstentionReason.INVALID_MODEL_OUTPUT,
-                task=exc.task,
+            return RAGAbstentionOutcome(
+                sufficiency_decision=decision,
+                answer=self._abstain(
+                    question.question_id,
+                    AbstentionReason.INVALID_MODEL_OUTPUT,
+                    task=exc.task,
+                ),
+                error=exc,
             )
 
     @staticmethod

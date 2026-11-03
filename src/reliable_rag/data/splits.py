@@ -1,4 +1,4 @@
-"""Deterministic question-ID split manifests."""
+"""Deterministic question subset sampling and ID-only split manifests."""
 
 from __future__ import annotations
 
@@ -6,6 +6,8 @@ import json
 import random
 from pathlib import Path
 from typing import TypedDict
+
+from reliable_rag.config.settings import DEFAULT_PROJECT_SEED
 
 
 class SplitManifestRow(TypedDict):
@@ -16,11 +18,36 @@ class SplitManifestRow(TypedDict):
     project_split: str
 
 
+def select_subset_indices(
+    source_count: int,
+    *,
+    subset_size: int | None = None,
+    seed: int = DEFAULT_PROJECT_SEED,
+) -> list[int]:
+    """Select a seeded shuffled prefix without materializing source records.
+
+    With the same ordered source and seed, a larger subset contains the smaller
+    subset as its prefix. Omitting subset_size preserves the original source
+    order and the preparation command's legacy full-source behavior.
+    """
+    if source_count < 1:
+        raise ValueError("source must contain at least one question")
+    if seed < 0:
+        raise ValueError("seed must be non-negative")
+    if subset_size is not None and not 1 <= subset_size <= source_count:
+        raise ValueError("subset_size must be between 1 and the source question count")
+    indices = list(range(source_count))
+    if subset_size is not None:
+        random.Random(seed).shuffle(indices)
+        return indices[:subset_size]
+    return indices
+
+
 def build_split_manifest(
     question_ids: list[str],
     *,
     source_split: str,
-    seed: int = 42,
+    seed: int = DEFAULT_PROJECT_SEED,
     development_fraction: float = 0.8,
     validation_fraction: float = 0.1,
 ) -> list[SplitManifestRow]:
@@ -50,7 +77,9 @@ def build_split_manifest(
         project_split = (
             "development"
             if index < development_count
-            else "validation" if index < development_count + validation_count else "test"
+            else "validation"
+            if index < development_count + validation_count
+            else "test"
         )
         rows.append(
             {
