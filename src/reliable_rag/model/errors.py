@@ -1,5 +1,7 @@
 """Structured errors for malformed or contract-invalid model output."""
 
+from typing import Any
+
 from reliable_rag.contracts.enums import AbstentionReason
 
 
@@ -17,7 +19,7 @@ class ModelOutputError(RuntimeError):
             f"after {attempts} attempt(s): {reason}"
         )
 
-    def as_dict(self) -> dict[str, str | int]:
+    def as_dict(self) -> dict[str, Any]:
         """Return a safe structured failure summary without retaining raw model output."""
         return {
             "question_id": self.question_id,

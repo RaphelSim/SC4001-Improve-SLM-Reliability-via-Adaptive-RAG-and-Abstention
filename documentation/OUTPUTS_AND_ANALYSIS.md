@@ -6,12 +6,12 @@ Use [setup and run](SETUP_AND_RUN.md) for commands and [architecture](SYSTEM_ARC
 
 For size 500 and seed 88, preparation writes `data/processed/hotpotqa/subset-500-seed88/`:
 
-| File | Contents and purpose |
-| --- | --- |
-| `questions-development.jsonl` | QuestionRecord rows in selected source order: source ID, text, gold answer, project partition, support/candidate evidence IDs and source metadata. Count is the requested question count. |
-| `evidence-development.jsonl` | Unique EvidenceChunk paragraphs from selected questions' candidate contexts: ID, document ID, title, joined text. Count is not the question count; the existing 500-question subset has 4,935 evidence paragraphs. Scores are absent until retrieval. |
-| `manifest-development.jsonl` | Per-question ID, source split and project split assignments. This is a partition manifest, not the full sampling record. |
-| `subset-development.json` | Sampling/source provenance: source kind/location/config/split, requested/dataset revision, local input hash when applicable, source count/fingerprint, seed, requested/selected size, ordered source indices and selected question IDs, method/version information, artifact SHA-256 and row counts. This also validates processed-cache reuse. |
+| File                          | Contents and purpose                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `questions-development.jsonl` | QuestionRecord rows in selected source order: source ID, text, gold answer, project partition, support/candidate evidence IDs and source metadata. Count is the requested question count.                                                                                                                                                       |
+| `evidence-development.jsonl`  | Unique EvidenceChunk paragraphs from selected questions' candidate contexts: ID, document ID, title, joined text. Count is not the question count; the existing 500-question subset has 4,935 evidence paragraphs. Scores are absent until retrieval.                                                                                           |
+| `manifest-development.jsonl`  | Per-question ID, source split and project split assignments. This is a partition manifest, not the full sampling record.                                                                                                                                                                                                                        |
+| `subset-development.json`     | Sampling/source provenance: source kind/location/config/split, requested/dataset revision, local input hash when applicable, source count/fingerprint, seed, requested/selected size, ordered source indices and selected question IDs, method/version information, artifact SHA-256 and row counts. This also validates processed-cache reuse. |
 
 Names use the configured project split in place of `development` for other preparations. `--manifest-dir data/splits` additionally publishes `hotpotqa-subset-500-seed88-development.json`: the same provenance without raw question/context text, suitable for versioning. This extra published file is optional; the processed selection manifest is always written.
 
@@ -37,14 +37,14 @@ outputs/<run-id>/
   evaluation.json       written by evaluate_results.py
 ```
 
-| Artifact | What to inspect |
-| --- | --- |
-| `retrieval.jsonl` | One RetrievalResult per planned question: question/query, `stage: initial`, requested `top_k`, ranked evidence with exact IDs/text/titles/scores. Saved before Qwen inference. |
-| `results.jsonl` | ExperimentRecord per **valid assessment**, containing question, initial evidence, round-0 decision, final answer, gold/model flags and model/prompt metadata. Invalid answer output can still produce a record with typed abstention. Invalid assessment produces no record. |
-| `errors.jsonl` | Unrepaired model-contract failures and runtime errors. Empty is valid. Model errors contain task, question ID, attempts, `failure_reason`, validation `message`, gold sufficiency, `record_written`, and the typed final answer. Runtime errors have a separate category, exception type and reason. |
-| `events.jsonl` | Timestamped model-component log events: assessment/answer outcomes, invalid-output messages, formatting retry and retry success. Preserves successful repair history even when no final error exists. Does not persist raw prompts or raw generations. |
-| `run_metadata.json` | Run ID/time/status, complete effective configuration, Git commit and dirty state, package versions, input/prompt SHA-256, query limit, source question path, local model path and progress counters. Metadata and completed rows are updated during the run. |
-| `evaluation.json` | Derived report with run status, input hashes, retrieval metrics, classification counts/rates, answer/abstention metrics and failure breakdowns. Re-evaluation replaces this report, not raw observations. |
+| Artifact            | What to inspect                                                                                                                                                                                                                                                                                      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `retrieval.jsonl`   | One RetrievalResult per planned question: question/query, `stage: initial`, requested `top_k`, ranked evidence with exact IDs/text/titles/scores. Saved before Qwen inference.                                                                                                                       |
+| `results.jsonl`     | ExperimentRecord per **valid assessment**, containing question, initial evidence, round-0 decision, final answer, gold/model flags and model/prompt metadata. Invalid answer output can still produce a record with typed abstention. Invalid assessment produces no record.                         |
+| `errors.jsonl`      | Unrepaired model-contract failures and runtime errors. Empty is valid. Model errors contain task, question ID, attempts, `failure_reason`, validation `message`, gold sufficiency, `record_written`, and the typed final answer. Runtime errors have a separate category, exception type and reason. |
+| `events.jsonl`      | Timestamped model-component log events: assessment/answer outcomes, invalid-output messages, formatting retry and retry success. Preserves successful repair history even when no final error exists. Does not persist raw prompts or raw generations.                                               |
+| `run_metadata.json` | Run ID/time/status, complete effective configuration, Git commit and dirty state, package versions, input/prompt SHA-256, query limit, source question path, local model path and progress counters. Metadata and completed rows are updated during the run.                                         |
+| `evaluation.json`   | Derived report with run status, input hashes, retrieval metrics, classification counts/rates, answer/abstention metrics and failure breakdowns. Re-evaluation replaces this report, not raw observations.                                                                                            |
 
 `run_metadata.summary` separates planned/attempted questions, recorded results, unrecorded assessment failures, answered/abstained records, model errors and runtime errors. An invalid final answer counts as both a model error and a recorded abstention; these categories intentionally overlap. Do not sum them as independent question populations.
 
@@ -69,12 +69,12 @@ Compare these predictions with `gold_sufficient_initially/finally`. Gold suffici
 
 `final_answer.answer` is text when answering and null when abstaining. `abstained` specifies the action; `abstention_reason` categorizes why; `used_evidence_ids` records supplied evidence used by an answer. Citation validity does not establish answer correctness.
 
-| Reason | Meaning and current usage |
-| --- | --- |
-| `insufficient_evidence` | Valid semantic insufficiency decision, or valid answer-generator evidence-based refusal. Ordinary intentional abstention. |
-| `invalid_model_output` | JSON/schema/citation output remained invalid after the allowed formatting repair. This is a contract failure, not a model-insufficiency prediction. |
-| `retrieval_failed` | Reserved shared label for retrieval failure handling. The current baseline does not emit it automatically; even empty evidence goes through assessment. |
-| `max_retrieval_rounds_reached` | Reserved shared label for a future bounded adaptive controller. The current baseline does not emit it. |
+| Reason                         | Meaning and current usage                                                                                                                               |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `insufficient_evidence`        | Valid semantic insufficiency decision, or valid answer-generator evidence-based refusal. Ordinary intentional abstention.                               |
+| `invalid_model_output`         | JSON/schema/citation output remained invalid after the allowed formatting repair. This is a contract failure, not a model-insufficiency prediction.     |
+| `retrieval_failed`             | Reserved shared label for retrieval failure handling. The current baseline does not emit it automatically; even empty evidence goes through assessment. |
+| `max_retrieval_rounds_reached` | Reserved shared label for a future bounded adaptive controller. The current baseline does not emit it.                                                  |
 
 If assessment is invalid, `errors.jsonl` retains the typed invalid-output abstention, but no SufficiencyDecision or ExperimentRecord is invented. If the assessment was valid and final-answer output is invalid, the record remains with its valid prediction and invalid-output abstention. Runtime failures are separately categorized and never relabeled as semantic insufficiency.
 
@@ -97,33 +97,37 @@ Supporting Evidence Recall@k is **micro-aggregated paragraph support recall**:
 
 Binary classification uses **need-more-evidence as the positive class**, preserving the existing protocol:
 
-| Count | Gold evidence | Model prediction |
-| --- | --- | --- |
-| TP | Insufficient | Need more evidence |
-| FP | Sufficient | Need more evidence |
-| TN | Sufficient | Sufficient |
-| FN | Insufficient | Sufficient |
+| Count | Gold evidence | Model prediction   |
+| ----- | ------------- | ------------------ |
+| TP    | Insufficient  | Need more evidence |
+| FP    | Sufficient    | Need more evidence |
+| TN    | Sufficient    | Sufficient         |
+| FN    | Insufficient  | Sufficient         |
 
 Classification metrics use only recorded cases with valid assessments; unrepaired assessments are reported as failures, not silently assigned a class.
 
-| Metric | Numerator | Denominator | Interpretation |
-| --- | --- | --- | --- |
-| Sufficiency accuracy | TP + TN | TP + FP + TN + FN | Higher: correct decision fraction. |
-| Precision | TP | TP + FP | Higher: predicted insufficiency is justified. |
-| Recall | TP | TP + FN | Higher: detects gold insufficiency. |
-| F1 | 2TP | 2TP + FP + FN | Higher: balances insufficiency precision/recall. |
-| False sufficiency rate | FN | TP + FN | Lower: fewer unsafe sufficient predictions on incomplete evidence. |
-| False insufficiency rate | FP | FP + TN | Lower: fewer needless insufficiency predictions on complete evidence. |
-| Answer coverage, recorded | Non-abstained records | All records | Higher answers more often; interpret alongside unsupported answering. |
-| Answer coverage, attempted | Non-abstained records | Attempted questions | Includes invalid-assessment/runtime impact in the denominator. |
-| Correct abstention rate | Abstained records with gold-insufficient final evidence | All gold-insufficient records | Higher refusal on insufficient evidence; includes typed contract-failure abstentions, so also inspect reasons. |
-| False abstention rate | Abstained records with gold-sufficient final evidence | All gold-sufficient records | Lower unnecessary refusal; includes typed failures. |
-| Unsupported answer rate | Answered records with gold-insufficient final evidence | All gold-insufficient records | Lower answering despite missing annotated support. |
-| Unsupported answer rate among answered | Answered records with gold-insufficient final evidence | All answered records | Lower unsupported fraction of substantive answers. Different denominator from the preceding metric. |
+| Metric                                        | Numerator                                                     | Denominator                                                             | Interpretation                                                                                                 |
+| --------------------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Sufficiency accuracy                          | TP + TN                                                       | TP + FP + TN + FN                                                       | Higher: correct decision fraction.                                                                             |
+| Precision                                     | TP                                                            | TP + FP                                                                 | Higher: predicted insufficiency is justified.                                                                  |
+| Recall                                        | TP                                                            | TP + FN                                                                 | Higher: detects gold insufficiency.                                                                            |
+| F1                                            | 2TP                                                           | 2TP + FP + FN                                                           | Higher: balances insufficiency precision/recall.                                                               |
+| False sufficiency rate                        | FN                                                            | TP + FN                                                                 | Lower: fewer unsafe sufficient predictions on incomplete evidence.                                             |
+| False insufficiency rate                      | FP                                                            | FP + TN                                                                 | Lower: fewer needless insufficiency predictions on complete evidence.                                          |
+| Answer coverage, recorded                     | Non-abstained records                                         | All records                                                             | Higher answers more often; interpret alongside unsupported answering.                                          |
+| Answer coverage, attempted                    | Non-abstained records                                         | Attempted questions                                                     | Includes invalid-assessment/runtime impact in the denominator.                                                 |
+| Correct abstention rate                       | Abstained records with gold-insufficient final evidence       | All gold-insufficient records                                           | Higher refusal on insufficient evidence; includes typed contract-failure abstentions, so also inspect reasons. |
+| False abstention rate                         | Abstained records with gold-sufficient final evidence         | All gold-sufficient records                                             | Lower unnecessary refusal; includes typed failures.                                                            |
+| Unsupported answer rate                       | Answered records with gold-insufficient final evidence        | All gold-insufficient records                                           | Lower answering despite missing annotated support.                                                             |
+| Unsupported answer rate among answered        | Answered records with gold-insufficient final evidence        | All answered records                                                    | Lower unsupported fraction of substantive answers. Different denominator from the preceding metric.            |
+| Exact match (answered / recorded / attempted) | Answers equal to the gold answer after HotpotQA normalisation | Answered records / all records / attempted questions                    | Higher: correct answers. The recorded and attempted versions count abstentions and failures as wrong.          |
+| Token F1 (answered / recorded / attempted)    | Sum of per-answer word-overlap F1                             | Same three denominators                                                 | Higher: partial credit for overlapping words. Yes/No answers score only on an exact match.                     |
+| Recovery rate                                 | Initially gold-insufficient records that end gold-sufficient  | All initially gold-insufficient records                                 | Higher: round 1 repaired the missing support. Always 0 for single-round systems.                               |
+| Follow-up support recall                      | Missing gold supports present in round-1 results              | Gold supports missing after round 0, over records with a stored round 1 | Higher: the model's follow-up query finds what is missing.                                                     |
 
 All answer metrics except `coverage_attempted` operate on recorded cases. Model-error sidecars and recorded abstentions overlap for final-answer failures. Missing assessment records can bias conditional metrics; always show record count, assessment-failure count and attempted coverage together. Unsupported answering is defined by missing gold evidence, not a separate factuality judge.
 
-**Not implemented:** answer Exact Match, answer token F1, adaptive recovery rate and recovery curves. They are listed as unimplemented in reports. No adaptive results or answer-quality claims should be inferred from coverage or sufficiency accuracy. Exact answer evaluation would require an explicitly agreed normalization/scoring protocol.
+Answer correctness uses the official HotpotQA normalisation (lowercase, remove punctuation, articles and extra whitespace). Sentence-style answers such as "Yes, both are magazines" against a gold "yes" therefore score 0 on both EM and F1. Recovery curves are not implemented.
 
 ## Existing 500-question observations
 

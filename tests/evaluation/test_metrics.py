@@ -9,10 +9,17 @@ from reliable_rag.contracts.enums import AbstentionReason, SufficiencyStatus
 from reliable_rag.contracts.records import ExperimentRecord
 from reliable_rag.evaluation.metrics import (
     answer_coverage,
+    answer_exact_match,
+    answer_token_f1,
     correct_abstention_rate,
+    exact_match,
     false_abstention_rate,
+    followup_support_recall,
+    normalize_answer,
+    recovery_rate,
     sufficiency_classification_metrics,
     supporting_evidence_recall_at_k,
+    token_f1,
     unsupported_answer_rate,
     unsupported_answer_rate_among_answered,
 )
@@ -125,3 +132,69 @@ def test_correct_and_false_abstention_rates_have_distinct_denominators() -> None
         1,
         2,
     )
+
+
+def test_normalize_answer_removes_case_punctuation_and_articles() -> None:
+    assert normalize_answer("    The Oberoi Group. ") == "oberoi group"
+
+
+def test_exact_match_ignores_formatting_but_not_content() -> None:
+    assert exact_match("germany", "Germany")
+    assert exact_match("the Oberoi Group.", "Oberoi Group")
+    assert not exact_match("New Delhi", "Delhi")
+
+
+def test_token_f1_gives_partial_credit_for_overlap() -> None:
+    assert token_f1("New Delhi", "Delhi") == pytest.approx(2 / 3)
+    assert token_f1("Germany", "Germany") == 1.0
+    assert token_f1("France", "Germany") == 0.0
+
+
+def test_token_f1_requires_exact_yes_no() -> None:
+    assert token_f1("yes", "yes") == 1.0
+    assert token_f1("no", "yes") == 0.0
+    assert token_f1("Yes, both are magazines", "yes") == 0.0
+
+
+def test_answer_metrics_use_answered_or_all_record_denominators() -> None:
+    answered = ExperimentRecord.model_validate_json(FIXTURE.read_text(encoding="utf-8"))
+    abstained = answered.model_copy(
+        update={
+            "final_answer": answered.final_answer.model_copy(
+                update={
+                    "answer": None,
+                    "abstained": True,
+                    "abstention_reason": AbstentionReason.INSUFFICIENT_EVIDENCE,
+                    "used_evidence_ids": [],
+                }
+            )
+        }
+    )
+
+    records = [answered, abstained]
+
+    exact = answer_exact_match(records)
+    f1 = answer_token_f1(records)
+    exact_all = answer_exact_match(records, answered_only=False)
+    f1_all = answer_token_f1(records, answered_only=False)
+
+    assert (exact.numerator, exact.denominator) == (1, 1)
+    assert (f1.total, f1.count, f1.value) == (1.0, 1, 1.0)
+    assert (exact_all.numerator, exact_all.denominator, exact_all.value) == (1, 2, 0.5)
+    assert f1_all.value == 0.5
+    assert answer_exact_match([]).value is None
+
+
+def test_recovery_metrics_count_round_one_repairs() -> None:
+    recovered = ExperimentRecord.model_validate_json(FIXTURE.read_text(encoding="utf-8"))
+    already_complete = recovered.model_copy(
+        update={"gold_sufficient_initially": True, "rounds": recovered.rounds[:1]}
+    )
+    records = [recovered, already_complete]
+
+    recovery = recovery_rate(records)
+    followup = followup_support_recall(records)
+
+    assert (recovery.numerator, recovery.denominator, recovery.value) == (1, 1, 1.0)
+    assert (followup.numerator, followup.denominator) == (1, 1)
+    assert recovery_rate([already_complete]).value is None

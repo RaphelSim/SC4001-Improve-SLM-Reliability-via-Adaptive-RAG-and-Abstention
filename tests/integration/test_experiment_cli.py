@@ -91,6 +91,9 @@ def test_runner_persists_distinct_failures_and_refuses_overwrite(
         report = json.loads((directory / "evaluation.json").read_text())
         assert report["sufficiency"]["accuracy"]["denominator"] == 0
         assert report["answers"]["coverage_attempted"]["denominator"] == 1
+        assert report["answer_correctness"]["exact_match_attempted"]["denominator"] == 1
+        assert report["answer_correctness"]["token_f1_answered"]["value"] is None
+        assert report["adaptive"]["recovery_rate"]["denominator"] == 0
     monkeypatch.setattr(
         sys,
         "argv",

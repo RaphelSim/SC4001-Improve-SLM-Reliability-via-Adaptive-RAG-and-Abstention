@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TypeVar
 
@@ -45,7 +46,7 @@ def read_jsonl(path: str | Path, model_type: type[ModelT]) -> list[ModelT]:
     return records
 
 
-def write_jsonl(path: str | Path, records: list[BaseModel]) -> None:
+def write_jsonl(path: str | Path, records: Sequence[BaseModel]) -> None:
     """Write models as deterministic UTF-8 JSONL, creating parent directories."""
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
