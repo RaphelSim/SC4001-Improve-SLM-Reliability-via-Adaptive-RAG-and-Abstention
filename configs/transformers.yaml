@@ -26,7 +26,7 @@ retrieval:
 
 slm:
   model_id: Qwen/Qwen3-1.7B
-  revision: null
+  revision: 70d244cc86ccca08cf5af4e1e306ecf908b1ad5e
   runtime: transformers
   quantization: null
   max_input_tokens: 8192
