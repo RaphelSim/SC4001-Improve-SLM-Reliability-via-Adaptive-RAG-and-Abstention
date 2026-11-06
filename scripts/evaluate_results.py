@@ -23,6 +23,14 @@ def rate(numerator, denominator):
     }
 
 
+def mean(total, count):
+    return {
+        "total": total,
+        "count": count,
+        "value": total / count if count else None,
+    }
+
+
 def evaluate(questions, retrieval, records, errors, *, attempted, ks):
     if not questions or [q.question_id for q in questions] != [r.question_id for r in retrieval]:
         raise ValueError("Question and retrieval IDs/counts must align and be nonempty")
@@ -86,6 +94,32 @@ def evaluate(questions, retrieval, records, errors, *, attempted, ks):
     report["answers"]["coverage_attempted"] = rate(
         sum(not r.final_answer.abstained for r in records), attempted
     )
+
+    exact = metrics.answer_exact_match(records)
+    f1 = metrics.answer_token_f1(records)
+
+    report["answer_correctness"] = {
+        "normalization": "hotpotqa_official",
+        "exact_match_answered": rate(exact.numerator, exact.denominator),
+        "exact_match_recorded": rate(exact.numerator, len(records)),
+        "exact_match_attempted": rate(exact.numerator, attempted),
+        "token_f1_answered": mean(f1.total, f1.count),
+        "token_f1_recorded": mean(f1.total, len(records)),
+        "token_f1_attempted": mean(f1.total, attempted),
+    }
+
+    recovery = metrics.recovery_rate(records)
+    followup = metrics.followup_support_recall(records)
+
+    report["adaptive"] = {
+        "recovery_rate": rate(recovery.numerator, recovery.denominator),
+        "followup_support_recall": rate(followup.numerator, followup.denominator),
+        "retrieval_rounds": {
+            str(rounds): count
+            for rounds, count in sorted(Counter(len(r.rounds) for r in records).items())
+        },
+    }
+
     report["abstention_reasons"] = dict(
         Counter(r.final_answer.abstention_reason.value for r in records if r.final_answer.abstained)
     )
@@ -107,7 +141,6 @@ def evaluate(questions, retrieval, records, errors, *, attempted, ks):
         "records": len(records),
         "not_started": len(questions) - attempted,
     }
-    report["not_implemented"] = ["answer_exact_match", "answer_f1", "adaptive_recovery_rate"]
     return report
 
 

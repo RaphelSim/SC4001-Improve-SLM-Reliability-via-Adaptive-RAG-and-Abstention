@@ -1,6 +1,6 @@
 # Setup and run
 
-This repository runs a single-round RAG + Abstention baseline: prepare HotpotQA, retrieve evidence with MiniLM, ask Qwen whether it is sufficient, then answer or abstain. Adaptive follow-up retrieval is not implemented. See [architecture](SYSTEM_ARCHITECTURE.md) for internals and [outputs and analysis](OUTPUTS_AND_ANALYSIS.md) for interpretation.
+This repository runs three systems on HotpotQA: the single-round `rag_abstention` baseline (retrieve evidence with MiniLM, ask Qwen whether it is sufficient, then answer or abstain), and two adaptive systems that search once more when Qwen asks for more evidence: `adaptive_retrieval` (always answers) and `adaptive_retrieval_abstention` (can abstain). Qwen runs though MLX on Apple Silicon or through Hugging Face Transformers on NVIDIA GPU. See [architecture](SYSTEM_ARCHITECTURE.md) for internals and [outputs and analysis](OUTPUTS_AND_ANALYSIS.md) for interpretation.
 
 ## First-time environment setup
 
@@ -16,6 +16,22 @@ python -m pip install -e '.[dev,mac]'
 python scripts/check_environment.py --check-mlx
 python scripts/validate.py config
 ```
+
+### Transformers backend (Windows)
+
+Use Python 3.11 (`py -3.11 on Windows) and install a CUDA build of PyTorch before the project. In PowerShell:
+
+```powershell
+py -3.11 -m venv .venv
+.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+pip install torch --index-url https://download.pytorch.org/wh1/cu124
+pip install -e ".[dev,colab]" "pandas=2.2.3" "pyarrow==21.0.0" "datasets=4.8.5"
+python -c "import torch; print(torch.cude.is_available())"
+```
+
+Pass `--config configs/transformers.yaml` to every command below. It loads `Qwen/Qwen3-1.7B` in bfloat16.
+Results are only comparable between runs that use the same config.
 
 All subsequent commands assume this directory and activated environment. The editable install makes `reliable_rag` importable from scripts. No setup shell wrapper is required. To finish a session, run `deactivate`; results remain on disk.
 
@@ -62,6 +78,22 @@ python scripts/evaluate_results.py --run-id dev500-seed88-v1
 
 The defaults already specify 500 and seed 88; explicit sizes make examples easy to adapt. The existing `subset-500-seed88` run and its 4,935-paragraph corpus are preserved. Use a new run ID to compare against it. A 10,000-question sample is optional, not required to exercise the current baseline; start at 500 to measure failures and time before scaling. This sample is development data, not a held-out evaluation partition.
 
+## Adaptive retrieval experiment
+
+Run the baseline first, then both adaptive systems from its saved round-0 retrieval and decisions. --baseline-results reuses each question's round-0 assessment instead of asking Qwen again; it is accepted only when the baseline's SLM settings and initial top-k match the current config.
+
+```bash
+python scripts/run_experiment.py --run-id dev500-rag
+python scripts/run_adaptive.py --variant adaptive_retrieval --run-id dev500-adaptive --retrieval outputs/dev500-rag/retrieval.jsonl --baseline-results outputs/dev500-rag/results.jsonl
+python scripts/run_adaptive.py --variant adaptive_retrieval_abstention --run-id dev500-adaptive-abst --retrieval outputs/dev500-rag/retrieval.jsonl --baseline-results outputs/dev500-rag/results.jsonl
+python scripts/evaluate_results.py --run-id dev500-rag
+python scripts/evaluate_results.py --run-id dev500-adaptive
+python scripts/evaluate_results.py --run-id dev500-adaptive-abst
+```
+
+On Windows add ``--config configs/transformers.yaml` to every command and use `\` in paths.
+The controller allows at most two retrieval rounds: when Qwen returns `need_more_evidence`, its `search_query` retrieves `followup_top_k` new paragraphs (round-0 IDs are excluded), the evidence is merged and assesed again, then the system answers, abstains (`max_retrieval_rounds_reached` or `retrieval_failed` when nothing new is found) or, in `adaptive_retrieval`, answers anyway. `notebook/analysis.ipynb` compares the runs, sets its `RUNS` dictionary to the run IDs.
+
 ## Rerun using caches
 
 Repeat the preparation commands above, then choose a new run ID:
@@ -97,18 +129,19 @@ Dataset `--force` regenerates normalized artifacts and provenance. Index `--forc
 
 ## Script reference
 
-Every script supports `--help`. There are six normal workflow commands and two optional developer/research operations.
+Every script supports `--help`. There are seven normal workflow commands and two optional developer/research operations.
 
-| Script | Inputs, output and cache behavior |
-| --- | --- |
-| `check_environment.py` | No positional arguments. Reports Python, architecture and installed packages. `--check-mlx` additionally executes a Metal operation; failure returns 1. Does not install packages or modify caches. |
-| `prepare_hotpotqa.py` | No positionals. `--config` defaults to `configs/base.yaml`; `--subset-size`/`--seed` default to YAML (500/88). `--input PATH` overrides `dataset.input_path` for local raw HotpotQA JSON-list/JSONL. `--output-dir PATH` overrides the derived processed directory. `--manifest-dir PATH` additionally publishes an ID-only provenance JSON. `--force` bypasses processed-cache reuse. Outputs three JSONL files and `subset-SPLIT.json`. Source, split, revision, seed, size, hashes and selected IDs are checked before reuse. Missing/incompatible data is rebuilt. |
-| `prepare_models.py` | No positionals. `--config` chooses models/cache root. Tries exact configured local snapshots first, verifies required files, downloads missing assets. `--offline` forbids downloads and fails for unavailable/incomplete models. Runtime execution is offline by default, so run this stage first. |
-| `build_embedding_index.py` | No positionals. `--config`, `--subset-size`, `--seed` derive inputs; `--evidence PATH` and `--index PATH` override them. `--batch-size` defaults to 64 and must be positive. `--force` rebuilds even a compatible index. Reads prepared evidence; writes NPZ plus JSON metadata. Validates IDs/order, ordered text fingerprint, model/revision, dimensions, finite nonzero vectors and preprocessing before reuse. |
-| `run_experiment.py` | No positionals. `--config`, `--subset-size`, `--seed`; `--run-id` defaults to `experiment.run_id` (`development`). `--questions PATH`, `--evidence PATH`, `--index PATH` override derived inputs. Optional `--retrieval PATH` skips fresh retrieval. Optional positive `--limit N`; `--force` replaces existing run. Writes retrieval/results/errors/events/metadata under the run ID. No automatic preparation/downloads or inference-response reuse. Only `rag_abstention` is executable. Exit 1 also indicates completed runs with invalid assessments; inspect saved status/errors before diagnosing a crash. |
-| `evaluate_results.py` | Required `--run-id ID`; optional `--config`; `--k K [K ...]` defaults to 1 and 3. Cannot evaluate beyond saved retrieval depth. `--output PATH` defaults to the run's `evaluation.json`. Reads saved questions/retrieval/results/errors/metadata, checks question/retrieval hashes for modern runs, and writes metrics with denominators. Also reads the preserved historical `baseline.*` run layout. It does not generate predictions. |
-| `freeze_hotpotqa_splits.py` | Optional partition operation. Positional `questions` JSONL; required `--output-dir`; optional `--config`, `--seed` (shared 88), `--source-split` (train), `--development-fraction` (0.8), `--validation-fraction` (0.1). Assigns unique question IDs to development/validation/test and writes questions/manifest JSONL for each. Uses the existing full evidence corpus/index, not independent re-sampling. Use a fresh directory; `--force` explicitly replaces existing split files. |
-| `validate.py` | Subcommands: `config [--config PATH]`; `jsonl PATH --schema NAME`; `schemas [--output-dir PATH]` (default `schemas`). JSONL names: `question-record`, `evidence-chunk`, `evidence-set`, `retrieval-request`, `retrieval-result`, `sufficiency-decision`, `answer-result`, `experiment-record`, `adaptive-round-record`. Config/JSONL validation is read-only and fails on malformed input. `schemas` regenerates the eight checked-in schemas from Pydantic definitions. |
+| Script                      | Inputs, output and cache behavior                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `check_environment.py`      | No positional arguments. Reports Python, architecture and installed packages. `--check-mlx` additionally executes a Metal operation; failure returns 1. Does not install packages or modify caches.                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `prepare_hotpotqa.py`       | No positionals. `--config` defaults to `configs/base.yaml`; `--subset-size`/`--seed` default to YAML (500/88). `--input PATH` overrides `dataset.input_path` for local raw HotpotQA JSON-list/JSONL. `--output-dir PATH` overrides the derived processed directory. `--manifest-dir PATH` additionally publishes an ID-only provenance JSON. `--force` bypasses processed-cache reuse. Outputs three JSONL files and `subset-SPLIT.json`. Source, split, revision, seed, size, hashes and selected IDs are checked before reuse. Missing/incompatible data is rebuilt.                                              |
+| `prepare_models.py`         | No positionals. `--config` chooses models/cache root. Tries exact configured local snapshots first, verifies required files, downloads missing assets. `--offline` forbids downloads and fails for unavailable/incomplete models. Runtime execution is offline by default, so run this stage first.                                                                                                                                                                                                                                                                                                                 |
+| `build_embedding_index.py`  | No positionals. `--config`, `--subset-size`, `--seed` derive inputs; `--evidence PATH` and `--index PATH` override them. `--batch-size` defaults to 64 and must be positive. `--force` rebuilds even a compatible index. Reads prepared evidence; writes NPZ plus JSON metadata. Validates IDs/order, ordered text fingerprint, model/revision, dimensions, finite nonzero vectors and preprocessing before reuse.                                                                                                                                                                                                  |
+| `run_experiment.py`         | No positionals. `--config`, `--subset-size`, `--seed`; `--run-id` defaults to `experiment.run_id` (`development`). `--questions PATH`, `--evidence PATH`, `--index PATH` override derived inputs. Optional `--retrieval PATH` skips fresh retrieval. Optional positive `--limit N`; `--force` replaces existing run. Writes retrieval/results/errors/events/metadata under the run ID. No automatic preparation/downloads or inference-response reuse. Only `rag_abstention` is executable. Exit 1 also indicates completed runs with invalid assessments; inspect saved status/errors before diagnosing a crash.   |
+| `run_adaptive.py`           | No positionals. `--variant` is `adaptive_retrieval` or `adaptive_retrieval_abstention`; `--config`, `--run-id`, `--questions`, `--evidence`, `--index`, `--limit`, and `--force` behave as in `run_experiment.py`. Optional `--retrieval PATH` reuses saved round-0 retrieval; optional `--baseline-results PATH` reuses round-0 decisions from a `rag_abstention` results JSONL (same SLM settings, initial top-k and round-0 evidence required). Writes the same files as `run_experiment.py`; the summary adds `round0-reused` and `two_round_records`.                                                          |
+| `evaluate_results.py`       | Required `--run-id ID`; optional `--config`; `--k K [K ...]` defaults to 1 and 3. Cannot evaluate beyond saved retrieval depth. `--output PATH` defaults to the run's `evaluation.json`. Reads saved questions/retrieval/results/errors/metadata, checks question/retrieval hashes for modern runs, and writes metrics with denominators, including EM/token F1 (official HotpotQA normalisation) over answered, recorded and attempted questions, and recovery rate and follow-up support recall for adaptive runs. Also reads the preserved historical `baseline.*` run layout. It does not generate predictions. |
+| `freeze_hotpotqa_splits.py` | Optional partition operation. Positional `questions` JSONL; required `--output-dir`; optional `--config`, `--seed` (shared 88), `--source-split` (train), `--development-fraction` (0.8), `--validation-fraction` (0.1). Assigns unique question IDs to development/validation/test and writes questions/manifest JSONL for each. Uses the existing full evidence corpus/index, not independent re-sampling. Use a fresh directory; `--force` explicitly replaces existing split files.                                                                                                                             |
+| `validate.py`               | Subcommands: `config [--config PATH]`; `jsonl PATH --schema NAME`; `schemas [--output-dir PATH]` (default `schemas`). JSONL names: `question-record`, `evidence-chunk`, `evidence-set`, `retrieval-request`, `retrieval-result`, `sufficiency-decision`, `answer-result`, `experiment-record`, `adaptive-round-record`. Config/JSONL validation is read-only and fails on malformed input. `schemas` regenerates the eight checked-in schemas from Pydantic definitions.                                                                                                                                            |
 
 Example of a disjoint partition for a later frozen evaluation:
 
@@ -122,6 +155,7 @@ This uses the default 500-question evidence corpus/index. Do not call `prepare_h
 ## Troubleshooting and development checks
 
 - **`ModuleNotFoundError: reliable_rag`**: activate `.venv` and run the editable install from the root.
+- **Transformers loads on CPU**: `torch.cude.is_available()` printed `False`, reinstall the CUDA build of torch and check `nvidia-smi` reports CUDA 12.4 or newer.
 - **MLX device failure / process abort**: use native ARM Python and a session with Metal access. The environment report without `--check-mlx` checks availability only. Automated tests inject clients and do not require Metal.
 - **Missing model**: run `prepare_models.py`; `--offline` is useful after the first successful fetch. Tokenizers, weight shards and SentenceTransformer pooling configuration must be present.
 - **Stale index**: run index preparation again. A different seed/size changes paths; changed evidence/model/revision invalidates compatibility. Do not copy an arbitrary index into place.
