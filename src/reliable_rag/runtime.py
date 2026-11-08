@@ -6,7 +6,12 @@ from pathlib import Path
 
 from reliable_rag.config import Settings
 from reliable_rag.contracts.records import EvidenceChunk, QuestionRecord
-from reliable_rag.model import MLXLMClient, SLMAnswerGenerator, SLMSufficiencyAssessor
+from reliable_rag.model import (
+    MLXLMClient,
+    SLMAnswerGenerator,
+    SLMSufficiencyAssessor,
+    TransformersClient,
+)
 from reliable_rag.retrieval import DenseRetriever, SentenceTransformerEmbedder, load_embedding_cache
 from reliable_rag.retrieval.embedder import validate_embedding_cache
 
@@ -15,7 +20,7 @@ from reliable_rag.retrieval.embedder import validate_embedding_cache
 class ModelComponents:
     """Share one loaded model across independent assessor/answer interfaces."""
 
-    client: MLXLMClient
+    client: MLXLMClient | TransformersClient
     assessor: SLMSufficiencyAssessor
     answer_generator: SLMAnswerGenerator
 
@@ -23,7 +28,13 @@ class ModelComponents:
 def create_model_components(
     settings: Settings, *, allow_model_download: bool = False
 ) -> ModelComponents:
-    client = MLXLMClient.from_settings(settings, allow_model_download=allow_model_download)
+    client: MLXLMClient | TransformersClient
+    if settings.slm.runtime.lower() == "transformers":
+        client = TransformersClient.from_settings(
+            settings, allow_model_download=allow_model_download
+        )
+    else:
+        client = MLXLMClient.from_settings(settings, allow_model_download=allow_model_download)
     return ModelComponents(
         client=client,
         assessor=SLMSufficiencyAssessor(client, settings),

@@ -1,10 +1,11 @@
-"""Backend-neutral SLM client contract and optional Apple Silicon MLX-LM adapter."""
+"""Backend-neutral SLM client contract and optional Apple Silicon MLX-LM and Transformers adapters."""
 
 from __future__ import annotations
 
 import json
 import logging
 from collections.abc import Callable
+from contextlib import AbstractContextManager, nullcontext
 from pathlib import Path
 from typing import Any, Protocol, runtime_checkable
 
@@ -152,3 +153,106 @@ class MLXLMClient:
         if not isinstance(output, str):
             raise RuntimeError(f"MLX-LM returned {type(output).__name__}, expected text")
         return output
+
+
+class TransformersClient:
+    """Hugging Face Transformers adapter.
+
+    Mirrors MLXLMClient: same chat template, disabled Qwen3 thinking, greedy decoding and
+    token limits, so only inference engine differs between runtimes.
+    """
+
+    def __init__(
+        self,
+        *,
+        model: Any,
+        tokenizer: Any,
+        settings: SLMSettings,
+        inference_context: Callable[[], AbstractContextManager[Any]] = nullcontext,
+        model_path: Path | None = None,
+    ) -> None:
+        self._model = model
+        self._tokenizer = tokenizer
+        self._settings = settings
+        self._inference_context = inference_context
+        self.model_path = model_path
+
+    @classmethod
+    def from_settings(
+        cls,
+        settings: Settings,
+        *,
+        allow_model_download: bool = False,
+    ) -> TransformersClient:
+        """Load a configured Transformers model."""
+        slm_settings = settings.slm
+        if slm_settings.runtime.lower() != "transformers":
+            raise ValueError("TransformersClient requires slm.runtime to be 'transformers'")
+        if slm_settings.quantization not in (None, "none"):
+            raise ValueError("TransformersClient loads full-precision weights, set quantization")
+        model_location = resolve_model_path(
+            slm_settings.model_id,
+            revision=slm_settings.revision,
+            cache_root=settings.cache_root,
+            allow_download=allow_model_download,
+        )
+        try:
+            import torch
+            from transformers import AutoModelForCausalLM, AutoTokenizer
+        except ImportError as exc:
+            raise RuntimeError(
+                "Transformers runtime needs torch and transformers. Install `.[dev,colab]` "
+                "with a CUDA build of torch for GPU inference."
+            ) from exc
+
+        torch.manual_seed(settings.project_seed)
+        if torch.cuda.is_available():
+            dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+            device = "cuda"
+        else:
+            dtype, device = torch.float32, "cpu"
+        tokenizer = AutoTokenizer.from_pretrained(model_location)
+        model = AutoModelForCausalLM.from_pretrained(model_location, torch_dtype=dtype)
+        model.to(device).eval()
+        LOGGER.info(
+            "Loaded Transformers model model_id=%s device=%s dtype=%s project_seed=%s",
+            slm_settings.model_id,
+            device,
+            str(dtype).removeprefix("torch."),
+            settings.project_seed,
+        )
+        return cls(
+            model=model,
+            tokenizer=tokenizer,
+            settings=slm_settings,
+            inference_context=torch.inference_mode,
+            model_path=model_location,
+        )
+
+    def generate(self, prompt: str, *, max_new_tokens: int | None = None) -> str:
+        """Generate within configured token limits, without logging prompt contents."""
+        formatted_prompt = self._tokenizer.apply_chat_template(
+            [{"role": "user", "content": prompt}],
+            tokenize=False,
+            add_generation_prompt=True,
+            enable_thinking=self._settings.enable_thinking,
+        )
+        inputs = self._tokenizer(formatted_prompt, return_tensors="pt").to(self._model.device)
+        prompt_length = len(inputs["input_ids"][0])
+        if prompt_length > self._settings.max_input_tokens:
+            raise ValueError(
+                f"Prompt has {prompt_length} tokens, exceeding configured "
+                f"max_input_tokens={self._settings.max_input_tokens}; evidence was not truncated."
+            )
+        token_limit = self._settings.max_new_tokens if max_new_tokens is None else max_new_tokens
+        if not 1 <= token_limit <= self._settings.max_new_tokens:
+            raise ValueError("max_new_tokens must be between 1 and the configured output limit")
+        with self._inference_context():
+            output = self._model.generate(
+                **inputs,
+                max_new_tokens=token_limit,
+                do_sample=self._settings.do_sample,
+                pad_token_id=self._tokenizer.eos_token_id,
+            )
+        # Decode only the newly generated tokens, not the echoed prompt.
+        return self._tokenizer.decode(output[0][prompt_length:], skip_special_tokens=True)
