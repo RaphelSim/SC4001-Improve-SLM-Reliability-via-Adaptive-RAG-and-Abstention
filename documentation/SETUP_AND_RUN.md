@@ -29,22 +29,32 @@ The pinned HotpotQA distractor/train revision is sampled with Python's seed-88 s
 
 ## Phase 2 and Phase 3: 100-question comparison
 
-Run the paired comparison using one implementation for both modes:
+The seven saved canonical runs are listed in [the registry](canonical_runs.json), including their exact 100 ordered question IDs. To reproduce the original Top-5/V1 paired design under a **new** run ID:
 
 ```bash
-python scripts/run_retrieval_study.py --mode combined --sample-size 100 --pool-size 1000 --seed 88 --baseline-top-k 5 --adaptive-top-k 2 --max-rounds 5 --run-id phase3-n100-seed88-top5-adaptive2x5-v2
+python scripts/run_retrieval_study.py --mode combined --sample-size 100 --pool-size 1000 --seed 88 --baseline-top-k 5 --adaptive-top-k 2 --max-rounds 5 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-v1-top5-same100
 ```
 
-The command creates `outputs/phase3-n100-seed88-top5-adaptive2x5-v2/` with `baseline/` and `adaptive/` subdirectories, plus aggregate `summary.json`, `comparison.csv`, `paired.jsonl`, and `metadata.json`. Each system directory has `run_metadata.json`, `results.jsonl`, `errors.jsonl`, `events.jsonl`, `summary.json`, and `summary.csv`. All 100 attempted questions get a result row, including typed controller errors with their partial retrieval history. Quality means exclude those error rows and report their count separately.
+That command creates `outputs/reproduce-v1-top5-same100/` with `baseline/` and `adaptive/` subdirectories. The saved canonical Top-5 and V1 records live in separate named folders under `outputs/`; their original paired manifest is preserved as `outputs/adaptive_v1_top2_basic_controller_same100/original_paired_metadata.json`. Every system folder contains `run_metadata.json`, `results.jsonl`, `errors.jsonl`, `events.jsonl`, `summary.json`, and `summary.csv`. All attempted questions get a result row, including typed controller errors with partial retrieval history.
 
 The baseline and adaptive modes can also run independently:
 
 ```bash
-python scripts/run_retrieval_study.py --mode baseline --sample-size 100 --run-id baseline-n100-seed88-top5
-python scripts/run_retrieval_study.py --mode adaptive --sample-size 100 --run-id adaptive-n100-seed88-top2x5
+python scripts/run_retrieval_study.py --mode baseline --sample-size 100 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-baseline-top5-same100
+python scripts/run_retrieval_study.py --mode adaptive --sample-size 100 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-adaptive-v1-same100
 ```
 
 The baseline does not load Qwen. Adaptive uses the configured Qwen3-4B MLX 4-bit model, greedy decoding, thinking disabled, at most 512 output tokens and one structured-output repair. `prompts/retrieval_controller_v1.txt` asks only for evidence sufficiency and a focused follow-up query; `prompts/retrieval_retry_v1.txt` repairs malformed responses. The model prompt gets the question and unique accumulated paragraph ID/title/text, without gold labels, gold answer, or evaluation scores. Every raw model response is saved in the corresponding round record.
+
+The fixed Top-2/3/4 baselines were run separately on the registry's exact ordered sample. To reproduce them, use distinct new run IDs:
+
+```bash
+python scripts/run_retrieval_study.py --config configs/retrieval_study_v3.yaml --mode baseline --sample-size 100 --pool-size 1000 --seed 88 --baseline-top-k 2 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-baseline-top2-same100
+python scripts/run_retrieval_study.py --config configs/retrieval_study_v3.yaml --mode baseline --sample-size 100 --pool-size 1000 --seed 88 --baseline-top-k 3 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-baseline-top3-same100
+python scripts/run_retrieval_study.py --config configs/retrieval_study_v3.yaml --mode baseline --sample-size 100 --pool-size 1000 --seed 88 --baseline-top-k 4 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-baseline-top4-same100
+```
+
+Fixed modes use one original-question retrieval call, no Qwen, and no follow-up. The [canonical comparison script](../scripts/compare_canonical_runs.py) checks that each fixed run's IDs and returned ranking are a prefix of the saved Top-5 run.
 
 ## Adaptive V2 controller ablation
 
@@ -53,15 +63,15 @@ V2 preserves the V1 run and baseline. It uses the same pinned Qwen3-4B MLX 4-bit
 The clean V2.1 prompt uses generic placeholders rather than a sample-specific example. Its exact-sample command was:
 
 ```bash
-python scripts/run_retrieval_study.py --config configs/retrieval_study_v2_1.yaml --mode adaptive --sample-size 100 --pool-size 1000 --seed 88 --adaptive-top-k 2 --max-rounds 5 --reuse-question-ids-from outputs/phase3-n100-seed88-top5-adaptive2x5-v2/metadata.json --run-id phase3-n100-seed88-top5-adaptive2x5-v4
+python scripts/run_retrieval_study.py --config configs/retrieval_study_v2_1.yaml --mode adaptive --sample-size 100 --pool-size 1000 --seed 88 --adaptive-top-k 2 --max-rounds 5 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-adaptive-v2-same100
 ```
 
-It writes `outputs/phase3-n100-seed88-top5-adaptive2x5-v4/`. The run attempted all 100 frozen IDs; 63 had valid final controller records and 37 were typed controller errors (26 repeated-query regeneration failures and 11 output/requirement validation failures). Retrieval metrics are reported across all 100 attempts because evidence and retrieval cost remain observable when the controller errors; sufficiency metrics use valid controller decisions and show their denominators. The prior `v3` prompt pilot is preserved but excluded from analysis because its prompt included a sample-specific entity phrase from the first question.
+The saved canonical run is `outputs/adaptive_v2_top2_evidence_chain_controller_same100/`. It attempted all 100 frozen IDs; 63 had valid final controller records and 37 were typed controller errors (26 repeated-query regeneration failures and 11 output/requirement validation failures). Retrieval metrics cover all 100 attempts; sufficiency metrics use valid controller decisions with explicit denominators. The sample-contaminated pilot was removed during cleanup.
 
 Recreate the three-way comparison without rerunning the baseline or V1:
 
 ```bash
-python scripts/compare_retrieval_studies.py --baseline outputs/phase3-n100-seed88-top5-adaptive2x5-v2/baseline/results.jsonl --adaptive-v1 outputs/phase3-n100-seed88-top5-adaptive2x5-v2/adaptive/results.jsonl --adaptive-v2 outputs/phase3-n100-seed88-top5-adaptive2x5-v4/results.jsonl --output-dir outputs/phase3-n100-seed88-top5-adaptive2x5-v4
+python scripts/compare_retrieval_studies.py --baseline outputs/baseline_top5_single_shot_same100/results.jsonl --adaptive-v1 outputs/adaptive_v1_top2_basic_controller_same100/results.jsonl --adaptive-v2 outputs/adaptive_v2_top2_evidence_chain_controller_same100/results.jsonl --output-dir outputs/adaptive_v2_top2_evidence_chain_controller_same100
 ```
 
 This creates `three_way_comparison.json`, `three_way_comparison.csv`, and `paired_adaptive_v1_v2.jsonl`. The comparison asserts identical IDs and order across the three result files. The JSON separates all-attempt retrieval metrics, controller metrics for valid V2.1 decisions, and the common 63-question V2.1-valid cohort.
@@ -69,9 +79,10 @@ This creates `three_way_comparison.json`, `three_way_comparison.csv`, and `paire
 Inspect a completed run:
 
 ```bash
-python scripts/validate.py jsonl outputs/phase3-n100-seed88-top5-adaptive2x5-v2/baseline/results.jsonl --schema retrieval-study-record
-python scripts/validate.py jsonl outputs/phase3-n100-seed88-top5-adaptive2x5-v2/adaptive/results.jsonl --schema retrieval-study-record
-cat outputs/phase3-n100-seed88-top5-adaptive2x5-v2/comparison.csv
+python scripts/validate.py jsonl outputs/baseline_top5_single_shot_same100/results.jsonl --schema retrieval-study-record
+python scripts/validate.py jsonl outputs/adaptive_v1_top2_basic_controller_same100/results.jsonl --schema retrieval-study-record
+python scripts/compare_canonical_runs.py
+cat outputs/adaptive_v3_top2_unseen_compact_controller_same100/canonical_comparison.csv
 ```
 
 `run_metadata.json` records the resolved configuration, selected question IDs, pool and index hashes, prompt hashes, model ID/revision/quantization/runtime, package versions, Git state, timestamps, runtime, status, and error counts. A completed run ID cannot be reused; choose a new ID to rerun. The main `run_retrieval_study.py` does not offer `--force` because replacing raw experiment observations would undermine provenance. Old `scripts/run_experiment.py` and `scripts/evaluate_results.py` remain available for the historical answer/abstention study only.
@@ -83,13 +94,13 @@ V3 uses a single-field controller output: `{"search_query": null}` stops and `{"
 The frozen same-100 V3 experiment command is:
 
 ```bash
-python scripts/run_retrieval_study.py --config configs/retrieval_study_v3.yaml --mode adaptive --sample-size 100 --pool-size 1000 --seed 88 --adaptive-top-k 2 --max-rounds 5 --reuse-question-ids-from outputs/phase3-n100-seed88-top5-adaptive2x5-v2/metadata.json --run-id phase3-n100-seed88-top2unseen-v3
+python scripts/run_retrieval_study.py --config configs/retrieval_study_v3.yaml --mode adaptive --sample-size 100 --pool-size 1000 --seed 88 --adaptive-top-k 2 --max-rounds 5 --reuse-question-ids-from documentation/canonical_runs.json --run-id reproduce-adaptive-v3-same100
 ```
 
-This explicitly reuses the saved ordered IDs. It writes `outputs/phase3-n100-seed88-top2unseen-v3/` with `results.jsonl`, `errors.jsonl`, `events.jsonl`, `summary.json`, `summary.csv`, and `run_metadata.json`. Prompt hashes, model revision, sample manifest hash, index hash, and resolved settings are in metadata. The earlier Top-5, V1 and V2.1 runs are reused, not rerun. Recreate the four-way and paired V2.1/V3 analysis with:
+This explicitly reuses the saved ordered IDs and writes to a new reproduction folder. The saved canonical V3 folder is `outputs/adaptive_v3_top2_unseen_compact_controller_same100/`. Its metadata records prompt hashes, model revision, sample manifest hash, index hash, and resolved settings. Recreate the four-way and paired V2.1/V3 analysis with:
 
 ```bash
-python scripts/compare_retrieval_studies_v3.py --top5 outputs/phase3-n100-seed88-top5-adaptive2x5-v2/baseline/results.jsonl --v1 outputs/phase3-n100-seed88-top5-adaptive2x5-v2/adaptive/results.jsonl --v2 outputs/phase3-n100-seed88-top5-adaptive2x5-v4/results.jsonl --v3 outputs/phase3-n100-seed88-top2unseen-v3/results.jsonl --output-dir outputs/phase3-n100-seed88-top2unseen-v3
+python scripts/compare_retrieval_studies_v3.py --top5 outputs/baseline_top5_single_shot_same100/results.jsonl --v1 outputs/adaptive_v1_top2_basic_controller_same100/results.jsonl --v2 outputs/adaptive_v2_top2_evidence_chain_controller_same100/results.jsonl --v3 outputs/adaptive_v3_top2_unseen_compact_controller_same100/results.jsonl --output-dir outputs/adaptive_v3_top2_unseen_compact_controller_same100
 ```
 
 This writes `four_way_comparison.json`, `four_way_comparison.csv`, and `paired_v2_v3.jsonl`. The script asserts exactly 100 identical ordered IDs and equal frozen candidate/gold IDs. Retrieval metrics include all 100 attempts, even if a later controller call errors. Gold-based controller diagnostics use completed controller decisions; HotpotQA gold marks one annotated supporting path, so a gold-incomplete stop is an annotation-relative diagnostic. V3 differs from V2.1 in both output interface and unseen retrieval policy, so the comparison does not isolate either change.

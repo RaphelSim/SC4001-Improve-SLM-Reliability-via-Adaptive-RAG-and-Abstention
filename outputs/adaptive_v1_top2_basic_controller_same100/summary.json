@@ -1,0 +1,156 @@
+{
+  "attempted": 100,
+  "by_stopping_round": {
+    "1": {
+      "gold_evidence_percentage": {
+        "max": 100.0,
+        "mean": 60.24096385542169,
+        "median": 50.0,
+        "min": 0.0,
+        "std": 31.77389637166408
+      },
+      "noise_percentage": {
+        "max": 100.0,
+        "mean": 39.75903614457831,
+        "median": 50.0,
+        "min": 0.0,
+        "std": 31.77389637166408
+      }
+    },
+    "2": {
+      "gold_evidence_percentage": {
+        "max": 100.0,
+        "mean": 78.57142857142857,
+        "median": 100.0,
+        "min": 0.0,
+        "std": 36.42156795423418
+      },
+      "noise_percentage": {
+        "max": 100.0,
+        "mean": 54.761904761904766,
+        "median": 50.0,
+        "min": 33.333333333333336,
+        "std": 21.295885499997997
+      }
+    },
+    "3": {
+      "gold_evidence_percentage": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "std": null
+      },
+      "noise_percentage": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "std": null
+      }
+    },
+    "4": {
+      "gold_evidence_percentage": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "std": null
+      },
+      "noise_percentage": {
+        "max": null,
+        "mean": null,
+        "median": null,
+        "min": null,
+        "std": null
+      }
+    },
+    "5": {
+      "gold_evidence_percentage": {
+        "max": 50.0,
+        "mean": 50.0,
+        "median": 50.0,
+        "min": 50.0,
+        "std": 0.0
+      },
+      "noise_percentage": {
+        "max": 66.66666666666667,
+        "mean": 51.666666666666664,
+        "median": 50.0,
+        "min": 50.0,
+        "std": 5.000000000000002
+      }
+    }
+  },
+  "duplicate_percentage_raw": 27.891156462585034,
+  "duplicate_retrievals": {
+    "max": 8,
+    "mean": 0.82,
+    "median": 0.0,
+    "min": 0,
+    "std": 2.368037161870565
+  },
+  "ending_model_status": {
+    "need_more_evidence": 10,
+    "sufficient": 90
+  },
+  "ending_model_status_percentages": {
+    "need_more_evidence": 10.0,
+    "sufficient": 90.0
+  },
+  "errors": 0,
+  "full_gold_recovery_rate": 0.32,
+  "gold_evidence_percentage": {
+    "max": 100.0,
+    "mean": 60.5,
+    "median": 50.0,
+    "min": 0.0,
+    "std": 31.060424980994707
+  },
+  "model_continued_after_gold_complete": 0,
+  "model_stopped_early_without_gold": 58,
+  "noise_percentage": {
+    "max": 100.0,
+    "mean": 42.0,
+    "median": 50.0,
+    "min": 0.0,
+    "std": 29.951813152313687
+  },
+  "raw_paragraphs_retrieved": {
+    "max": 10,
+    "mean": 2.94,
+    "median": 2.0,
+    "min": 2,
+    "std": 2.4075713904264604
+  },
+  "retrieval_rounds": {
+    "max": 5,
+    "mean": 1.47,
+    "median": 1.0,
+    "min": 1,
+    "std": 1.2037856952132302
+  },
+  "stopping_round_counts": {
+    "1": 83,
+    "2": 7,
+    "3": 0,
+    "4": 0,
+    "5": 10
+  },
+  "stopping_round_percentages": {
+    "1": 83.0,
+    "2": 7.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 10.0
+  },
+  "unique_paragraphs_retrieved": {
+    "max": 4,
+    "mean": 2.12,
+    "median": 2.0,
+    "min": 2,
+    "std": 0.43081318457076034
+  },
+  "valid": 100,
+  "zero_gold_recovery_rate": 0.11
+}

@@ -1,6 +1,6 @@
 # Paragraph retrieval architecture and metrics
 
-The main SC4001 study asks whether adaptive multi-round retrieval recovers a higher proportion of required HotpotQA evidence while introducing less irrelevant unique evidence than one fixed Top-k retrieval. The unit is a question and its supplied HotpotQA candidate context paragraphs. The compared systems are fixed Top-5, Adaptive V1, Adaptive V2.1, and Adaptive V3. No answer generation or abstention accuracy is part of this comparison. Historical answer/abstention code remains isolated in `scripts/run_experiment.py` for reproducibility.
+The main SC4001 study asks whether adaptive multi-round retrieval recovers a higher proportion of required HotpotQA evidence while introducing less irrelevant unique evidence than one fixed Top-k retrieval. The unit is a question and its supplied HotpotQA candidate context paragraphs. The seven canonical systems are fixed Top-2/3/4/5 and Adaptive V1/V2.1/V3. No answer generation or abstention accuracy is part of this comparison. Historical answer/abstention code remains isolated in `scripts/run_experiment.py` for reproducibility. See [the consolidated experiment guide](EXPERIMENT_ARCHITECTURE_AND_RESULTS.md) and [run registry](canonical_runs.json) for the definitive folder map and seven-run comparison.
 
 ## Data and flow
 
@@ -65,13 +65,13 @@ For each question, let G be the frozen set of gold paragraph IDs, U the unique r
 | Average Number of Paragraphs Retrieved | \|R\|, including duplicates | Mean, median, population standard deviation, min/max |
 | Average Number of Unique Paragraphs Retrieved | \|U\| | Mean, median, population standard deviation, min/max |
 
-Average Retrieval Rounds is a separate secondary cost statistic; a six-instance retrieval across three rounds is three calls, not six calls. The legacy per-system summaries exclude controller-error records from quality means and show valid/error denominators; the four-way comparison reports retrieval metrics over all 100 attempts because their returned evidence and cost remain observable after a controller error. Secondary metrics include duplicate count and percentage, stopping-round distribution (rounds 1–5), ending model status, evidence/noise by stopping round, and model-stop errors relative to gold completeness. `paired.jsonl` stores adaptive-minus-baseline per-question gold percentage, noise percentage, and raw instance count for valid pairs. No scalar weighted score combines the trade-off.
+Average Retrieval Rounds is a separate secondary cost statistic; a six-instance retrieval across three rounds is three calls, not six calls. The legacy per-system summaries exclude controller-error records from quality means and show valid/error denominators; the four-way comparison reports retrieval metrics over all 100 attempts because their returned evidence and cost remain observable after a controller error. Secondary metrics include duplicate count and percentage, stopping-round distribution (rounds 1–5), ending model status, evidence/noise by stopping round, and model-stop errors relative to gold completeness. The original Top-5/V1 paired rows are preserved as `paired_baseline_top5_v1.jsonl` in the V1 folder; new combined-mode runs produce `paired.jsonl` within their new run folder. No scalar weighted score combines the trade-off.
 
 V2 also reports gold-based false sufficiency among completed decisions with incomplete annotated gold evidence; round-1 false sufficiency; gold-based false insufficiency; premature sufficiency stops; zero-new-evidence rounds; repeated queries; new unique paragraphs by round; stopping distribution; recovery/noise trajectory among questions that reached each round; and guard activations. The term *gold-based false sufficiency* is deliberate: HotpotQA marks an annotated support path, and non-gold evidence can sometimes support an equivalent answer. For retrieval-only primary metrics, all 100 attempts are included in the three-way comparison because the retrieved paragraphs remain observable when the controller errors. Controller metrics report completed-decision denominators separately.
 
-The clean V2.1 run is `outputs/phase3-n100-seed88-top5-adaptive2x5-v4/`. It uses the same 100 IDs, model, index and retrieval settings as V1, with a generic prompt that contains no question-specific example. V1 has gold-based false sufficiency 58/115 (50.4%), including 56/73 (76.7%) at round 1. V2.1 reduced these to 29/81 (35.8%) overall and 28/68 (41.2%) at round 1, but produced 37 controller errors out of 100: 26 repeated-query regeneration failures and 11 output/requirement validation failures. Across all retrieval attempts, V2.1 mean gold evidence was 71.0% versus V1 60.5%; full recovery was 50% versus 32%; mean unique noise was 40.25% versus 42.0%; and raw retrieval rose from 2.94 to 3.40. V2.1 false insufficiency was 19/52 (36.5%), so it sometimes continued after complete annotated gold evidence. See `outputs/phase3-n100-seed88-top5-adaptive2x5-v4/three_way_comparison.json` for full denominators, paired rows and round-level metrics.
+The clean V2.1 run is `outputs/adaptive_v2_top2_evidence_chain_controller_same100/`. It uses the same 100 IDs, model, index and retrieval settings as V1, with a generic prompt that contains no question-specific example. V1 has gold-based false sufficiency 58/115 (50.4%), including 56/73 (76.7%) at round 1. V2.1 reduced these to 29/81 (35.8%) overall and 28/68 (41.2%) at round 1, but produced 37 controller errors out of 100: 26 repeated-query regeneration failures and 11 output/requirement validation failures. Across all retrieval attempts, V2.1 mean gold evidence was 71.0% versus V1 60.5%; full recovery was 50% versus 32%; mean unique noise was 40.25% versus 42.0%; and raw retrieval rose from 2.94 to 3.40. V2.1 false insufficiency was 19/52 (36.5%), so it sometimes continued after complete annotated gold evidence. See `outputs/adaptive_v2_top2_evidence_chain_controller_same100/three_way_comparison.json` for full denominators, paired rows and round-level metrics.
 
-An earlier V2 prompt pilot is preserved in `outputs/phase3-n100-seed88-top5-adaptive2x5-v3/`, but it is excluded from the comparison: its prompt contained a sample-specific entity phrase (`Tommy Carcetti actor`) that could bias the first question. V2.1 replaced that with generic placeholders and was rerun on the frozen cohort.
+An earlier V2 prompt pilot contained a sample-specific entity phrase and was removed from canonical outputs. V2.1 used generic placeholders and was rerun on the frozen cohort.
 
 The primary retrieval metrics below use all 100 attempts for all systems. Controller diagnostics exclude only calls that returned no valid status; the V2 diagnostic denominators are shown. Top-5 has no controller decision.
 
@@ -131,7 +131,7 @@ Python keeps the seen-ID set, all previously returned paragraphs, retrieval quer
 
 The saved V3 record stores raw model responses, returned IDs and scores, original ranking positions, ranked IDs skipped, cumulative unique IDs, parsed next query, per-round repair/regeneration flags, and the final stop reason. It separately counts controller calls, repair calls, query-regeneration calls, and their sum. The MLX client returns text without reliable token-usage metadata, so input/output token counts are unavailable rather than estimated. Gold completeness, gold recovery and unique noise are evaluator-only annotations added after controller execution. They never appear in V3 prompts or affect filtering, stopping or query generation.
 
-The V3 output and four-way analysis are under `outputs/phase3-n100-seed88-top2unseen-v3/`. `four_way_comparison.json` includes all-attempt retrieval metrics, controller diagnostics and a question-by-question V2.1/V3 comparison. The V2.1 artifacts remain under their original run directory. The V3 round trajectory is conditional on questions reaching each round; stopped questions do not enter later-round averages.
+The V3 output and four-way analysis are under `outputs/adaptive_v3_top2_unseen_compact_controller_same100/`. `four_way_comparison.json` includes all-attempt retrieval metrics, controller diagnostics and a question-by-question V2.1/V3 comparison. The V2.1 artifacts remain under their original run directory. The V3 round trajectory is conditional on questions reaching each round; stopped questions do not enter later-round averages.
 
 The frozen same-100 V3 run completed without experiment-level errors. The principal all-attempt results are:
 
@@ -164,36 +164,12 @@ V3 gained 11.0 gold-recovery percentage points over V2.1 on the paired 100 IDs, 
 `QuestionRecord` holds candidate and frozen gold IDs; `EvidenceChunk` holds stable paragraph ID/title/text; existing `RetrievalRequest`/`RetrievalResult` hold query, rank and score. `ModelEvidence` is a gold-free view for the assessor. `StudyRound` and `RetrievalStudyRecord` in `contracts/retrieval_study.py` validate the raw/unique/gold/noise counts and final status. The historical `ExperimentRecord` remains for old answer/abstention artifacts. The schema can be checked with `scripts/validate.py jsonl ... --schema retrieval-study-record`.
 
 ```text
-outputs/<comparison-run-id>/
-  metadata.json                 paired run references and hashes
-  summary.json                  baseline/adaptive aggregate metrics
-  comparison.csv                metric table
-  paired.jsonl                  per-question paired differences
-  baseline/
-    run_metadata.json           resolved config, source/index hashes, timestamps, Git/packages
-    results.jsonl               one row per attempted question
-    errors.jsonl                explicit failures
-    events.jsonl                model events (normally empty for baseline)
-    summary.json, summary.csv
-  adaptive/
-    run_metadata.json, results.jsonl, errors.jsonl, events.jsonl
-    summary.json, summary.csv
-
-outputs/phase3-n100-seed88-top5-adaptive2x5-v3/  # preliminary prompt pilot; excluded
-outputs/phase3-n100-seed88-top5-adaptive2x5-v4/  # clean Adaptive V2.1 run and comparison
-  results.jsonl                   per-question V2 records and evaluator annotations
-  errors.jsonl, events.jsonl      controller failures, retries and guard logs
-  run_metadata.json               pinned configuration, sample IDs/hash, prompt hashes
-  three_way_comparison.json       all-attempt and common-valid-cohort metrics
-  three_way_comparison.csv        flat metric table
-  paired_adaptive_v1_v2.jsonl     per-question retrieval deltas across all 100 IDs
-
-outputs/phase3-n100-seed88-top2unseen-v3/       # Adaptive V3 same-100 run
-  results.jsonl                   per-question V3 rounds, skipped rankings, call counts
-  errors.jsonl, events.jsonl      errors and model events
-  run_metadata.json, summary.json pinned settings, hashes, aggregate diagnostics
-  four_way_comparison.json/.csv   Top-5 / V1 / V2.1 / V3 metrics
-  paired_v2_v3.jsonl              per-question V2.1-to-V3 changes
+outputs/baseline_top{2,3,4,5}_single_shot_same100/
+outputs/adaptive_v1_top2_basic_controller_same100/
+outputs/adaptive_v2_top2_evidence_chain_controller_same100/
+outputs/adaptive_v3_top2_unseen_compact_controller_same100/
 ```
+
+Each canonical folder contains `results.jsonl`, `run_metadata.json`, `summary.json`, `summary.csv`, `errors.jsonl` and `events.jsonl`. V1 also holds the byte-preserved original paired sample manifest; V2.1 holds the three-way comparison; V3 holds the four-way and seven-run canonical comparisons. The [run registry](canonical_runs.json) gives exact paths and hashes.
 
 An independent mode writes the same per-system files directly under `outputs/<run-id>/`. Output creation refuses an existing run directory. Dataset cache reuse checks source revision, seed, size, preprocessing version and artifact hashes; index reuse checks ordered corpus/content hash, encoder ID/revision/dimension, dataset revision and similarity configuration. Model snapshots use exact ID/revision. Results are never reused merely because a similar run name exists.
