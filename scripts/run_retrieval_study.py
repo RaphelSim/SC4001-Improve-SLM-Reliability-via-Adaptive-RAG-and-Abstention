@@ -17,7 +17,9 @@ from reliable_rag.contracts.records import EvidenceChunk, QuestionRecord
 from reliable_rag.evaluation.retrieval_study import paired_differences, summarize
 from reliable_rag.io.artifacts import file_sha256, write_json
 from reliable_rag.io.jsonl import read_jsonl
+from reliable_rag.model.retrieval_query_v3 import V3QueryAssessor
 from reliable_rag.retrieval.study import run_retrieval_case
+from reliable_rag.retrieval.study_v3 import run_v3_case
 from reliable_rag.run_artifacts import RunWriter, run_directory
 from reliable_rag.runtime import create_model_components, create_retriever
 
@@ -116,6 +118,8 @@ def _run_one(system, settings, questions, retriever, *, run_id, inputs, allow_mo
     writer.metadata["sample_size"] = len(questions)
     writer.metadata["model_used"] = system == "adaptive"
     writer.metadata["prompt_version"] = local.slm.prompt_version if system == "adaptive" else None
+    is_v3 = system == "adaptive" and local.slm.prompt_version == "retrieval-controller-v3"
+    writer.metadata["retrieval_policy"] = "top_k_unseen" if is_v3 else "ranked_top_k"
     writer.save()
     records = []
     current_question = None
@@ -123,7 +127,7 @@ def _run_one(system, settings, questions, retriever, *, run_id, inputs, allow_mo
         assessor = None
         if system == "adaptive":
             model = create_model_components(local, allow_model_download=allow_model_download)
-            assessor = model.assessor
+            assessor = V3QueryAssessor(model.client, local) if is_v3 else model.assessor
             writer.metadata["local_model_path"] = str(model.client.model_path)
         top_k = (
             local.retrieval.initial_top_k
@@ -135,14 +139,23 @@ def _run_one(system, settings, questions, retriever, *, run_id, inputs, allow_mo
             current_question = question.question_id
             writer.metadata["summary"]["attempted"] += 1
             writer.save()
-            record = run_retrieval_case(
-                question,
-                retriever=retriever,
-                assessor=assessor,
-                system=system,
-                top_k=top_k,
-                max_rounds=max_rounds,
-            )
+            if is_v3:
+                record = run_v3_case(
+                    question,
+                    retriever=retriever,
+                    assessor=assessor,
+                    top_k=top_k,
+                    max_rounds=max_rounds,
+                )
+            else:
+                record = run_retrieval_case(
+                    question,
+                    retriever=retriever,
+                    assessor=assessor,
+                    system=system,
+                    top_k=top_k,
+                    max_rounds=max_rounds,
+                )
             writer.append("results", record.model_dump(mode="json"))
             records.append(record)
             writer.metadata["summary"]["records_written"] += 1
@@ -206,6 +219,11 @@ def main() -> int:
     parser.add_argument("--model-id")
     parser.add_argument("--model-revision")
     parser.add_argument("--run-id", help="Defaults to a timestamped unique ID")
+    parser.add_argument(
+        "--reuse-question-ids-from",
+        type=Path,
+        help="JSON run metadata/manifest containing selected_question_ids; preserve this exact sample and order",
+    )
     args = parser.parse_args()
     settings = load_settings(args.config)
     sample_size = (
@@ -264,6 +282,20 @@ def main() -> int:
     ):
         raise ValueError("prepared questions changed after pool freeze")
     selected = questions[:sample_size]
+    reused_manifest_sha256 = None
+    if args.reuse_question_ids_from:
+        reused_manifest_sha256 = file_sha256(args.reuse_question_ids_from)
+        saved_sample = json.loads(args.reuse_question_ids_from.read_text(encoding="utf-8"))
+        ids = saved_sample.get("selected_question_ids")
+        if not isinstance(ids, list) or len(ids) < sample_size or len(ids) != len(set(ids)):
+            raise ValueError(
+                "reused sample manifest must contain at least sample_size unique question IDs"
+            )
+        ids = ids[:sample_size]
+        question_by_id = {q.question_id: q for q in questions}
+        if set(ids) - question_by_id.keys():
+            raise ValueError("reused sample contains question IDs absent from the frozen pool")
+        selected = [question_by_id[question_id] for question_id in ids]
     if any(not q.gold_paragraph_ids for q in selected):
         raise ValueError("selected question lacks frozen gold paragraph IDs")
     evidence = read_jsonl(settings.evidence_path, EvidenceChunk)
@@ -299,6 +331,19 @@ def main() -> int:
             run_id=system if args.mode == "combined" else run_id,
             inputs=inputs,
         )
+        if reused_manifest_sha256:
+            metadata_path = directory / "run_metadata.json"
+            run_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            run_metadata["reused_question_ids_manifest"] = str(args.reuse_question_ids_from)
+            run_metadata["reused_question_ids_manifest_sha256"] = reused_manifest_sha256
+            run_metadata["selected_question_ids_sha256"] = (
+                __import__("hashlib")
+                .sha256(
+                    json.dumps([q.question_id for q in selected], separators=(",", ":")).encode()
+                )
+                .hexdigest()
+            )
+            write_json(metadata_path, run_metadata)
         outputs[system] = (records, directory, summary)
     if args.mode == "combined":
         paired = paired_differences(outputs["baseline"][0], outputs["adaptive"][0])

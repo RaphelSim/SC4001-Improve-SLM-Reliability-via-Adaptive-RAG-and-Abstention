@@ -340,6 +340,14 @@
       "additionalProperties": false,
       "description": "Concise model assessment; this stores a decision, not hidden reasoning.",
       "properties": {
+        "established_facts": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Established Facts",
+          "type": "array"
+        },
         "missing_information": {
           "anyOf": [
             {
@@ -352,10 +360,24 @@
           "default": null,
           "title": "Missing Information"
         },
+        "missing_information_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Information Items",
+          "type": "array"
+        },
         "question_id": {
           "minLength": 1,
           "title": "Question Id",
           "type": "string"
+        },
+        "required_information": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Information",
+          "type": "array"
         },
         "search_query": {
           "anyOf": [

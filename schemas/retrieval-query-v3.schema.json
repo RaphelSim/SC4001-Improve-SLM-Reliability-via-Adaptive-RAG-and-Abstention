@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "Null stops; a nonempty query requests another retrieval round.",
+  "properties": {
+    "search_query": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Search Query"
+    }
+  },
+  "required": [
+    "search_query"
+  ],
+  "title": "V3QueryDecision",
+  "type": "object"
+}

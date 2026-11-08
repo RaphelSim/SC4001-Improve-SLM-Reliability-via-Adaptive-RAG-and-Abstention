@@ -201,6 +201,9 @@ class SufficiencyDecision(ContractModel):
     missing_information: str | None = None
     search_query: str | None = None
     supporting_evidence_ids: list[str] = Field(default_factory=list)
+    required_information: list[str] = Field(default_factory=list)
+    established_facts: list[dict[str, Any]] = Field(default_factory=list)
+    missing_information_items: list[str] = Field(default_factory=list)
 
     @field_validator("question_id")
     @classmethod

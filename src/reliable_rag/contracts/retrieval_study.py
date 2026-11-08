@@ -20,6 +20,21 @@ class StudyRound(ContractModel):
     next_query: str | None = None
     raw_model_responses: list[str] = Field(default_factory=list)
     gold_complete_after_round: bool | None = None
+    required_information: list[str] = Field(default_factory=list)
+    established_facts: list[dict] = Field(default_factory=list)
+    missing_information_items: list[str] = Field(default_factory=list)
+    retrieval_stagnated: bool = False
+    loop_guard_activated: bool = False
+    ranked_seen_ids_skipped: list[str] = Field(default_factory=list)
+    ranked_candidate_ids_considered: list[str] = Field(default_factory=list)
+    repair_used: bool = False
+    query_regeneration_used: bool = False
+    stop_reason: str | None = None
+    cumulative_raw_paragraphs: int = 0
+    cumulative_unique_paragraph_ids: list[str] = Field(default_factory=list)
+    cumulative_gold_paragraph_ids: list[str] = Field(default_factory=list)
+    cumulative_gold_evidence_percentage: float = Field(default=0, ge=0, le=100)
+    cumulative_unique_noise_percentage: float = Field(default=0, ge=0, le=100)
 
 
 class RetrievalStudyRecord(ContractModel):
@@ -44,6 +59,12 @@ class RetrievalStudyRecord(ContractModel):
     final_model_status: SufficiencyStatus | Literal["ERROR"] | None = None
     error_type: str | None = None
     error_message: str | None = None
+    controller_version: str | None = None
+    stop_reason: str | None = None
+    controller_model_calls: int = Field(default=0, ge=0)
+    repair_model_calls: int = Field(default=0, ge=0)
+    query_regeneration_model_calls: int = Field(default=0, ge=0)
+    total_reasoning_model_calls: int = Field(default=0, ge=0)
 
     @model_validator(mode="after")
     def counts_and_labels_agree(self) -> RetrievalStudyRecord:
@@ -101,4 +122,15 @@ class RetrievalStudyRecord(ContractModel):
             raise ValueError("adaptive final model status is required")
         if self.final_model_status == "ERROR" and not self.error_type:
             raise ValueError("ERROR requires an error type")
+        if self.total_reasoning_model_calls != (
+            self.controller_model_calls
+            + self.repair_model_calls
+            + self.query_regeneration_model_calls
+        ):
+            raise ValueError("reasoning-model call totals are inconsistent")
+        if self.controller_version == "v3":
+            if self.system != "adaptive" or self.stop_reason is None:
+                raise ValueError("V3 requires adaptive system and a stop reason")
+            if self.duplicate_retrieval_count or any(r.duplicate_ids for r in self.rounds):
+                raise ValueError("V3 must return only unseen paragraphs")
         return self

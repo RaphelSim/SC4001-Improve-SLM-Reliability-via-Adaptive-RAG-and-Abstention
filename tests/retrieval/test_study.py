@@ -86,6 +86,35 @@ class Assessor:
         )
 
 
+class V2Assessor:
+    is_v2 = True
+
+    def __init__(self, decisions):
+        self.decisions = decisions
+        self.calls = []
+        self.raw_outputs = []
+
+    def assess(self, question, evidence, **context):
+        self.calls.append((list(evidence.evidence_ids), context))
+        self.raw_outputs = [json.dumps({"call": len(self.calls)})]
+        return self.decisions[len(self.calls) - 1]
+
+
+def v2_decision(status, search_query=None):
+    return SufficiencyDecision(
+        question_id="q1",
+        status=status,
+        missing_information=None if status == SufficiencyStatus.SUFFICIENT else "actor relation",
+        search_query=search_query,
+        supporting_evidence_ids=["1"],
+        required_information=["identify the actor"],
+        established_facts=[],
+        missing_information_items=[]
+        if status == SufficiencyStatus.SUFFICIENT
+        else ["identify the actor"],
+    )
+
+
 def test_baseline_top_five_never_calls_model():
     retriever = Retriever([["1", "3", "4", "2"]])
     record = run_retrieval_case(_question(), retriever=retriever, system="baseline", top_k=5)
@@ -194,3 +223,108 @@ def test_real_assessor_prompt_contains_no_gold_labels():
     assert "gold_support_ids" not in client.prompts[0]
     assert "gold_paragraph_ids" not in client.prompts[0]
     assert '"evidence_id": "2"' not in client.prompts[0]
+
+
+def test_v2_retrieval_history_stagnation_and_loop_guard_regeneration():
+    retriever = Retriever([["1", "3"], ["1", "3"], ["2"]])
+    assessor = V2Assessor(
+        [
+            v2_decision(SufficiencyStatus.NEED_MORE_EVIDENCE, "bridge actor"),
+            v2_decision(SufficiencyStatus.NEED_MORE_EVIDENCE, "bridge actor"),
+            v2_decision(SufficiencyStatus.NEED_MORE_EVIDENCE, "bridge person performer"),
+            v2_decision(SufficiencyStatus.SUFFICIENT),
+        ]
+    )
+    record = run_retrieval_case(
+        _question(),
+        retriever=retriever,
+        assessor=assessor,
+        system="adaptive",
+        top_k=2,
+        max_rounds=5,
+    )
+    assert record.final_model_status == SufficiencyStatus.SUFFICIENT
+    assert [request.query for request in retriever.requests] == [
+        _question().question,
+        "bridge actor",
+        "bridge person performer",
+    ]
+    assert assessor.calls[1][1]["retrieval_stagnated"] is True
+    assert assessor.calls[1][1]["force_query_reformulation"] is False
+    assert assessor.calls[2][1]["force_query_reformulation"] is True
+    assert assessor.calls[2][1]["retrieval_history"][1]["duplicate_ids"] == ["1", "3"]
+    assert record.rounds[1].retrieval_stagnated is True
+    assert record.rounds[1].loop_guard_activated is True
+    assert len(record.rounds[1].raw_model_responses) == 2
+
+
+def test_v2_output_contains_per_round_evaluator_trajectory():
+    retriever = Retriever([["1", "2"], ["3"]])
+    assessor = V2Assessor(
+        [
+            v2_decision(SufficiencyStatus.NEED_MORE_EVIDENCE, "another query"),
+            v2_decision(SufficiencyStatus.SUFFICIENT),
+        ]
+    )
+    record = run_retrieval_case(
+        _question(),
+        retriever=retriever,
+        assessor=assessor,
+        system="adaptive",
+        top_k=2,
+        max_rounds=5,
+    )
+    assert record.rounds[0].cumulative_raw_paragraphs == 2
+    assert record.rounds[1].cumulative_raw_paragraphs == 3
+    assert record.rounds[1].cumulative_unique_paragraph_ids == ["1", "2", "3"]
+    assert record.rounds[1].cumulative_gold_evidence_percentage == 100
+
+
+def test_v2_prompt_has_history_and_never_receives_evaluator_fields():
+    class Client:
+        prompts = []
+
+        def generate(self, prompt, *, max_new_tokens=None):
+            self.prompts.append(prompt)
+            return json.dumps(
+                {
+                    "question_id": "q1",
+                    "required_information": ["the maker's country"],
+                    "established_facts": [],
+                    "missing_information_items": ["the maker's country"],
+                    "status": "need_more_evidence",
+                    "missing_information": "the maker's country",
+                    "search_query": "maker headquarters country",
+                    "supporting_evidence_ids": ["1"],
+                }
+            )
+
+    from reliable_rag.contracts.records import ModelEvidence
+
+    settings = load_settings("configs/retrieval_study_v2_1.yaml")
+    client = Client()
+    assessor = SLMSufficiencyAssessor(client, settings)
+    decision = assessor.assess(
+        _question(),
+        ModelEvidence(
+            question_id="q1",
+            evidence=[EvidenceChunk(evidence_id="1", document_id="1", text="Maker is Acme.")],
+        ),
+        retrieval_history=[
+            {
+                "round_number": 1,
+                "query": "maker country",
+                "retrieved_ids": ["1"],
+                "new_unique_ids": ["1"],
+                "duplicate_ids": [],
+            }
+        ],
+        retrieval_stagnated=True,
+    )
+    assert decision.status == SufficiencyStatus.NEED_MORE_EVIDENCE
+    rendered = client.prompts[0]
+    assert '"query": "maker country"' in rendered
+    assert "Did the latest retrieval stagnate (zero new unique IDs)? true" in rendered
+    assert "gold_paragraph_ids" not in rendered
+    assert "gold_complete_after_round" not in rendered
+    assert "gold_evidence_percentage" not in rendered

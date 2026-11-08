@@ -127,11 +127,52 @@
     "StudyRound": {
       "additionalProperties": false,
       "properties": {
+        "cumulative_gold_evidence_percentage": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Cumulative Gold Evidence Percentage",
+          "type": "number"
+        },
+        "cumulative_gold_paragraph_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cumulative Gold Paragraph Ids",
+          "type": "array"
+        },
+        "cumulative_raw_paragraphs": {
+          "default": 0,
+          "title": "Cumulative Raw Paragraphs",
+          "type": "integer"
+        },
+        "cumulative_unique_noise_percentage": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Cumulative Unique Noise Percentage",
+          "type": "number"
+        },
+        "cumulative_unique_paragraph_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cumulative Unique Paragraph Ids",
+          "type": "array"
+        },
         "duplicate_ids": {
           "items": {
             "type": "string"
           },
           "title": "Duplicate Ids",
+          "type": "array"
+        },
+        "established_facts": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Established Facts",
           "type": "array"
         },
         "gold_complete_after_round": {
@@ -146,6 +187,11 @@
           "default": null,
           "title": "Gold Complete After Round"
         },
+        "loop_guard_activated": {
+          "default": false,
+          "title": "Loop Guard Activated",
+          "type": "boolean"
+        },
         "missing_information": {
           "anyOf": [
             {
@@ -157,6 +203,13 @@
           ],
           "default": null,
           "title": "Missing Information"
+        },
+        "missing_information_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Information Items",
+          "type": "array"
         },
         "model_status_after_round": {
           "anyOf": [
@@ -188,6 +241,25 @@
           "default": null,
           "title": "Next Query"
         },
+        "query_regeneration_used": {
+          "default": false,
+          "title": "Query Regeneration Used",
+          "type": "boolean"
+        },
+        "ranked_candidate_ids_considered": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ranked Candidate Ids Considered",
+          "type": "array"
+        },
+        "ranked_seen_ids_skipped": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ranked Seen Ids Skipped",
+          "type": "array"
+        },
         "raw_model_responses": {
           "items": {
             "type": "string"
@@ -195,13 +267,42 @@
           "title": "Raw Model Responses",
           "type": "array"
         },
+        "repair_used": {
+          "default": false,
+          "title": "Repair Used",
+          "type": "boolean"
+        },
+        "required_information": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Information",
+          "type": "array"
+        },
         "retrieval": {
           "$ref": "#/$defs/RetrievalResult"
+        },
+        "retrieval_stagnated": {
+          "default": false,
+          "title": "Retrieval Stagnated",
+          "type": "boolean"
         },
         "round_number": {
           "minimum": 1,
           "title": "Round Number",
           "type": "integer"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Reason"
         }
       },
       "required": [
@@ -234,6 +335,24 @@
       "minItems": 1,
       "title": "Candidate Paragraph Ids",
       "type": "array"
+    },
+    "controller_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Controller Model Calls",
+      "type": "integer"
+    },
+    "controller_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Controller Version"
     },
     "duplicate_retrieval_count": {
       "minimum": 0,
@@ -314,6 +433,12 @@
       "title": "Noise Percentage",
       "type": "number"
     },
+    "query_regeneration_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Query Regeneration Model Calls",
+      "type": "integer"
+    },
     "question": {
       "title": "Question",
       "type": "string"
@@ -334,6 +459,12 @@
       "title": "Raw Retrieved Ids",
       "type": "array"
     },
+    "repair_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Repair Model Calls",
+      "type": "integer"
+    },
     "retrieval_rounds": {
       "minimum": 1,
       "title": "Retrieval Rounds",
@@ -347,6 +478,18 @@
       "title": "Rounds",
       "type": "array"
     },
+    "stop_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Reason"
+    },
     "system": {
       "enum": [
         "baseline",
@@ -354,6 +497,12 @@
       ],
       "title": "System",
       "type": "string"
+    },
+    "total_reasoning_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Reasoning Model Calls",
+      "type": "integer"
     },
     "unique_paragraphs_retrieved": {
       "minimum": 0,

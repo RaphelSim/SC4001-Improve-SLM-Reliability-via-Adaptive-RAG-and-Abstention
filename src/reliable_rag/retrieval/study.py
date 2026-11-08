@@ -2,9 +2,18 @@
 
 from __future__ import annotations
 
+import logging
+
 from reliable_rag.contracts.enums import RetrievalStage, SufficiencyStatus
 from reliable_rag.contracts.records import ModelEvidence, QuestionRecord, RetrievalRequest
 from reliable_rag.contracts.retrieval_study import RetrievalStudyRecord, StudyRound
+
+LOGGER = logging.getLogger(__name__)
+
+
+def _normalize_query(value: str) -> str:
+    """Conservative exact normalization for the inference-time loop guard."""
+    return " ".join("".join(c.lower() if c.isalnum() else " " for c in value).split())
 
 
 def _finish(question: QuestionRecord, system: str, rounds: list[StudyRound], *, error=None):
@@ -17,9 +26,30 @@ def _finish(question: QuestionRecord, system: str, rounds: list[StudyRound], *, 
     unique = list(dict.fromkeys(raw))
     seen: set[str] = set()
     annotated = []
+    cumulative_unique: list[str] = []
+    cumulative_raw = 0
     for item in rounds:
-        seen.update(chunk.evidence_id for chunk in item.retrieval.evidence)
-        annotated.append(item.model_copy(update={"gold_complete_after_round": gold.issubset(seen)}))
+        round_ids = [chunk.evidence_id for chunk in item.retrieval.evidence]
+        cumulative_raw += len(round_ids)
+        seen.update(round_ids)
+        cumulative_unique = list(dict.fromkeys([*cumulative_unique, *round_ids]))
+        cumulative_gold = sorted(gold.intersection(cumulative_unique))
+        annotated.append(
+            item.model_copy(
+                update={
+                    "gold_complete_after_round": gold.issubset(seen),
+                    "cumulative_raw_paragraphs": cumulative_raw,
+                    "cumulative_unique_paragraph_ids": cumulative_unique,
+                    "cumulative_gold_paragraph_ids": cumulative_gold,
+                    "cumulative_gold_evidence_percentage": 100 * len(cumulative_gold) / len(gold),
+                    "cumulative_unique_noise_percentage": 100
+                    * (len(cumulative_unique) - len(cumulative_gold))
+                    / len(cumulative_unique)
+                    if cumulative_unique
+                    else 0,
+                }
+            )
+        )
     gold_retrieved = [item for item in unique if item in gold]
     noise = [item for item in unique if item not in gold]
     final_status = (
@@ -65,6 +95,7 @@ def run_retrieval_case(
     rounds: list[StudyRound] = []
     accumulated = []
     seen: set[str] = set()
+    history: list[dict] = []
     query = question.question
     for number in range(1, 2 if system == "baseline" else max_rounds + 1):
         retrieval = retriever.retrieve(
@@ -90,15 +121,74 @@ def run_retrieval_case(
             retrieval=retrieval,
             new_unique_ids=new_ids,
             duplicate_ids=duplicate_ids,
+            retrieval_stagnated=not new_ids,
         )
         rounds.append(item)
+        history_item = {
+            "round_number": number,
+            "query": query,
+            "retrieved_ids": [chunk.evidence_id for chunk in retrieval.evidence],
+            "new_unique_ids": new_ids,
+            "duplicate_ids": duplicate_ids,
+            "retrieval_stagnated": not new_ids,
+        }
+        history.append(history_item)
         if system == "baseline":
             break
         try:
-            decision = assessor.assess(
-                question,
-                ModelEvidence(question_id=question.question_id, evidence=accumulated),
-            )
+            model_evidence = ModelEvidence(question_id=question.question_id, evidence=accumulated)
+            if getattr(assessor, "is_v2", False):
+                decision = assessor.assess(
+                    question,
+                    model_evidence,
+                    retrieval_history=history,
+                    retrieval_stagnated=not new_ids,
+                    force_query_reformulation=False,
+                )
+                item.raw_model_responses.extend(list(getattr(assessor, "raw_outputs", [])))
+                item.required_information = list(decision.required_information)
+                item.established_facts = list(decision.established_facts)
+                item.missing_information_items = list(decision.missing_information_items)
+                if decision.status == SufficiencyStatus.NEED_MORE_EVIDENCE and number < max_rounds:
+                    failed_queries = {
+                        _normalize_query(entry["query"])
+                        for entry in history
+                        if entry["retrieval_stagnated"]
+                    }
+                    if _normalize_query(decision.search_query) in failed_queries:
+                        item.loop_guard_activated = True
+                        LOGGER.warning(
+                            "V2 query loop guard activated question_id=%s round=%s repeated_query=%r",
+                            question.question_id,
+                            number,
+                            decision.search_query,
+                        )
+                        history_item["loop_guard_activated"] = True
+                        history_item["rejected_repeated_query"] = decision.search_query
+                        history_item["controller_status"] = decision.status.value
+                        history_item["missing_information"] = decision.missing_information
+                        history_item["required_information"] = list(decision.required_information)
+                        history_item["established_facts"] = list(decision.established_facts)
+                        history_item["missing_information_items"] = list(
+                            decision.missing_information_items
+                        )
+                        decision = assessor.assess(
+                            question,
+                            model_evidence,
+                            retrieval_history=history,
+                            retrieval_stagnated=True,
+                            force_query_reformulation=True,
+                        )
+                        item.raw_model_responses.extend(list(getattr(assessor, "raw_outputs", [])))
+                        item.required_information = list(decision.required_information)
+                        item.established_facts = list(decision.established_facts)
+                        item.missing_information_items = list(decision.missing_information_items)
+                        if _normalize_query(decision.search_query or "") in failed_queries:
+                            raise ValueError(
+                                "V2 query regeneration repeated a failed stagnant query"
+                            )
+            else:
+                decision = assessor.assess(question, model_evidence)
             if decision.status == SufficiencyStatus.SUFFICIENT and decision.missing_information:
                 raise ValueError(
                     "sufficient controller decision must have null missing_information"
@@ -106,9 +196,17 @@ def run_retrieval_case(
             item.model_status_after_round = decision.status
             item.missing_information = decision.missing_information
             item.next_query = decision.search_query if number < max_rounds else None
-            item.raw_model_responses = list(getattr(assessor, "raw_outputs", []))
+            history_item["controller_status"] = decision.status.value
+            history_item["missing_information"] = decision.missing_information
+            history_item["next_query"] = item.next_query
+            history_item["required_information"] = item.required_information
+            history_item["established_facts"] = item.established_facts
+            history_item["missing_information_items"] = item.missing_information_items
+            if not item.raw_model_responses:
+                item.raw_model_responses = list(getattr(assessor, "raw_outputs", []))
         except Exception as exc:
-            item.raw_model_responses = list(getattr(assessor, "raw_outputs", []))
+            if not item.raw_model_responses:
+                item.raw_model_responses = list(getattr(assessor, "raw_outputs", []))
             return _finish(question, system, rounds, error=exc)
         if decision.status == SufficiencyStatus.SUFFICIENT or number == max_rounds:
             break
