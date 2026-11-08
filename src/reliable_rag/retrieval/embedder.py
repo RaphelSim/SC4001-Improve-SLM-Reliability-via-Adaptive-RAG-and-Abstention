@@ -218,5 +218,6 @@ def prepare_embedding_index(
                 "corpus_fingerprint": corpus_fingerprint(evidence),
             },
         )
+        del vectors
     logger.info("Built embedding index for %s paragraphs: %s", len(evidence), output)
     return True

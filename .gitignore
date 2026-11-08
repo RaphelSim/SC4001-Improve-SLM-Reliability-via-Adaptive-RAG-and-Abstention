@@ -44,3 +44,5 @@ outputs/*
 .DS_Store
 .idea/
 .vscode/
+
+.ipynb_checkpoints/

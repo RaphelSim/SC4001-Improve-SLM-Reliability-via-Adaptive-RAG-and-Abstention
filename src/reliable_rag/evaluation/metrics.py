@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+import string
+from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass
 
@@ -20,6 +23,19 @@ class MetricResult:
     def value(self) -> float | None:
         """Return the rate, or None when the denominator is zero."""
         return self.numerator / self.denominator if self.denominator else None
+
+
+@dataclass(frozen=True)
+class MeanScore:
+    """An average of per-case scores with its total and case count retained"""
+
+    total: float
+    count: int
+
+    @property
+    def value(self) -> float | None:
+        """Return the mean score, or None when there are no cases."""
+        return self.total / self.count if self.count else None
 
 
 @dataclass(frozen=True)
@@ -151,3 +167,135 @@ def unsupported_answer_rate_among_answered(records: Sequence[ExperimentRecord]) 
         numerator=sum(not record.gold_sufficient_finally for record in answered),
         denominator=len(answered),
     )
+
+
+# Answer correctness follows HotpotQA evaluation script
+# Answers are normalised before comparison, so
+# E.g., "The Oberoi Group." and "oberoi group" matches
+_ARTICLES = re.compile(r"\b(a|an|the)\b")
+_YES_NO = {"yes", "no", "noanswer"}
+
+
+def normalize_answer(text: str) -> str:
+    """Lowercase, remove punctuation, articles (a, an, the) and extra whitespace"""
+    text = text.lower()
+    text = "".join(character for character in text if character not in string.punctuation)
+    text = _ARTICLES.sub(" ", text)
+
+    return " ".join(text.split())
+
+
+def exact_match(prediction: str, gold: str) -> bool:
+    """Return whether normalised prediction is equal to normalised gold answer"""
+    return normalize_answer(prediction) == normalize_answer(gold)
+
+
+def token_f1(prediction: str, gold: str) -> float:
+    """Return word-overlap F1 between normalised prediction and gold answer"""
+    normalized_prediction = normalize_answer(prediction)
+    normalized_gold = normalize_answer(gold)
+
+    # yes/no only gets credit for exact match
+    # "no" would get partial credit against "yes, no" style answers
+    if (
+        normalized_prediction in _YES_NO or normalized_gold in _YES_NO
+    ) and normalized_prediction != normalized_gold:
+        return 0.0
+
+    prediction_tokens = normalized_prediction.split()
+    gold_tokens = normalized_gold.split()
+    common = sum((Counter(prediction_tokens) & Counter(gold_tokens)).values())
+
+    if common == 0:
+        return 0.0
+
+    precision = common / len(prediction_tokens)
+    recall = common / len(gold_tokens)
+
+    return 2 * precision * recall / (precision + recall)
+
+
+def answer_exact_match(
+    records: Sequence[ExperimentRecord], *, answered_only: bool = True
+) -> MetricResult:
+    """
+    Return exact matches over answered records, or over all records when not answered_only
+
+    With `answered_only = False` abstentions count as wrong, so score also shows coverage
+    """
+
+    answered = [record for record in records if not record.final_answer.abstained]
+
+    return MetricResult(
+        numerator=sum(
+            exact_match(record.final_answer.answer or "", record.question.gold_answer)
+            for record in answered
+        ),
+        denominator=len(answered) if answered_only else len(records),
+    )
+
+
+def answer_token_f1(
+    records: Sequence[ExperimentRecord], *, answered_only: bool = True
+) -> MeanScore:
+    """
+    Return mean token F1 over answered records, or over all records when not answered_only
+
+    With `answered_only = False` abstentions score 0, giving-coverage-adjusted F1
+    """
+
+    answered = [record for record in records if not record.final_answer.abstained]
+
+    return MeanScore(
+        total=sum(
+            token_f1(record.final_answer.answer or "", record.question.gold_answer)
+            for record in answered
+        ),
+        count=len(answered) if answered_only else len(records),
+    )
+
+
+# Adaptive retrieval metrics
+def recovery_rate(records: Sequence[ExperimentRecord]) -> MetricResult:
+    """
+    Return initially insufficient records that end gold-sufficient / initially insufficient
+
+    Counts every reason recovery can fail:
+    - Model judged evidence sufficient and never searched
+    - Model's follow-up query missed the paragraph
+    - Follow-up found nothing new
+
+    Single round systems always score 0, since initial and final evidence match
+    """
+
+    initially_insufficient = [record for record in records if not record.gold_sufficient_initially]
+
+    return MetricResult(
+        numerator=sum(record.gold_sufficient_finally for record in initially_insufficient),
+        denominator=len(initially_insufficient),
+    )
+
+
+def followup_support_recall(records: Sequence[ExperimentRecord]) -> MetricResult:
+    """
+    Return missing gold supports found by follow-up / supports missing after round 0
+
+    Only records with stored round-1 retrieval count, so this measures how well
+    the model's search_query finds what is missing, separately from whether it is asked at all
+    """
+
+    found = missing_total = 0
+
+    for record in records:
+        if record.gold_sufficient_initially or len(record.rounds) < 2:
+            continue
+
+        missing = set(record.question.gold_support_ids).difference(
+            record.initial_evidence.evidence_ids
+        )
+
+        followup_ids = {chunk.evidence_id for chunk in record.rounds[1].retrieval.evidence}
+        found += len(missing.intersection(followup_ids))
+        missing_total += len(missing)
+
+    return MetricResult(numerator=found, denominator=missing_total)
