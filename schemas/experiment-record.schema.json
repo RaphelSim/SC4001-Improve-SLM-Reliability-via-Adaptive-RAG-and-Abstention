@@ -236,6 +236,21 @@
           "title": "Gold Answer",
           "type": "string"
         },
+        "gold_paragraph_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gold Paragraph Ids"
+        },
         "gold_support_ids": {
           "items": {
             "type": "string"

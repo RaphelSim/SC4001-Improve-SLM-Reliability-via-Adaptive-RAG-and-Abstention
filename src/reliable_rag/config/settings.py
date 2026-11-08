@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import Any, Literal
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator
 
 from reliable_rag.contracts.enums import SystemVariant
 
@@ -47,7 +47,7 @@ class RetrievalSettings(StrictSettings):
     embedding_device: str = "cpu"
     initial_top_k: int = Field(ge=1)
     followup_top_k: int = Field(ge=1)
-    max_total_retrieval_rounds: int = Field(default=2, ge=1, le=2)
+    max_total_retrieval_rounds: int = Field(default=2, ge=1, le=20)
     similarity_metric: str = "cosine"
 
     @field_validator("similarity_metric")
@@ -83,6 +83,7 @@ class ExperimentSettings(StrictSettings):
 
     system_variant: SystemVariant
     run_id: str = Field(min_length=1)
+    sample_size: int | None = Field(default=None, ge=1)
 
 
 class Settings(StrictSettings):
@@ -118,12 +119,6 @@ class Settings(StrictSettings):
     def index_path(self) -> Path:
         size = self.dataset.subset_size if self.dataset.subset_size is not None else "all"
         return self.cache_root / f"hotpotqa-subset-{size}-seed{self.project_seed}.npz"
-
-    @model_validator(mode="after")
-    def enforce_shared_round_limit(self) -> Settings:
-        if self.retrieval.max_total_retrieval_rounds > 2:
-            raise ValueError("the foundation supports at most two total retrieval rounds")
-        return self
 
 
 _ENV_PATH_FIELDS = {

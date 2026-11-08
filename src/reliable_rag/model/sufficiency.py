@@ -8,7 +8,12 @@ import logging
 from reliable_rag.config.settings import Settings
 from reliable_rag.contracts.enums import SufficiencyStatus
 from reliable_rag.contracts.interfaces import SufficiencyAssessor
-from reliable_rag.contracts.records import EvidenceSet, QuestionRecord, SufficiencyDecision
+from reliable_rag.contracts.records import (
+    EvidenceSet,
+    ModelEvidence,
+    QuestionRecord,
+    SufficiencyDecision,
+)
 from reliable_rag.model.errors import ModelOutputError
 from reliable_rag.model.slm import SLMClient
 from reliable_rag.model.structured_output import (
@@ -34,7 +39,7 @@ def parse_sufficiency_response(
     raw_output: str,
     *,
     question: QuestionRecord,
-    evidence: EvidenceSet,
+    evidence: EvidenceSet | ModelEvidence,
 ) -> SufficiencyDecision:
     """Parse a strict decision and ensure it only cites evidence supplied to the SLM."""
     decision = parse_json_model(
@@ -69,8 +74,11 @@ class SLMSufficiencyAssessor(SufficiencyAssessor):
         self._settings = settings
         self._prompt_template = load_prompt_template(settings.slm.sufficiency_prompt_path)
         self._retry_template = load_prompt_template(settings.slm.structured_retry_prompt_path)
+        self.raw_outputs: list[str] = []
 
-    def assess(self, question: QuestionRecord, evidence: EvidenceSet) -> SufficiencyDecision:
+    def assess(
+        self, question: QuestionRecord, evidence: EvidenceSet | ModelEvidence
+    ) -> SufficiencyDecision:
         """Assess only the question and evidence text; never expose gold annotations in the prompt."""
         if question.question_id != evidence.question_id:
             raise ValueError("question and EvidenceSet question_id values must match")
@@ -86,10 +94,12 @@ class SLMSufficiencyAssessor(SufficiencyAssessor):
                 "evidence_json": json.dumps(evidence_payload, ensure_ascii=False),
             },
         )
+        self.raw_outputs = []
         raw_output = self._client.generate(
             prompt,
             max_new_tokens=self._settings.slm.max_new_tokens,
         )
+        self.raw_outputs.append(raw_output)
         retry_limit = self._settings.slm.format_retry_limit
         for attempt_index in range(retry_limit + 1):
             try:
@@ -122,6 +132,7 @@ class SLMSufficiencyAssessor(SufficiencyAssessor):
                     schema=SufficiencyDecision.model_json_schema(),
                     invalid_output=raw_output,
                     validation_error=str(exc),
+                    original_prompt=prompt,
                 )
                 LOGGER.info(
                     "Retrying structured output question_id=%s task=%s next_attempt=%s "
@@ -136,6 +147,7 @@ class SLMSufficiencyAssessor(SufficiencyAssessor):
                     retry_prompt,
                     max_new_tokens=self._settings.slm.max_new_tokens,
                 )
+                self.raw_outputs.append(raw_output)
                 continue
             LOGGER.info(
                 "Assessed evidence question_id=%s status=%s prompt_version=%s model_id=%s",

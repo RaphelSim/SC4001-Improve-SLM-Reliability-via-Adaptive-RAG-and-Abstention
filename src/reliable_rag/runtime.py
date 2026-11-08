@@ -64,6 +64,8 @@ def create_retriever(
         metadata,
         model_name=settings.retrieval.embedding_model,
         revision=settings.retrieval.embedding_revision,
+        dataset_revision=settings.dataset.revision,
+        similarity_metric=settings.retrieval.similarity_metric,
     )
     return DenseRetriever(
         evidence,

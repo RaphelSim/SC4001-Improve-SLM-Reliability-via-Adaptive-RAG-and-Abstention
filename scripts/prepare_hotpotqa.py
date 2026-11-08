@@ -19,6 +19,7 @@ from reliable_rag.io.artifacts import file_sha256, write_json
 from reliable_rag.io.jsonl import read_jsonl
 
 LOGGER = logging.getLogger(__name__)
+PREPROCESSING_VERSION = "paragraph-context-gold-ids-v3"
 
 
 def _load_local_rows(path: Path) -> list[dict[str, Any]]:
@@ -73,6 +74,8 @@ def _cache_matches(directory: Path, request: dict) -> bool:
         if any(source.get(key) != value for key, value in expected.items()):
             return False
         if metadata["project_split"] != request["project_split"]:
+            return False
+        if metadata.get("preprocessing", {}).get("version") != request["preprocessing_version"]:
             return False
         if (
             sampling["seed"] != request["seed"]
@@ -143,6 +146,7 @@ def main() -> int:
         "project_split": dataset.project_split,
         "seed": settings.project_seed,
         "subset_size": dataset.subset_size,
+        "preprocessing_version": PREPROCESSING_VERSION,
     }
     selection = directory / f"subset-{dataset.project_split}.json"
     if not args.force and _cache_matches(directory, request):
@@ -188,6 +192,10 @@ def main() -> int:
         )
         metadata = {
             "schema_version": 1,
+            "preprocessing": {
+                "version": PREPROCESSING_VERSION,
+                "gold_definition": "paragraph contains at least one annotated support sentence",
+            },
             "source": {
                 **request["source"],
                 "question_count": len(source),

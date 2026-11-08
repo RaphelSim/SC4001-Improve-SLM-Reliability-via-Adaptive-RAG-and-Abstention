@@ -16,6 +16,7 @@ from reliable_rag.contracts.records import (
     RetrievalResult,
     SufficiencyDecision,
 )
+from reliable_rag.contracts.retrieval_study import RetrievalStudyRecord
 from reliable_rag.io.artifacts import write_json
 from reliable_rag.io.jsonl import read_jsonl
 
@@ -28,6 +29,7 @@ SCHEMAS = {
     "question-record": QuestionRecord,
     "retrieval-request": RetrievalRequest,
     "retrieval-result": RetrievalResult,
+    "retrieval-study-record": RetrievalStudyRecord,
     "sufficiency-decision": SufficiencyDecision,
 }
 

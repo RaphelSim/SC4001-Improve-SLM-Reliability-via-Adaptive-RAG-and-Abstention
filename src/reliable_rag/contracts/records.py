@@ -57,6 +57,7 @@ class QuestionRecord(ContractModel):
     gold_answer: str = Field(min_length=1)
     split: DatasetSplit
     gold_support_ids: list[str] = Field(min_length=1)
+    gold_paragraph_ids: list[str] | None = None
     candidate_evidence_ids: list[str] = Field(default_factory=list)
     metadata: dict[str, Any] = Field(default_factory=dict)
 
@@ -67,13 +68,39 @@ class QuestionRecord(ContractModel):
     def text_must_contain_content(cls, value: str) -> str:
         return _require_nonempty(value)
 
-    @field_validator("gold_support_ids", "candidate_evidence_ids")
+    @field_validator("gold_support_ids", "gold_paragraph_ids", "candidate_evidence_ids")
     @classmethod
-    def ids_must_be_unique_and_nonempty(cls, values: list[str]) -> list[str]:
+    def ids_must_be_unique_and_nonempty(cls, values: list[str] | None) -> list[str] | None:
+        if values is None:
+            return None
         cleaned = [_require_nonempty(value) for value in values]
         if len(cleaned) != len(set(cleaned)):
             raise ValueError("IDs must be unique")
         return cleaned
+
+    @model_validator(mode="after")
+    def paragraph_labels_match_supports(self) -> QuestionRecord:
+        if self.gold_paragraph_ids is not None and self.gold_paragraph_ids != self.gold_support_ids:
+            raise ValueError("gold_paragraph_ids must match paragraph-level gold_support_ids")
+        return self
+
+
+class ModelEvidence(ContractModel):
+    """Evidence-only model input; excludes gold labels and evaluation conditions."""
+
+    question_id: str = Field(min_length=1)
+    evidence: list[EvidenceChunk] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def unique_evidence(self) -> ModelEvidence:
+        ids = [chunk.evidence_id for chunk in self.evidence]
+        if len(ids) != len(set(ids)):
+            raise ValueError("model evidence must have unique paragraph IDs")
+        return self
+
+    @property
+    def evidence_ids(self) -> list[str]:
+        return [chunk.evidence_id for chunk in self.evidence]
 
 
 class EvidenceSet(ContractModel):

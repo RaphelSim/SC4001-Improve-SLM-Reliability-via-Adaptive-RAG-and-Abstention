@@ -1,0 +1,12 @@
+Repair the previous JSON response to the original retrieval-controller task. Return one corrected JSON object only. Do not output a schema, the task text, markdown, or explanations.
+
+Original task, including the exact question ID and allowed evidence IDs:
+{{original_prompt_json}}
+
+Previous invalid response:
+{{invalid_output_json}}
+
+Validation error:
+{{validation_error_json}}
+
+Required keys exactly: question_id, status, missing_information, search_query, supporting_evidence_ids. Copy question_id exactly from the original task. Cite only its supplied evidence IDs. Use status "sufficient" with null missing_information and null search_query, or status "need_more_evidence" with a specific missing_information and focused search_query.

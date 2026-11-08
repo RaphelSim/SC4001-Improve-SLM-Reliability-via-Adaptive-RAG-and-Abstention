@@ -1,7 +1,6 @@
-# Improve SLM Reliability via Adaptive RAG and Abstention
+# Adaptive Multi-Round Retrieval for Evidence Recovery
 
-A reproducible HotpotQA baseline using MiniLM retrieval and Qwen3-1.7B on Apple MLX for evidence sufficiency, grounded answering and abstention. Adaptive retrieval is an extension point, not yet implemented.
+A reproducible HotpotQA study of paragraph-level evidence recovery, unique evidence noise, and raw retrieval cost. It compares single-shot Top-5 retrieval with Qwen3-4B-controlled adaptive Top-2 retrieval for up to five rounds. Historical answer/abstention code remains available, but the main experiment does not generate answers.
 
-- [Setup and run](documentation/SETUP_AND_RUN.md) — installation, five-question and 500-question experiments, cache reuse, CLI reference.
-- [System architecture](documentation/SYSTEM_ARCHITECTURE.md) — modules, contracts, data flow and caches.
-- [Outputs and analysis](documentation/OUTPUTS_AND_ANALYSIS.md) — artifacts, failures and metric definitions.
+- [Setup and run](documentation/SETUP_AND_RUN.md) — frozen pool, commands, caches, and experiment phases.
+- [Architecture and metrics](documentation/SYSTEM_ARCHITECTURE.md) — data flow, records, duplicate counting, evaluation.

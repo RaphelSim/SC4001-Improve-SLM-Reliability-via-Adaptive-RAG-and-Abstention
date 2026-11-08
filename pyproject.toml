@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "reliable-rag"
 version = "0.1.0"
-description = "Shared foundation for an SC4001 adaptive RAG and abstention study"
+description = "HotpotQA paragraph retrieval and adaptive evidence recovery study"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = [
