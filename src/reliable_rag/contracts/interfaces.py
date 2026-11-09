@@ -26,7 +26,9 @@ class Retriever(Protocol):
 class SufficiencyAssessor(Protocol):
     """Assess whether the supplied evidence supports answering the question."""
 
-    def assess(self, question: QuestionRecord, evidence: EvidenceSet) -> SufficiencyDecision:
+    def assess(
+        self, question: QuestionRecord, evidence: EvidenceSet, **context
+    ) -> SufficiencyDecision:
         """Return a structured sufficiency decision without hidden reasoning text."""
         ...
 

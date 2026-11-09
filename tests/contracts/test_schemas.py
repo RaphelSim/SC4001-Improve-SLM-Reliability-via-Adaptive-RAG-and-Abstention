@@ -10,6 +10,8 @@ EXPECTED = {
     "evidence-set.schema.json",
     "retrieval-request.schema.json",
     "retrieval-result.schema.json",
+    "retrieval-study-record.schema.json",
+    "retrieval-query-v3.schema.json",
     "sufficiency-decision.schema.json",
     "answer-result.schema.json",
     "experiment-record.schema.json",

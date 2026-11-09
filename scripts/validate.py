@@ -16,8 +16,10 @@ from reliable_rag.contracts.records import (
     RetrievalResult,
     SufficiencyDecision,
 )
+from reliable_rag.contracts.retrieval_study import RetrievalStudyRecord
 from reliable_rag.io.artifacts import write_json
 from reliable_rag.io.jsonl import read_jsonl
+from reliable_rag.model.retrieval_query_v3 import V3QueryDecision
 
 SCHEMAS = {
     "adaptive-round-record": AdaptiveRoundRecord,
@@ -28,6 +30,8 @@ SCHEMAS = {
     "question-record": QuestionRecord,
     "retrieval-request": RetrievalRequest,
     "retrieval-result": RetrievalResult,
+    "retrieval-study-record": RetrievalStudyRecord,
+    "retrieval-query-v3": V3QueryDecision,
     "sufficiency-decision": SufficiencyDecision,
 }
 

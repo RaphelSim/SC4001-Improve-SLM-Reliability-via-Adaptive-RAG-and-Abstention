@@ -21,7 +21,15 @@ configs/local.yaml
 data/raw/**
 data/processed/**
 cache/**
-outputs/**
+# Keep the seven small, audited same-100 experiment records in version control.
+outputs/*
+!outputs/baseline_top2_single_shot_same100/
+!outputs/baseline_top3_single_shot_same100/
+!outputs/baseline_top4_single_shot_same100/
+!outputs/baseline_top5_single_shot_same100/
+!outputs/adaptive_v1_top2_basic_controller_same100/
+!outputs/adaptive_v2_top2_evidence_chain_controller_same100/
+!outputs/adaptive_v3_top2_unseen_compact_controller_same100/
 *.safetensors
 *.gguf
 *.pt

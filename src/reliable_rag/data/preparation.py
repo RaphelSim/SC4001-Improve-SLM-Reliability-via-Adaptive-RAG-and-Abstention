@@ -74,6 +74,10 @@ def prepare_split(
                         replacements.get(evidence_id, evidence_id)
                         for evidence_id in example.question.gold_support_ids
                     ],
+                    "gold_paragraph_ids": [
+                        replacements.get(evidence_id, evidence_id)
+                        for evidence_id in example.question.gold_support_ids
+                    ],
                     "candidate_evidence_ids": [
                         replacements.get(evidence_id, evidence_id)
                         for evidence_id in example.question.candidate_evidence_ids

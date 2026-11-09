@@ -1,0 +1,13 @@
+metric,mean,median,std,min,max
+gold_evidence_percentage,72.22222222222223,100.0,31.84508356783949,0.0,100.0
+noise_percentage,37.43386243386244,50.0,28.439461054076453,0.0,100.0
+raw_paragraphs_retrieved,2.7936507936507935,2,1.4924011775927821,2,10
+unique_paragraphs_retrieved,2.365079365079365,2,0.6498250631891658,2,4
+retrieval_rounds,1.3968253968253967,1,0.7462005887963911,1,5
+duplicate_retrievals,0.42857142857142855,0,1.1507662831994832,0,7
+full_gold_recovery_rate,0.5238095238095238,,,,
+zero_gold_recovery_rate,0.07936507936507936,,,,
+duplicate_percentage_raw,15.340909090909092,,,,
+attempted,100,,,,
+valid,63,,,,
+errors,37,,,,

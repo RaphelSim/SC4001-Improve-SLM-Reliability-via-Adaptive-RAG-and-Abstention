@@ -22,6 +22,15 @@ def test_local_hotpotqa_input_accepts_jsonl_objects(tmp_path) -> None:
     assert _load_local_rows(path) == rows
 
 
+def test_seed88_first_100_are_prefix_of_unique_1000_question_pool() -> None:
+    source_count = 90447
+    pool = select_subset_indices(source_count, subset_size=1000, seed=88)
+    phase3 = select_subset_indices(source_count, subset_size=100, seed=88)
+    assert len(pool) == len(set(pool)) == 1000
+    assert pool[:100] == phase3
+    assert pool == select_subset_indices(source_count, subset_size=1000, seed=88)
+
+
 def test_prepare_split_writes_contract_validated_outputs(tmp_path) -> None:
     rows = [
         {
@@ -46,6 +55,11 @@ def test_prepare_split_writes_contract_validated_outputs(tmp_path) -> None:
 
     questions = read_jsonl(questions_path, QuestionRecord)
     assert len(questions) == 1
+    assert questions[0].gold_paragraph_ids == questions[0].gold_support_ids
+    assert questions[0].metadata["supporting_facts"] == [
+        {"title": "Lost Gravity", "sent_id": 0},
+        {"title": "Mack Rides", "sent_id": 0},
+    ]
     manifest = [line for line in manifest_path.read_text(encoding="utf-8").splitlines() if line]
     assert '"project_split":"development"' in manifest[0]
     assert read_jsonl(evidence_path, EvidenceChunk)

@@ -104,6 +104,7 @@ def build_retry_prompt(
     schema: dict[str, object],
     invalid_output: str,
     validation_error: str,
+    original_prompt: str | None = None,
 ) -> str:
     """Render a repair-only prompt with all untrusted output JSON-encoded as data."""
     return render_prompt(
@@ -113,5 +114,6 @@ def build_retry_prompt(
             "schema_json": json.dumps(schema, ensure_ascii=False, sort_keys=True),
             "invalid_output_json": json.dumps(invalid_output, ensure_ascii=False),
             "validation_error_json": json.dumps(validation_error, ensure_ascii=False),
+            "original_prompt_json": json.dumps(original_prompt, ensure_ascii=False),
         },
     )

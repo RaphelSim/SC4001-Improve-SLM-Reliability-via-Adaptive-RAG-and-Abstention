@@ -1,0 +1,3254 @@
+{
+  "all_attempted_cohort": {
+    "adaptive_v1": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0.82,
+      "average_raw_paragraphs": 2.94,
+      "average_retrieval_rounds": 1.47,
+      "average_unique_paragraphs": 2.12,
+      "duplicate_share_raw": 0.2789115646258503,
+      "errors": 0,
+      "false_sufficiency_by_round": {
+        "1": {
+          "false_sufficient": 56,
+          "gold_incomplete_decisions": 73,
+          "rate": 0.7671232876712328
+        },
+        "2": {
+          "false_sufficient": 2,
+          "gold_incomplete_decisions": 12,
+          "rate": 0.16666666666666666
+        },
+        "3": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 10,
+          "rate": 0.0
+        },
+        "4": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 10,
+          "rate": 0.0
+        },
+        "5": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 10,
+          "rate": 0.0
+        }
+      },
+      "final_need_more_evidence": 10,
+      "final_sufficient": 90,
+      "full_gold_recovery_rate": 0.32,
+      "gold_based_false_insufficiency": 0.0,
+      "gold_based_false_sufficiency": 0.5043478260869565,
+      "gold_recovery_by_round": {
+        "1": {
+          "duplicate_paragraphs": 0,
+          "mean_cumulative_gold_recall_percentage": 57.5,
+          "mean_cumulative_raw_paragraphs": 2,
+          "mean_cumulative_unique_noise_percentage": 42.5,
+          "new_unique_paragraphs": 200,
+          "questions_reaching_round": 100,
+          "zero_new_evidence_rounds": 0
+        },
+        "2": {
+          "duplicate_paragraphs": 22,
+          "mean_cumulative_gold_recall_percentage": 61.76470588235294,
+          "mean_cumulative_raw_paragraphs": 4,
+          "mean_cumulative_unique_noise_percentage": 52.94117647058824,
+          "new_unique_paragraphs": 12,
+          "questions_reaching_round": 17,
+          "zero_new_evidence_rounds": 9
+        },
+        "3": {
+          "duplicate_paragraphs": 20,
+          "mean_cumulative_gold_recall_percentage": 50.0,
+          "mean_cumulative_raw_paragraphs": 6,
+          "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+          "new_unique_paragraphs": 0,
+          "questions_reaching_round": 10,
+          "zero_new_evidence_rounds": 10
+        },
+        "4": {
+          "duplicate_paragraphs": 20,
+          "mean_cumulative_gold_recall_percentage": 50.0,
+          "mean_cumulative_raw_paragraphs": 8,
+          "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+          "new_unique_paragraphs": 0,
+          "questions_reaching_round": 10,
+          "zero_new_evidence_rounds": 10
+        },
+        "5": {
+          "duplicate_paragraphs": 20,
+          "mean_cumulative_gold_recall_percentage": 50.0,
+          "mean_cumulative_raw_paragraphs": 10,
+          "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+          "new_unique_paragraphs": 0,
+          "questions_reaching_round": 10,
+          "zero_new_evidence_rounds": 10
+        }
+      },
+      "loop_guard_activation_count": 0,
+      "mean_gold_evidence_percentage": 60.5,
+      "mean_unique_noise_percentage": 42.0,
+      "median_gold_evidence_percentage": 50.0,
+      "model_status_distribution": {
+        "need_more_evidence": 10,
+        "sufficient": 90
+      },
+      "premature_annotated_gold_stop_questions": 58,
+      "query_repetition_rate": 0.19727891156462585,
+      "retrieval_stagnation_count": 39,
+      "round_1_gold_based_false_sufficiency": 0.7671232876712328,
+      "stopping_round_distribution": {
+        "1": 83,
+        "2": 7,
+        "3": 0,
+        "4": 0,
+        "5": 10
+      },
+      "summary": {
+        "attempted": 100,
+        "by_stopping_round": {
+          "1": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 60.24096385542169,
+              "median": 50.0,
+              "min": 0.0,
+              "std": 31.77389637166408
+            },
+            "noise_percentage": {
+              "max": 100.0,
+              "mean": 39.75903614457831,
+              "median": 50.0,
+              "min": 0.0,
+              "std": 31.77389637166408
+            }
+          },
+          "2": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 78.57142857142857,
+              "median": 100.0,
+              "min": 0.0,
+              "std": 36.42156795423418
+            },
+            "noise_percentage": {
+              "max": 100.0,
+              "mean": 54.761904761904766,
+              "median": 50.0,
+              "min": 33.333333333333336,
+              "std": 21.295885499997997
+            }
+          },
+          "3": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "4": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "5": {
+            "gold_evidence_percentage": {
+              "max": 50.0,
+              "mean": 50.0,
+              "median": 50.0,
+              "min": 50.0,
+              "std": 0.0
+            },
+            "noise_percentage": {
+              "max": 66.66666666666667,
+              "mean": 51.666666666666664,
+              "median": 50.0,
+              "min": 50.0,
+              "std": 5.000000000000002
+            }
+          }
+        },
+        "controller_diagnostics": {
+          "average_new_unique_paragraphs_per_round": 1.4421768707482994,
+          "duplicate_retrieval_rate": 0.2789115646258503,
+          "false_sufficiency_by_round": {
+            "1": {
+              "false_sufficient": 56,
+              "gold_incomplete_decisions": 73,
+              "rate": 0.7671232876712328
+            },
+            "2": {
+              "false_sufficient": 2,
+              "gold_incomplete_decisions": 12,
+              "rate": 0.16666666666666666
+            },
+            "3": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 10,
+              "rate": 0.0
+            },
+            "4": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 10,
+              "rate": 0.0
+            },
+            "5": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 10,
+              "rate": 0.0
+            }
+          },
+          "final_status_distribution": {
+            "need_more_evidence": 10,
+            "sufficient": 90
+          },
+          "gold_based_false_insufficiency": 0.0,
+          "gold_based_false_insufficiency_count": 0,
+          "gold_based_false_sufficiency": 0.5043478260869565,
+          "gold_based_false_sufficiency_count": 58,
+          "gold_complete_decisions": 32,
+          "gold_incomplete_decisions": 115,
+          "gold_recovery_by_round": {
+            "1": {
+              "duplicate_paragraphs": 0,
+              "mean_cumulative_gold_recall_percentage": 57.5,
+              "mean_cumulative_raw_paragraphs": 2,
+              "mean_cumulative_unique_noise_percentage": 42.5,
+              "new_unique_paragraphs": 200,
+              "questions_reaching_round": 100,
+              "zero_new_evidence_rounds": 0
+            },
+            "2": {
+              "duplicate_paragraphs": 22,
+              "mean_cumulative_gold_recall_percentage": 61.76470588235294,
+              "mean_cumulative_raw_paragraphs": 4,
+              "mean_cumulative_unique_noise_percentage": 52.94117647058824,
+              "new_unique_paragraphs": 12,
+              "questions_reaching_round": 17,
+              "zero_new_evidence_rounds": 9
+            },
+            "3": {
+              "duplicate_paragraphs": 20,
+              "mean_cumulative_gold_recall_percentage": 50.0,
+              "mean_cumulative_raw_paragraphs": 6,
+              "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+              "new_unique_paragraphs": 0,
+              "questions_reaching_round": 10,
+              "zero_new_evidence_rounds": 10
+            },
+            "4": {
+              "duplicate_paragraphs": 20,
+              "mean_cumulative_gold_recall_percentage": 50.0,
+              "mean_cumulative_raw_paragraphs": 8,
+              "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+              "new_unique_paragraphs": 0,
+              "questions_reaching_round": 10,
+              "zero_new_evidence_rounds": 10
+            },
+            "5": {
+              "duplicate_paragraphs": 20,
+              "mean_cumulative_gold_recall_percentage": 50.0,
+              "mean_cumulative_raw_paragraphs": 10,
+              "mean_cumulative_unique_noise_percentage": 51.666666666666664,
+              "new_unique_paragraphs": 0,
+              "questions_reaching_round": 10,
+              "zero_new_evidence_rounds": 10
+            }
+          },
+          "loop_guard_activation_count": 0,
+          "premature_annotated_gold_stop_questions": 58,
+          "query_repetition_count": 29,
+          "query_repetition_rate": 0.19727891156462585,
+          "retrieval_stagnation_count": 39,
+          "round_1_false_sufficiency_count": 56,
+          "round_1_gold_based_false_sufficiency": 0.7671232876712328,
+          "round_1_gold_incomplete_decisions": 73,
+          "stopping_round_distribution": {
+            "1": 83,
+            "2": 7,
+            "3": 0,
+            "4": 0,
+            "5": 10
+          },
+          "zero_new_evidence_round_rate": 0.2653061224489796
+        },
+        "duplicate_percentage_raw": 27.891156462585034,
+        "duplicate_retrievals": {
+          "max": 8,
+          "mean": 0.82,
+          "median": 0.0,
+          "min": 0,
+          "std": 2.368037161870565
+        },
+        "ending_model_status": {
+          "need_more_evidence": 10,
+          "sufficient": 90
+        },
+        "ending_model_status_percentages": {
+          "need_more_evidence": 10.0,
+          "sufficient": 90.0
+        },
+        "errors": 0,
+        "full_gold_recovery_rate": 0.32,
+        "gold_evidence_percentage": {
+          "max": 100.0,
+          "mean": 60.5,
+          "median": 50.0,
+          "min": 0.0,
+          "std": 31.060424980994707
+        },
+        "model_continued_after_gold_complete": 0,
+        "model_stopped_early_without_gold": 58,
+        "noise_percentage": {
+          "max": 100.0,
+          "mean": 42.0,
+          "median": 50.0,
+          "min": 0.0,
+          "std": 29.951813152313687
+        },
+        "raw_paragraphs_retrieved": {
+          "max": 10,
+          "mean": 2.94,
+          "median": 2.0,
+          "min": 2,
+          "std": 2.4075713904264604
+        },
+        "reasoning_model_calls": {
+          "controller": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "query_regeneration": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "repair": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "total": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          }
+        },
+        "retrieval_rounds": {
+          "max": 5,
+          "mean": 1.47,
+          "median": 1.0,
+          "min": 1,
+          "std": 1.2037856952132302
+        },
+        "stop_reason_distribution": {},
+        "stopping_round_counts": {
+          "1": 83,
+          "2": 7,
+          "3": 0,
+          "4": 0,
+          "5": 10
+        },
+        "stopping_round_percentages": {
+          "1": 83.0,
+          "2": 7.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 10.0
+        },
+        "unique_paragraphs_retrieved": {
+          "max": 4,
+          "mean": 2.12,
+          "median": 2.0,
+          "min": 2,
+          "std": 0.43081318457076034
+        },
+        "valid": 100,
+        "zero_gold_recovery_rate": 0.11
+      },
+      "valid": 100,
+      "zero_new_evidence_round_rate": 0.2653061224489796
+    },
+    "adaptive_v2": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0.42857142857142855,
+      "average_raw_paragraphs": 2.7936507936507935,
+      "average_retrieval_rounds": 1.3968253968253967,
+      "average_unique_paragraphs": 2.365079365079365,
+      "duplicate_share_raw": 0.1534090909090909,
+      "errors": 37,
+      "false_sufficiency_by_round": {
+        "1": {
+          "false_sufficient": 28,
+          "gold_incomplete_decisions": 73,
+          "rate": 0.3835616438356164
+        },
+        "2": {
+          "false_sufficient": 1,
+          "gold_incomplete_decisions": 17,
+          "rate": 0.058823529411764705
+        },
+        "3": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 9,
+          "rate": 0.0
+        },
+        "4": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 1,
+          "rate": 0.0
+        },
+        "5": {
+          "false_sufficient": 0,
+          "gold_incomplete_decisions": 1,
+          "rate": 0.0
+        }
+      },
+      "final_need_more_evidence": 1,
+      "final_sufficient": 62,
+      "full_gold_recovery_rate": 0.5238095238095238,
+      "gold_based_false_insufficiency": 0.36538461538461536,
+      "gold_based_false_sufficiency": 0.35802469135802467,
+      "gold_recovery_by_round": {
+        "1": {
+          "duplicate_paragraphs": 0,
+          "mean_cumulative_gold_recall_percentage": 57.5,
+          "mean_cumulative_raw_paragraphs": 2,
+          "mean_cumulative_unique_noise_percentage": 42.5,
+          "new_unique_paragraphs": 200,
+          "questions_reaching_round": 100,
+          "zero_new_evidence_rounds": 0
+        },
+        "2": {
+          "duplicate_paragraphs": 48,
+          "mean_cumulative_gold_recall_percentage": 79.34782608695652,
+          "mean_cumulative_raw_paragraphs": 4,
+          "mean_cumulative_unique_noise_percentage": 45.108695652173914,
+          "new_unique_paragraphs": 44,
+          "questions_reaching_round": 46,
+          "zero_new_evidence_rounds": 12
+        },
+        "3": {
+          "duplicate_paragraphs": 43,
+          "mean_cumulative_gold_recall_percentage": 75.0,
+          "mean_cumulative_raw_paragraphs": 6,
+          "mean_cumulative_unique_noise_percentage": 52.27272727272727,
+          "new_unique_paragraphs": 1,
+          "questions_reaching_round": 22,
+          "zero_new_evidence_rounds": 21
+        },
+        "4": {
+          "duplicate_paragraphs": 2,
+          "mean_cumulative_gold_recall_percentage": 0.0,
+          "mean_cumulative_raw_paragraphs": 8,
+          "mean_cumulative_unique_noise_percentage": 100.0,
+          "new_unique_paragraphs": 0,
+          "questions_reaching_round": 1,
+          "zero_new_evidence_rounds": 1
+        },
+        "5": {
+          "duplicate_paragraphs": 2,
+          "mean_cumulative_gold_recall_percentage": 0.0,
+          "mean_cumulative_raw_paragraphs": 10,
+          "mean_cumulative_unique_noise_percentage": 100.0,
+          "new_unique_paragraphs": 0,
+          "questions_reaching_round": 1,
+          "zero_new_evidence_rounds": 1
+        }
+      },
+      "loop_guard_activation_count": 28,
+      "mean_gold_evidence_percentage": 72.22222222222223,
+      "mean_unique_noise_percentage": 37.43386243386244,
+      "median_gold_evidence_percentage": 100.0,
+      "model_status_distribution": {
+        "need_more_evidence": 1,
+        "sufficient": 62
+      },
+      "premature_annotated_gold_stop_questions": 29,
+      "query_repetition_rate": 0.1,
+      "retrieval_stagnation_count": 35,
+      "round_1_gold_based_false_sufficiency": 0.4117647058823529,
+      "stopping_round_distribution": {
+        "1": 45,
+        "2": 13,
+        "3": 4,
+        "4": 0,
+        "5": 1
+      },
+      "summary": {
+        "attempted": 100,
+        "by_stopping_round": {
+          "1": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 64.44444444444444,
+              "median": 50.0,
+              "min": 0.0,
+              "std": 30.951973949298043
+            },
+            "noise_percentage": {
+              "max": 100.0,
+              "mean": 35.55555555555556,
+              "median": 50.0,
+              "min": 0.0,
+              "std": 30.951973949298043
+            }
+          },
+          "2": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 96.15384615384616,
+              "median": 100.0,
+              "min": 50.0,
+              "std": 13.323467750529826
+            },
+            "noise_percentage": {
+              "max": 75.0,
+              "mean": 40.38461538461539,
+              "median": 33.333333333333336,
+              "min": 0.0,
+              "std": 16.617283842071437
+            }
+          },
+          "3": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 100.0,
+              "median": 100.0,
+              "min": 100.0,
+              "std": 0.0
+            },
+            "noise_percentage": {
+              "max": 33.333333333333336,
+              "mean": 33.333333333333336,
+              "median": 33.333333333333336,
+              "min": 33.333333333333336,
+              "std": 0.0
+            }
+          },
+          "4": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "5": {
+            "gold_evidence_percentage": {
+              "max": 0.0,
+              "mean": 0.0,
+              "median": 0.0,
+              "min": 0.0,
+              "std": 0.0
+            },
+            "noise_percentage": {
+              "max": 100.0,
+              "mean": 100.0,
+              "median": 100.0,
+              "min": 100.0,
+              "std": 0.0
+            }
+          }
+        },
+        "controller_diagnostics": {
+          "average_new_unique_paragraphs_per_round": 1.4411764705882353,
+          "duplicate_retrieval_rate": 0.1534090909090909,
+          "false_sufficiency_by_round": {
+            "1": {
+              "false_sufficient": 28,
+              "gold_incomplete_decisions": 73,
+              "rate": 0.3835616438356164
+            },
+            "2": {
+              "false_sufficient": 1,
+              "gold_incomplete_decisions": 17,
+              "rate": 0.058823529411764705
+            },
+            "3": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 9,
+              "rate": 0.0
+            },
+            "4": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 1,
+              "rate": 0.0
+            },
+            "5": {
+              "false_sufficient": 0,
+              "gold_incomplete_decisions": 1,
+              "rate": 0.0
+            }
+          },
+          "final_status_distribution": {
+            "need_more_evidence": 1,
+            "sufficient": 62
+          },
+          "gold_based_false_insufficiency": 0.36538461538461536,
+          "gold_based_false_insufficiency_count": 19,
+          "gold_based_false_sufficiency": 0.35802469135802467,
+          "gold_based_false_sufficiency_count": 29,
+          "gold_complete_decisions": 52,
+          "gold_incomplete_decisions": 81,
+          "gold_recovery_by_round": {
+            "1": {
+              "duplicate_paragraphs": 0,
+              "mean_cumulative_gold_recall_percentage": 57.5,
+              "mean_cumulative_raw_paragraphs": 2,
+              "mean_cumulative_unique_noise_percentage": 42.5,
+              "new_unique_paragraphs": 200,
+              "questions_reaching_round": 100,
+              "zero_new_evidence_rounds": 0
+            },
+            "2": {
+              "duplicate_paragraphs": 48,
+              "mean_cumulative_gold_recall_percentage": 79.34782608695652,
+              "mean_cumulative_raw_paragraphs": 4,
+              "mean_cumulative_unique_noise_percentage": 45.108695652173914,
+              "new_unique_paragraphs": 44,
+              "questions_reaching_round": 46,
+              "zero_new_evidence_rounds": 12
+            },
+            "3": {
+              "duplicate_paragraphs": 43,
+              "mean_cumulative_gold_recall_percentage": 75.0,
+              "mean_cumulative_raw_paragraphs": 6,
+              "mean_cumulative_unique_noise_percentage": 52.27272727272727,
+              "new_unique_paragraphs": 1,
+              "questions_reaching_round": 22,
+              "zero_new_evidence_rounds": 21
+            },
+            "4": {
+              "duplicate_paragraphs": 2,
+              "mean_cumulative_gold_recall_percentage": 0.0,
+              "mean_cumulative_raw_paragraphs": 8,
+              "mean_cumulative_unique_noise_percentage": 100.0,
+              "new_unique_paragraphs": 0,
+              "questions_reaching_round": 1,
+              "zero_new_evidence_rounds": 1
+            },
+            "5": {
+              "duplicate_paragraphs": 2,
+              "mean_cumulative_gold_recall_percentage": 0.0,
+              "mean_cumulative_raw_paragraphs": 10,
+              "mean_cumulative_unique_noise_percentage": 100.0,
+              "new_unique_paragraphs": 0,
+              "questions_reaching_round": 1,
+              "zero_new_evidence_rounds": 1
+            }
+          },
+          "loop_guard_activation_count": 28,
+          "premature_annotated_gold_stop_questions": 29,
+          "query_repetition_count": 17,
+          "query_repetition_rate": 0.1,
+          "retrieval_stagnation_count": 35,
+          "round_1_false_sufficiency_count": 28,
+          "round_1_gold_based_false_sufficiency": 0.4117647058823529,
+          "round_1_gold_incomplete_decisions": 68,
+          "stopping_round_distribution": {
+            "1": 45,
+            "2": 13,
+            "3": 4,
+            "4": 0,
+            "5": 1
+          },
+          "zero_new_evidence_round_rate": 0.20588235294117646
+        },
+        "duplicate_percentage_raw": 15.340909090909092,
+        "duplicate_retrievals": {
+          "max": 7,
+          "mean": 0.42857142857142855,
+          "median": 0,
+          "min": 0,
+          "std": 1.1507662831994832
+        },
+        "ending_model_status": {
+          "need_more_evidence": 1,
+          "sufficient": 62
+        },
+        "ending_model_status_percentages": {
+          "need_more_evidence": 1.5873015873015872,
+          "sufficient": 98.41269841269842
+        },
+        "errors": 37,
+        "full_gold_recovery_rate": 0.5238095238095238,
+        "gold_evidence_percentage": {
+          "max": 100.0,
+          "mean": 72.22222222222223,
+          "median": 100.0,
+          "min": 0.0,
+          "std": 31.84508356783949
+        },
+        "model_continued_after_gold_complete": 5,
+        "model_stopped_early_without_gold": 29,
+        "noise_percentage": {
+          "max": 100.0,
+          "mean": 37.43386243386244,
+          "median": 50.0,
+          "min": 0.0,
+          "std": 28.439461054076453
+        },
+        "raw_paragraphs_retrieved": {
+          "max": 10,
+          "mean": 2.7936507936507935,
+          "median": 2,
+          "min": 2,
+          "std": 1.4924011775927821
+        },
+        "reasoning_model_calls": {
+          "controller": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "query_regeneration": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "repair": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "total": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          }
+        },
+        "retrieval_rounds": {
+          "max": 5,
+          "mean": 1.3968253968253967,
+          "median": 1,
+          "min": 1,
+          "std": 0.7462005887963911
+        },
+        "stop_reason_distribution": {},
+        "stopping_round_counts": {
+          "1": 45,
+          "2": 13,
+          "3": 4,
+          "4": 0,
+          "5": 1
+        },
+        "stopping_round_percentages": {
+          "1": 71.42857142857143,
+          "2": 20.634920634920636,
+          "3": 6.349206349206349,
+          "4": 0.0,
+          "5": 1.5873015873015872
+        },
+        "unique_paragraphs_retrieved": {
+          "max": 4,
+          "mean": 2.365079365079365,
+          "median": 2,
+          "min": 2,
+          "std": 0.6498250631891658
+        },
+        "valid": 63,
+        "zero_gold_recovery_rate": 0.07936507936507936
+      },
+      "valid": 63,
+      "zero_new_evidence_round_rate": 0.20588235294117646
+    },
+    "top5": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0,
+      "average_raw_paragraphs": 4.97,
+      "average_retrieval_rounds": 1,
+      "average_unique_paragraphs": 4.97,
+      "duplicate_share_raw": 0.0,
+      "errors": 0,
+      "false_sufficiency_by_round": {},
+      "final_need_more_evidence": 0,
+      "final_sufficient": 0,
+      "full_gold_recovery_rate": 0.7,
+      "gold_based_false_insufficiency": null,
+      "gold_based_false_sufficiency": null,
+      "gold_recovery_by_round": {},
+      "loop_guard_activation_count": 0,
+      "mean_gold_evidence_percentage": 84.5,
+      "mean_unique_noise_percentage": 65.6,
+      "median_gold_evidence_percentage": 100.0,
+      "model_status_distribution": {},
+      "premature_annotated_gold_stop_questions": 0,
+      "query_repetition_rate": null,
+      "retrieval_stagnation_count": 0,
+      "round_1_gold_based_false_sufficiency": null,
+      "stopping_round_distribution": {
+        "1": 100,
+        "2": 0,
+        "3": 0,
+        "4": 0,
+        "5": 0
+      },
+      "summary": {
+        "attempted": 100,
+        "by_stopping_round": {
+          "1": {
+            "gold_evidence_percentage": {
+              "max": 100.0,
+              "mean": 84.5,
+              "median": 100.0,
+              "min": 0.0,
+              "std": 24.181604578687494
+            },
+            "noise_percentage": {
+              "max": 100.0,
+              "mean": 65.6,
+              "median": 60.0,
+              "min": 0.0,
+              "std": 11.689311356961966
+            }
+          },
+          "2": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "3": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "4": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          },
+          "5": {
+            "gold_evidence_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            },
+            "noise_percentage": {
+              "max": null,
+              "mean": null,
+              "median": null,
+              "min": null,
+              "std": null
+            }
+          }
+        },
+        "controller_diagnostics": {
+          "average_new_unique_paragraphs_per_round": null,
+          "duplicate_retrieval_rate": 0.0,
+          "false_sufficiency_by_round": {},
+          "final_status_distribution": {},
+          "gold_based_false_insufficiency": null,
+          "gold_based_false_insufficiency_count": 0,
+          "gold_based_false_sufficiency": null,
+          "gold_based_false_sufficiency_count": 0,
+          "gold_complete_decisions": 0,
+          "gold_incomplete_decisions": 0,
+          "gold_recovery_by_round": {},
+          "loop_guard_activation_count": 0,
+          "premature_annotated_gold_stop_questions": 0,
+          "query_repetition_count": 0,
+          "query_repetition_rate": null,
+          "retrieval_stagnation_count": 0,
+          "round_1_false_sufficiency_count": 0,
+          "round_1_gold_based_false_sufficiency": null,
+          "round_1_gold_incomplete_decisions": 0,
+          "stopping_round_distribution": {
+            "1": 100,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0
+          },
+          "zero_new_evidence_round_rate": null
+        },
+        "duplicate_percentage_raw": 0.0,
+        "duplicate_retrievals": {
+          "max": 0,
+          "mean": 0,
+          "median": 0.0,
+          "min": 0,
+          "std": 0.0
+        },
+        "ending_model_status": {},
+        "ending_model_status_percentages": {},
+        "errors": 0,
+        "full_gold_recovery_rate": 0.7,
+        "gold_evidence_percentage": {
+          "max": 100.0,
+          "mean": 84.5,
+          "median": 100.0,
+          "min": 0.0,
+          "std": 24.181604578687494
+        },
+        "model_continued_after_gold_complete": 0,
+        "model_stopped_early_without_gold": 0,
+        "noise_percentage": {
+          "max": 100.0,
+          "mean": 65.6,
+          "median": 60.0,
+          "min": 0.0,
+          "std": 11.689311356961966
+        },
+        "raw_paragraphs_retrieved": {
+          "max": 5,
+          "mean": 4.97,
+          "median": 5.0,
+          "min": 2,
+          "std": 0.298496231131986
+        },
+        "reasoning_model_calls": {
+          "controller": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "query_regeneration": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "repair": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          },
+          "total": {
+            "max": 0,
+            "mean": 0,
+            "median": 0.0,
+            "min": 0,
+            "std": 0.0
+          }
+        },
+        "retrieval_rounds": {
+          "max": 1,
+          "mean": 1,
+          "median": 1.0,
+          "min": 1,
+          "std": 0.0
+        },
+        "stop_reason_distribution": {},
+        "stopping_round_counts": {
+          "1": 100,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "stopping_round_percentages": {
+          "1": 100.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0
+        },
+        "unique_paragraphs_retrieved": {
+          "max": 5,
+          "mean": 4.97,
+          "median": 5.0,
+          "min": 2,
+          "std": 0.298496231131986
+        },
+        "valid": 100,
+        "zero_gold_recovery_rate": 0.01
+      },
+      "valid": 100,
+      "zero_new_evidence_round_rate": null
+    }
+  },
+  "cohort_ids_sha256": "eef5d006a21f842f39973e81fdaf2b73282439c7fd10395fb4b7af7b94042fcf",
+  "paired_adaptive_v1_to_v2": [
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac3b9bb55429939154138ed",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8398995542992ef85e2323",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a74f2a355429974ef308caa",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5adbdc205542996e68525261",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 1,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a7b9b8a554299294a54aa1c",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a809c9b5542996402f6a5a6",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5abe49c255429976d4830add",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a890d91554299669944a484",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a81e78d554299676cceb150",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a7fbd7e5542994857a767f1",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8ba80d554299240d9c206a",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -6,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a87b5bd5542996e4f3088d3",
+      "raw_paragraphs": -6,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -3,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a8e3e175542995a26add48a",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae74e9b5542997b22f6a6a8",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8f0e9c5542997ba9cb31a3",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a73621455429901807db01d",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab952f1554299753720f7f5",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8adc8655429950cd6afbbd",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ac06a915542996f0d89cbb1",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab39ebc554299753aec5977",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab84f9255429916710eb032",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab29388554299449642c906",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5adf67bd5542993344016c71",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7e1cdf55429965cec5ea77",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac21a855542992f1f2b37fd",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8a83c95542996c9b8d5f15",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a77362e5542994aec3b7227",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 16.66666666666667,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7e63f255429949594199b4",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 1,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ae340c45542992f92d82273",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae3a5a85542992f92d82323",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab9ced855429939ce03dc28",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5add75875542992ae4cec572",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7a19c35542990783324e5a",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae3a47f5542991a06ce9a07",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 1,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a80a04e5542996402f6a5bc",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 16.66666666666667,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 7,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae12f915542997b2ef7d11f",
+      "raw_paragraphs": 8,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 4,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae210c95542997283cd23a3",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5adc1031554299438c868d21",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae8286b5542997ec2727735",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5adc020d55429947ff1738b3",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a810876554299260e20a211",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -33.33333333333333,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae15b605542990adbacf768",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a776ae65542993569682d9c",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 16.66666666666667,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a87a42d5542996e4f30889a",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": -33.333333333333336,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5abfd0875542993fe9a41e82",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae7fe5a5542993210984014",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -4,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a77387355429972597f14aa",
+      "raw_paragraphs": -4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -2,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5abec5aa5542997719eab5bb",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8c43075542995e66a47582",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": -50.0,
+      "question_id": "5ab7e2b3554299366779402f",
+      "raw_paragraphs": -2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": -2,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 100.0,
+      "question_id": "5ac081255542992a796ded2c",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -50.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5adde6085542992200553b92",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8094a35542995d8a8ddfa4",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac2d9ff554299218029db86",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae6adae55429908198fa679",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -5,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ae4d03e5542990ba0bbb155",
+      "raw_paragraphs": -4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -1,
+      "gold_evidence_percentage": -50.0,
+      "question_id": "5a72cc6e5542991f9a20c59c",
+      "raw_paragraphs": -2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -1,
+      "unique_noise_percentage": 16.666666666666664,
+      "unique_paragraphs": -1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": -8,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7795655542992a6e59df0b",
+      "raw_paragraphs": -8,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -4,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae4df5055429908b632649e",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab96cd555429970cfb8eada",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7a13e55542990198eaf06f",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab7fc915542993667794089",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae4441e5542996836b02c62",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -7,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ae29c145542996483e64a0c",
+      "raw_paragraphs": -6,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -3,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac2e756554299218029db91",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8a6e8555429970aeb702dc",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a809b3e5542995d8a8ddfac",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -6,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a710e545542994082a3e530",
+      "raw_paragraphs": -6,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -3,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a8b82dc55429949d91db5bc",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5add47ae5542995b365faaf5",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -25.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ab8e03855429919ba4e2372",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac3a1cc5542993915413841",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5abc7c1d5542993a06baf8f1",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab9be41554299743d22ebe2",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab539115542997d4ad1f0d7",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a802d3a5542992bc0c4a6c1",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab966335542996be20204c4",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 50.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7c6d325542996dd594b92f",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 16.66666666666667,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab60f995542992aa134a408",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 1,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5ae568665542990ba0bbb298",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab3050155429976abd1bc25",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae0a84f554299603e418431",
+      "raw_paragraphs": -2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": -2,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ab66c9d55429954757d32a5",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ae74f345542997b22f6a6ae",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7781535542995d83181177",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -4,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a89156c554299669944a4a3",
+      "raw_paragraphs": -4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -2,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ade9ee755429939a52fe90a",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a803ad55542996402f6a48b",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 2,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7547cd55429916b01642d9",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": -8,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a7fe2055542994857a7681f",
+      "raw_paragraphs": -8,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -4,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 1,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a7c731555429935c91b51bb",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a74a9c755429979e28829e9",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": -6,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5a80ae375542996402f6a5e8",
+      "raw_paragraphs": -6,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -3,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": -5,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5adc74fd55429947ff173974",
+      "raw_paragraphs": -4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": -2,
+      "unique_noise_percentage": 16.66666666666667,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a7d18f955429909bec7694f",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 2,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5add11045542994ed6169c5b",
+      "raw_paragraphs": 2,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 1,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 50.0,
+      "question_id": "5a837ab8554299123d8c2136",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": -16.666666666666664,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ac081b9554299294b21900a",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    },
+    {
+      "duplicate_retrievals": 3,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5ade628a55429975fa854eb6",
+      "raw_paragraphs": 4,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 2,
+      "unique_noise_percentage": 33.333333333333336,
+      "unique_paragraphs": 1,
+      "v2_controller_valid": false
+    },
+    {
+      "duplicate_retrievals": 0,
+      "gold_evidence_percentage": 0.0,
+      "question_id": "5abace0a5542996606241621",
+      "raw_paragraphs": 0,
+      "retrieval_pair_valid": true,
+      "retrieval_rounds": 0,
+      "unique_noise_percentage": 0.0,
+      "unique_paragraphs": 0,
+      "v2_controller_valid": true
+    }
+  ],
+  "retrieval_metrics_all_attempts": {
+    "adaptive_v1": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0.82,
+      "average_raw_paragraphs": 2.94,
+      "average_retrieval_rounds": 1.47,
+      "average_unique_paragraphs": 2.12,
+      "duplicate_share_raw": 0.2789115646258503,
+      "full_gold_recovery_rate": 0.32,
+      "mean_gold_evidence_percentage": 60.5,
+      "mean_unique_noise_percentage": 42.0,
+      "median_gold_evidence_percentage": 50.0
+    },
+    "adaptive_v2": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0.95,
+      "average_raw_paragraphs": 3.4,
+      "average_retrieval_rounds": 1.7,
+      "average_unique_paragraphs": 2.45,
+      "duplicate_share_raw": 0.27941176470588236,
+      "full_gold_recovery_rate": 0.5,
+      "mean_gold_evidence_percentage": 71.0,
+      "mean_unique_noise_percentage": 40.25000000000001,
+      "median_gold_evidence_percentage": 75.0
+    },
+    "top5": {
+      "attempted": 100,
+      "average_duplicate_retrievals": 0.0,
+      "average_raw_paragraphs": 4.97,
+      "average_retrieval_rounds": 1.0,
+      "average_unique_paragraphs": 4.97,
+      "duplicate_share_raw": 0.0,
+      "full_gold_recovery_rate": 0.7,
+      "mean_gold_evidence_percentage": 84.5,
+      "mean_unique_noise_percentage": 65.6,
+      "median_gold_evidence_percentage": 100.0
+    }
+  },
+  "retrieval_pairs": 100,
+  "sources": {
+    "adaptive_v1": {
+      "path": "outputs/adaptive_v1_top2_basic_controller_same100/results.jsonl",
+      "sha256": "1d454ea207173c5ebb06850bb5b171b90f80cd520948d313e743acd9c8cb79ac"
+    },
+    "adaptive_v2": {
+      "path": "outputs/adaptive_v2_top2_evidence_chain_controller_same100/results.jsonl",
+      "sha256": "86782e6259ae3b06478d324b23b7f4169e1880084fbdecd9848123430f4e6318"
+    },
+    "top5": {
+      "path": "outputs/baseline_top5_single_shot_same100/results.jsonl",
+      "sha256": "88729301c997c10b092e264c08574734fa2343ec0359754b52d04bb6cf1948dc"
+    }
+  },
+  "v2_controller_valid_pairs": 63,
+  "v2_valid_common_cohort": {
+    "n": 63,
+    "systems": {
+      "adaptive_v1": {
+        "attempted": 63,
+        "average_duplicate_retrievals": 0.5396825396825397,
+        "average_raw_paragraphs": 2.634920634920635,
+        "average_retrieval_rounds": 1.3174603174603174,
+        "average_unique_paragraphs": 2.0952380952380953,
+        "duplicate_share_raw": 0.20481927710843373,
+        "errors": 0,
+        "false_sufficiency_by_round": {
+          "1": {
+            "false_sufficient": 37,
+            "gold_incomplete_decisions": 45,
+            "rate": 0.8222222222222222
+          },
+          "2": {
+            "false_sufficient": 2,
+            "gold_incomplete_decisions": 6,
+            "rate": 0.3333333333333333
+          },
+          "3": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 4,
+            "rate": 0.0
+          },
+          "4": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 4,
+            "rate": 0.0
+          },
+          "5": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 4,
+            "rate": 0.0
+          }
+        },
+        "final_need_more_evidence": 4,
+        "final_sufficient": 59,
+        "full_gold_recovery_rate": 0.31746031746031744,
+        "gold_based_false_insufficiency": 0.0,
+        "gold_based_false_sufficiency": 0.6190476190476191,
+        "gold_recovery_by_round": {
+          "1": {
+            "duplicate_paragraphs": 0,
+            "mean_cumulative_gold_recall_percentage": 58.73015873015873,
+            "mean_cumulative_raw_paragraphs": 2,
+            "mean_cumulative_unique_noise_percentage": 41.26984126984127,
+            "new_unique_paragraphs": 126,
+            "questions_reaching_round": 63,
+            "zero_new_evidence_rounds": 0
+          },
+          "2": {
+            "duplicate_paragraphs": 10,
+            "mean_cumulative_gold_recall_percentage": 56.25,
+            "mean_cumulative_raw_paragraphs": 4,
+            "mean_cumulative_unique_noise_percentage": 56.25,
+            "new_unique_paragraphs": 6,
+            "questions_reaching_round": 8,
+            "zero_new_evidence_rounds": 4
+          },
+          "3": {
+            "duplicate_paragraphs": 8,
+            "mean_cumulative_gold_recall_percentage": 50.0,
+            "mean_cumulative_raw_paragraphs": 6,
+            "mean_cumulative_unique_noise_percentage": 50.0,
+            "new_unique_paragraphs": 0,
+            "questions_reaching_round": 4,
+            "zero_new_evidence_rounds": 4
+          },
+          "4": {
+            "duplicate_paragraphs": 8,
+            "mean_cumulative_gold_recall_percentage": 50.0,
+            "mean_cumulative_raw_paragraphs": 8,
+            "mean_cumulative_unique_noise_percentage": 50.0,
+            "new_unique_paragraphs": 0,
+            "questions_reaching_round": 4,
+            "zero_new_evidence_rounds": 4
+          },
+          "5": {
+            "duplicate_paragraphs": 8,
+            "mean_cumulative_gold_recall_percentage": 50.0,
+            "mean_cumulative_raw_paragraphs": 10,
+            "mean_cumulative_unique_noise_percentage": 50.0,
+            "new_unique_paragraphs": 0,
+            "questions_reaching_round": 4,
+            "zero_new_evidence_rounds": 4
+          }
+        },
+        "loop_guard_activation_count": 0,
+        "mean_gold_evidence_percentage": 60.317460317460316,
+        "mean_unique_noise_percentage": 41.26984126984127,
+        "median_gold_evidence_percentage": 50.0,
+        "model_status_distribution": {
+          "need_more_evidence": 4,
+          "sufficient": 59
+        },
+        "premature_annotated_gold_stop_questions": 39,
+        "query_repetition_rate": 0.14457831325301204,
+        "retrieval_stagnation_count": 16,
+        "round_1_gold_based_false_sufficiency": 0.8222222222222222,
+        "stopping_round_distribution": {
+          "1": 55,
+          "2": 4,
+          "3": 0,
+          "4": 0,
+          "5": 4
+        },
+        "summary": {
+          "attempted": 63,
+          "by_stopping_round": {
+            "1": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 60.90909090909091,
+                "median": 50.0,
+                "min": 0.0,
+                "std": 31.17532399905863
+              },
+              "noise_percentage": {
+                "max": 100.0,
+                "mean": 39.09090909090909,
+                "median": 50.0,
+                "min": 0.0,
+                "std": 31.17532399905863
+              }
+            },
+            "2": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 62.5,
+                "median": 75.0,
+                "min": 0.0,
+                "std": 41.4578098794425
+              },
+              "noise_percentage": {
+                "max": 100.0,
+                "mean": 62.5,
+                "median": 58.333333333333336,
+                "min": 33.333333333333336,
+                "std": 24.650332429581734
+              }
+            },
+            "3": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "4": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "5": {
+              "gold_evidence_percentage": {
+                "max": 50.0,
+                "mean": 50.0,
+                "median": 50.0,
+                "min": 50.0,
+                "std": 0.0
+              },
+              "noise_percentage": {
+                "max": 50.0,
+                "mean": 50.0,
+                "median": 50.0,
+                "min": 50.0,
+                "std": 0.0
+              }
+            }
+          },
+          "controller_diagnostics": {
+            "average_new_unique_paragraphs_per_round": 1.5903614457831325,
+            "duplicate_retrieval_rate": 0.20481927710843373,
+            "false_sufficiency_by_round": {
+              "1": {
+                "false_sufficient": 37,
+                "gold_incomplete_decisions": 45,
+                "rate": 0.8222222222222222
+              },
+              "2": {
+                "false_sufficient": 2,
+                "gold_incomplete_decisions": 6,
+                "rate": 0.3333333333333333
+              },
+              "3": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 4,
+                "rate": 0.0
+              },
+              "4": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 4,
+                "rate": 0.0
+              },
+              "5": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 4,
+                "rate": 0.0
+              }
+            },
+            "final_status_distribution": {
+              "need_more_evidence": 4,
+              "sufficient": 59
+            },
+            "gold_based_false_insufficiency": 0.0,
+            "gold_based_false_insufficiency_count": 0,
+            "gold_based_false_sufficiency": 0.6190476190476191,
+            "gold_based_false_sufficiency_count": 39,
+            "gold_complete_decisions": 20,
+            "gold_incomplete_decisions": 63,
+            "gold_recovery_by_round": {
+              "1": {
+                "duplicate_paragraphs": 0,
+                "mean_cumulative_gold_recall_percentage": 58.73015873015873,
+                "mean_cumulative_raw_paragraphs": 2,
+                "mean_cumulative_unique_noise_percentage": 41.26984126984127,
+                "new_unique_paragraphs": 126,
+                "questions_reaching_round": 63,
+                "zero_new_evidence_rounds": 0
+              },
+              "2": {
+                "duplicate_paragraphs": 10,
+                "mean_cumulative_gold_recall_percentage": 56.25,
+                "mean_cumulative_raw_paragraphs": 4,
+                "mean_cumulative_unique_noise_percentage": 56.25,
+                "new_unique_paragraphs": 6,
+                "questions_reaching_round": 8,
+                "zero_new_evidence_rounds": 4
+              },
+              "3": {
+                "duplicate_paragraphs": 8,
+                "mean_cumulative_gold_recall_percentage": 50.0,
+                "mean_cumulative_raw_paragraphs": 6,
+                "mean_cumulative_unique_noise_percentage": 50.0,
+                "new_unique_paragraphs": 0,
+                "questions_reaching_round": 4,
+                "zero_new_evidence_rounds": 4
+              },
+              "4": {
+                "duplicate_paragraphs": 8,
+                "mean_cumulative_gold_recall_percentage": 50.0,
+                "mean_cumulative_raw_paragraphs": 8,
+                "mean_cumulative_unique_noise_percentage": 50.0,
+                "new_unique_paragraphs": 0,
+                "questions_reaching_round": 4,
+                "zero_new_evidence_rounds": 4
+              },
+              "5": {
+                "duplicate_paragraphs": 8,
+                "mean_cumulative_gold_recall_percentage": 50.0,
+                "mean_cumulative_raw_paragraphs": 10,
+                "mean_cumulative_unique_noise_percentage": 50.0,
+                "new_unique_paragraphs": 0,
+                "questions_reaching_round": 4,
+                "zero_new_evidence_rounds": 4
+              }
+            },
+            "loop_guard_activation_count": 0,
+            "premature_annotated_gold_stop_questions": 39,
+            "query_repetition_count": 12,
+            "query_repetition_rate": 0.14457831325301204,
+            "retrieval_stagnation_count": 16,
+            "round_1_false_sufficiency_count": 37,
+            "round_1_gold_based_false_sufficiency": 0.8222222222222222,
+            "round_1_gold_incomplete_decisions": 45,
+            "stopping_round_distribution": {
+              "1": 55,
+              "2": 4,
+              "3": 0,
+              "4": 0,
+              "5": 4
+            },
+            "zero_new_evidence_round_rate": 0.1927710843373494
+          },
+          "duplicate_percentage_raw": 20.481927710843372,
+          "duplicate_retrievals": {
+            "max": 8,
+            "mean": 0.5396825396825397,
+            "median": 0,
+            "min": 0,
+            "std": 1.9503796685773513
+          },
+          "ending_model_status": {
+            "need_more_evidence": 4,
+            "sufficient": 59
+          },
+          "ending_model_status_percentages": {
+            "need_more_evidence": 6.349206349206349,
+            "sufficient": 93.65079365079364
+          },
+          "errors": 0,
+          "full_gold_recovery_rate": 0.31746031746031744,
+          "gold_evidence_percentage": {
+            "max": 100.0,
+            "mean": 60.317460317460316,
+            "median": 50.0,
+            "min": 0.0,
+            "std": 31.064104429810996
+          },
+          "model_continued_after_gold_complete": 0,
+          "model_stopped_early_without_gold": 39,
+          "noise_percentage": {
+            "max": 100.0,
+            "mean": 41.26984126984127,
+            "median": 50.0,
+            "min": 0.0,
+            "std": 30.40832390582225
+          },
+          "raw_paragraphs_retrieved": {
+            "max": 10,
+            "mean": 2.634920634920635,
+            "median": 2,
+            "min": 2,
+            "std": 1.9784681207470327
+          },
+          "reasoning_model_calls": {
+            "controller": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "query_regeneration": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "repair": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "total": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            }
+          },
+          "retrieval_rounds": {
+            "max": 5,
+            "mean": 1.3174603174603174,
+            "median": 1,
+            "min": 1,
+            "std": 0.9892340603735164
+          },
+          "stop_reason_distribution": {},
+          "stopping_round_counts": {
+            "1": 55,
+            "2": 4,
+            "3": 0,
+            "4": 0,
+            "5": 4
+          },
+          "stopping_round_percentages": {
+            "1": 87.3015873015873,
+            "2": 6.349206349206349,
+            "3": 0.0,
+            "4": 0.0,
+            "5": 6.349206349206349
+          },
+          "unique_paragraphs_retrieved": {
+            "max": 4,
+            "mean": 2.0952380952380953,
+            "median": 2,
+            "min": 2,
+            "std": 0.3868589716493315
+          },
+          "valid": 63,
+          "zero_gold_recovery_rate": 0.1111111111111111
+        },
+        "valid": 63,
+        "zero_new_evidence_round_rate": 0.1927710843373494
+      },
+      "adaptive_v2": {
+        "attempted": 63,
+        "average_duplicate_retrievals": 0.42857142857142855,
+        "average_raw_paragraphs": 2.7936507936507935,
+        "average_retrieval_rounds": 1.3968253968253967,
+        "average_unique_paragraphs": 2.365079365079365,
+        "duplicate_share_raw": 0.1534090909090909,
+        "errors": 0,
+        "false_sufficiency_by_round": {
+          "1": {
+            "false_sufficient": 28,
+            "gold_incomplete_decisions": 45,
+            "rate": 0.6222222222222222
+          },
+          "2": {
+            "false_sufficient": 1,
+            "gold_incomplete_decisions": 2,
+            "rate": 0.5
+          },
+          "3": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 1,
+            "rate": 0.0
+          },
+          "4": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 1,
+            "rate": 0.0
+          },
+          "5": {
+            "false_sufficient": 0,
+            "gold_incomplete_decisions": 1,
+            "rate": 0.0
+          }
+        },
+        "final_need_more_evidence": 1,
+        "final_sufficient": 62,
+        "full_gold_recovery_rate": 0.5238095238095238,
+        "gold_based_false_insufficiency": 0.13157894736842105,
+        "gold_based_false_sufficiency": 0.58,
+        "gold_recovery_by_round": {
+          "1": {
+            "duplicate_paragraphs": 0,
+            "mean_cumulative_gold_recall_percentage": 58.73015873015873,
+            "mean_cumulative_raw_paragraphs": 2,
+            "mean_cumulative_unique_noise_percentage": 41.26984126984127,
+            "new_unique_paragraphs": 126,
+            "questions_reaching_round": 63,
+            "zero_new_evidence_rounds": 0
+          },
+          "2": {
+            "duplicate_paragraphs": 14,
+            "mean_cumulative_gold_recall_percentage": 91.66666666666667,
+            "mean_cumulative_raw_paragraphs": 4,
+            "mean_cumulative_unique_noise_percentage": 42.12962962962963,
+            "new_unique_paragraphs": 22,
+            "questions_reaching_round": 18,
+            "zero_new_evidence_rounds": 2
+          },
+          "3": {
+            "duplicate_paragraphs": 9,
+            "mean_cumulative_gold_recall_percentage": 80.0,
+            "mean_cumulative_raw_paragraphs": 6,
+            "mean_cumulative_unique_noise_percentage": 46.66666666666667,
+            "new_unique_paragraphs": 1,
+            "questions_reaching_round": 5,
+            "zero_new_evidence_rounds": 4
+          },
+          "4": {
+            "duplicate_paragraphs": 2,
+            "mean_cumulative_gold_recall_percentage": 0.0,
+            "mean_cumulative_raw_paragraphs": 8,
+            "mean_cumulative_unique_noise_percentage": 100.0,
+            "new_unique_paragraphs": 0,
+            "questions_reaching_round": 1,
+            "zero_new_evidence_rounds": 1
+          },
+          "5": {
+            "duplicate_paragraphs": 2,
+            "mean_cumulative_gold_recall_percentage": 0.0,
+            "mean_cumulative_raw_paragraphs": 10,
+            "mean_cumulative_unique_noise_percentage": 100.0,
+            "new_unique_paragraphs": 0,
+            "questions_reaching_round": 1,
+            "zero_new_evidence_rounds": 1
+          }
+        },
+        "loop_guard_activation_count": 1,
+        "mean_gold_evidence_percentage": 72.22222222222223,
+        "mean_unique_noise_percentage": 37.43386243386244,
+        "median_gold_evidence_percentage": 100.0,
+        "model_status_distribution": {
+          "need_more_evidence": 1,
+          "sufficient": 62
+        },
+        "premature_annotated_gold_stop_questions": 29,
+        "query_repetition_rate": 0.045454545454545456,
+        "retrieval_stagnation_count": 8,
+        "round_1_gold_based_false_sufficiency": 0.6222222222222222,
+        "stopping_round_distribution": {
+          "1": 45,
+          "2": 13,
+          "3": 4,
+          "4": 0,
+          "5": 1
+        },
+        "summary": {
+          "attempted": 63,
+          "by_stopping_round": {
+            "1": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 64.44444444444444,
+                "median": 50.0,
+                "min": 0.0,
+                "std": 30.951973949298043
+              },
+              "noise_percentage": {
+                "max": 100.0,
+                "mean": 35.55555555555556,
+                "median": 50.0,
+                "min": 0.0,
+                "std": 30.951973949298043
+              }
+            },
+            "2": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 96.15384615384616,
+                "median": 100.0,
+                "min": 50.0,
+                "std": 13.323467750529826
+              },
+              "noise_percentage": {
+                "max": 75.0,
+                "mean": 40.38461538461539,
+                "median": 33.333333333333336,
+                "min": 0.0,
+                "std": 16.617283842071437
+              }
+            },
+            "3": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 100.0,
+                "median": 100.0,
+                "min": 100.0,
+                "std": 0.0
+              },
+              "noise_percentage": {
+                "max": 33.333333333333336,
+                "mean": 33.333333333333336,
+                "median": 33.333333333333336,
+                "min": 33.333333333333336,
+                "std": 0.0
+              }
+            },
+            "4": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "5": {
+              "gold_evidence_percentage": {
+                "max": 0.0,
+                "mean": 0.0,
+                "median": 0.0,
+                "min": 0.0,
+                "std": 0.0
+              },
+              "noise_percentage": {
+                "max": 100.0,
+                "mean": 100.0,
+                "median": 100.0,
+                "min": 100.0,
+                "std": 0.0
+              }
+            }
+          },
+          "controller_diagnostics": {
+            "average_new_unique_paragraphs_per_round": 1.6931818181818181,
+            "duplicate_retrieval_rate": 0.1534090909090909,
+            "false_sufficiency_by_round": {
+              "1": {
+                "false_sufficient": 28,
+                "gold_incomplete_decisions": 45,
+                "rate": 0.6222222222222222
+              },
+              "2": {
+                "false_sufficient": 1,
+                "gold_incomplete_decisions": 2,
+                "rate": 0.5
+              },
+              "3": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 1,
+                "rate": 0.0
+              },
+              "4": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 1,
+                "rate": 0.0
+              },
+              "5": {
+                "false_sufficient": 0,
+                "gold_incomplete_decisions": 1,
+                "rate": 0.0
+              }
+            },
+            "final_status_distribution": {
+              "need_more_evidence": 1,
+              "sufficient": 62
+            },
+            "gold_based_false_insufficiency": 0.13157894736842105,
+            "gold_based_false_insufficiency_count": 5,
+            "gold_based_false_sufficiency": 0.58,
+            "gold_based_false_sufficiency_count": 29,
+            "gold_complete_decisions": 38,
+            "gold_incomplete_decisions": 50,
+            "gold_recovery_by_round": {
+              "1": {
+                "duplicate_paragraphs": 0,
+                "mean_cumulative_gold_recall_percentage": 58.73015873015873,
+                "mean_cumulative_raw_paragraphs": 2,
+                "mean_cumulative_unique_noise_percentage": 41.26984126984127,
+                "new_unique_paragraphs": 126,
+                "questions_reaching_round": 63,
+                "zero_new_evidence_rounds": 0
+              },
+              "2": {
+                "duplicate_paragraphs": 14,
+                "mean_cumulative_gold_recall_percentage": 91.66666666666667,
+                "mean_cumulative_raw_paragraphs": 4,
+                "mean_cumulative_unique_noise_percentage": 42.12962962962963,
+                "new_unique_paragraphs": 22,
+                "questions_reaching_round": 18,
+                "zero_new_evidence_rounds": 2
+              },
+              "3": {
+                "duplicate_paragraphs": 9,
+                "mean_cumulative_gold_recall_percentage": 80.0,
+                "mean_cumulative_raw_paragraphs": 6,
+                "mean_cumulative_unique_noise_percentage": 46.66666666666667,
+                "new_unique_paragraphs": 1,
+                "questions_reaching_round": 5,
+                "zero_new_evidence_rounds": 4
+              },
+              "4": {
+                "duplicate_paragraphs": 2,
+                "mean_cumulative_gold_recall_percentage": 0.0,
+                "mean_cumulative_raw_paragraphs": 8,
+                "mean_cumulative_unique_noise_percentage": 100.0,
+                "new_unique_paragraphs": 0,
+                "questions_reaching_round": 1,
+                "zero_new_evidence_rounds": 1
+              },
+              "5": {
+                "duplicate_paragraphs": 2,
+                "mean_cumulative_gold_recall_percentage": 0.0,
+                "mean_cumulative_raw_paragraphs": 10,
+                "mean_cumulative_unique_noise_percentage": 100.0,
+                "new_unique_paragraphs": 0,
+                "questions_reaching_round": 1,
+                "zero_new_evidence_rounds": 1
+              }
+            },
+            "loop_guard_activation_count": 1,
+            "premature_annotated_gold_stop_questions": 29,
+            "query_repetition_count": 4,
+            "query_repetition_rate": 0.045454545454545456,
+            "retrieval_stagnation_count": 8,
+            "round_1_false_sufficiency_count": 28,
+            "round_1_gold_based_false_sufficiency": 0.6222222222222222,
+            "round_1_gold_incomplete_decisions": 45,
+            "stopping_round_distribution": {
+              "1": 45,
+              "2": 13,
+              "3": 4,
+              "4": 0,
+              "5": 1
+            },
+            "zero_new_evidence_round_rate": 0.09090909090909091
+          },
+          "duplicate_percentage_raw": 15.340909090909092,
+          "duplicate_retrievals": {
+            "max": 7,
+            "mean": 0.42857142857142855,
+            "median": 0,
+            "min": 0,
+            "std": 1.1507662831994832
+          },
+          "ending_model_status": {
+            "need_more_evidence": 1,
+            "sufficient": 62
+          },
+          "ending_model_status_percentages": {
+            "need_more_evidence": 1.5873015873015872,
+            "sufficient": 98.41269841269842
+          },
+          "errors": 0,
+          "full_gold_recovery_rate": 0.5238095238095238,
+          "gold_evidence_percentage": {
+            "max": 100.0,
+            "mean": 72.22222222222223,
+            "median": 100.0,
+            "min": 0.0,
+            "std": 31.84508356783949
+          },
+          "model_continued_after_gold_complete": 5,
+          "model_stopped_early_without_gold": 29,
+          "noise_percentage": {
+            "max": 100.0,
+            "mean": 37.43386243386244,
+            "median": 50.0,
+            "min": 0.0,
+            "std": 28.439461054076453
+          },
+          "raw_paragraphs_retrieved": {
+            "max": 10,
+            "mean": 2.7936507936507935,
+            "median": 2,
+            "min": 2,
+            "std": 1.4924011775927821
+          },
+          "reasoning_model_calls": {
+            "controller": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "query_regeneration": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "repair": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "total": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            }
+          },
+          "retrieval_rounds": {
+            "max": 5,
+            "mean": 1.3968253968253967,
+            "median": 1,
+            "min": 1,
+            "std": 0.7462005887963911
+          },
+          "stop_reason_distribution": {},
+          "stopping_round_counts": {
+            "1": 45,
+            "2": 13,
+            "3": 4,
+            "4": 0,
+            "5": 1
+          },
+          "stopping_round_percentages": {
+            "1": 71.42857142857143,
+            "2": 20.634920634920636,
+            "3": 6.349206349206349,
+            "4": 0.0,
+            "5": 1.5873015873015872
+          },
+          "unique_paragraphs_retrieved": {
+            "max": 4,
+            "mean": 2.365079365079365,
+            "median": 2,
+            "min": 2,
+            "std": 0.6498250631891658
+          },
+          "valid": 63,
+          "zero_gold_recovery_rate": 0.07936507936507936
+        },
+        "valid": 63,
+        "zero_new_evidence_round_rate": 0.09090909090909091
+      },
+      "top5": {
+        "attempted": 63,
+        "average_duplicate_retrievals": 0,
+        "average_raw_paragraphs": 5,
+        "average_retrieval_rounds": 1,
+        "average_unique_paragraphs": 5,
+        "duplicate_share_raw": 0.0,
+        "errors": 0,
+        "false_sufficiency_by_round": {},
+        "final_need_more_evidence": 0,
+        "final_sufficient": 0,
+        "full_gold_recovery_rate": 0.6825396825396826,
+        "gold_based_false_insufficiency": null,
+        "gold_based_false_sufficiency": null,
+        "gold_recovery_by_round": {},
+        "loop_guard_activation_count": 0,
+        "mean_gold_evidence_percentage": 84.12698412698413,
+        "mean_unique_noise_percentage": 66.34920634920636,
+        "median_gold_evidence_percentage": 100.0,
+        "model_status_distribution": {},
+        "premature_annotated_gold_stop_questions": 0,
+        "query_repetition_rate": null,
+        "retrieval_stagnation_count": 0,
+        "round_1_gold_based_false_sufficiency": null,
+        "stopping_round_distribution": {
+          "1": 63,
+          "2": 0,
+          "3": 0,
+          "4": 0,
+          "5": 0
+        },
+        "summary": {
+          "attempted": 63,
+          "by_stopping_round": {
+            "1": {
+              "gold_evidence_percentage": {
+                "max": 100.0,
+                "mean": 84.12698412698413,
+                "median": 100.0,
+                "min": 50.0,
+                "std": 23.27440999780187
+              },
+              "noise_percentage": {
+                "max": 80.0,
+                "mean": 66.34920634920636,
+                "median": 60.0,
+                "min": 60.0,
+                "std": 9.309763999120749
+              }
+            },
+            "2": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "3": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "4": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            },
+            "5": {
+              "gold_evidence_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              },
+              "noise_percentage": {
+                "max": null,
+                "mean": null,
+                "median": null,
+                "min": null,
+                "std": null
+              }
+            }
+          },
+          "controller_diagnostics": {
+            "average_new_unique_paragraphs_per_round": null,
+            "duplicate_retrieval_rate": 0.0,
+            "false_sufficiency_by_round": {},
+            "final_status_distribution": {},
+            "gold_based_false_insufficiency": null,
+            "gold_based_false_insufficiency_count": 0,
+            "gold_based_false_sufficiency": null,
+            "gold_based_false_sufficiency_count": 0,
+            "gold_complete_decisions": 0,
+            "gold_incomplete_decisions": 0,
+            "gold_recovery_by_round": {},
+            "loop_guard_activation_count": 0,
+            "premature_annotated_gold_stop_questions": 0,
+            "query_repetition_count": 0,
+            "query_repetition_rate": null,
+            "retrieval_stagnation_count": 0,
+            "round_1_false_sufficiency_count": 0,
+            "round_1_gold_based_false_sufficiency": null,
+            "round_1_gold_incomplete_decisions": 0,
+            "stopping_round_distribution": {
+              "1": 63,
+              "2": 0,
+              "3": 0,
+              "4": 0,
+              "5": 0
+            },
+            "zero_new_evidence_round_rate": null
+          },
+          "duplicate_percentage_raw": 0.0,
+          "duplicate_retrievals": {
+            "max": 0,
+            "mean": 0,
+            "median": 0,
+            "min": 0,
+            "std": 0.0
+          },
+          "ending_model_status": {},
+          "ending_model_status_percentages": {},
+          "errors": 0,
+          "full_gold_recovery_rate": 0.6825396825396826,
+          "gold_evidence_percentage": {
+            "max": 100.0,
+            "mean": 84.12698412698413,
+            "median": 100.0,
+            "min": 50.0,
+            "std": 23.27440999780187
+          },
+          "model_continued_after_gold_complete": 0,
+          "model_stopped_early_without_gold": 0,
+          "noise_percentage": {
+            "max": 80.0,
+            "mean": 66.34920634920636,
+            "median": 60.0,
+            "min": 60.0,
+            "std": 9.309763999120749
+          },
+          "raw_paragraphs_retrieved": {
+            "max": 5,
+            "mean": 5,
+            "median": 5,
+            "min": 5,
+            "std": 0.0
+          },
+          "reasoning_model_calls": {
+            "controller": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "query_regeneration": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "repair": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            },
+            "total": {
+              "max": 0,
+              "mean": 0,
+              "median": 0,
+              "min": 0,
+              "std": 0.0
+            }
+          },
+          "retrieval_rounds": {
+            "max": 1,
+            "mean": 1,
+            "median": 1,
+            "min": 1,
+            "std": 0.0
+          },
+          "stop_reason_distribution": {},
+          "stopping_round_counts": {
+            "1": 63,
+            "2": 0,
+            "3": 0,
+            "4": 0,
+            "5": 0
+          },
+          "stopping_round_percentages": {
+            "1": 100.0,
+            "2": 0.0,
+            "3": 0.0,
+            "4": 0.0,
+            "5": 0.0
+          },
+          "unique_paragraphs_retrieved": {
+            "max": 5,
+            "mean": 5,
+            "median": 5,
+            "min": 5,
+            "std": 0.0
+          },
+          "valid": 63,
+          "zero_gold_recovery_rate": 0.0
+        },
+        "valid": 63,
+        "zero_new_evidence_round_rate": null
+      }
+    }
+  }
+}

@@ -21,15 +21,25 @@ def run_directory(output_root: Path, run_id: str) -> Path:
 class RunWriter(logging.Handler):
     """Flush each result/error and persist progress after every attempted question."""
 
-    def __init__(self, settings, run_id: str, *, inputs: list[Path], force: bool = False):
+    def __init__(
+        self,
+        settings,
+        run_id: str,
+        *,
+        inputs: list[Path],
+        force: bool = False,
+        prompt_paths: list[Path] | None = None,
+        scope: str = "single_round_rag_abstention",
+    ):
         super().__init__(level=logging.INFO)
         self.directory = run_directory(settings.output_root, run_id)
         resolved = self.directory.resolve()
-        prompt_paths = [
+        default_prompt_paths = [
             settings.slm.sufficiency_prompt_path,
             settings.slm.final_answer_prompt_path,
             settings.slm.structured_retry_prompt_path,
         ]
+        prompt_paths = default_prompt_paths if prompt_paths is None else prompt_paths
         if any(path.resolve().is_relative_to(resolved) for path in inputs + prompt_paths):
             raise ValueError("Run outputs must not overwrite their inputs")
         if self.directory.exists() and not force:
@@ -72,7 +82,7 @@ class RunWriter(logging.Handler):
             "run_id": run_id,
             "created_at": datetime.now(UTC).isoformat(),
             "status": "running",
-            "scope": "single_round_rag_abstention",
+            "scope": scope,
             "config": settings.model_dump(mode="json"),
             "git_commit": commit,
             "git_dirty": dirty,

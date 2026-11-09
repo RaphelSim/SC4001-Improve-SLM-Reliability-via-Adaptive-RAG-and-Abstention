@@ -105,6 +105,8 @@ def validate_embedding_cache(
     *,
     model_name: str,
     revision: str | None,
+    dataset_revision: str | None = None,
+    similarity_metric: str = "cosine",
 ) -> None:
     """Reject stale or incompatible evidence/query embedding combinations."""
     expected = {
@@ -115,6 +117,10 @@ def validate_embedding_cache(
     }
     if metadata.get("encoder_preprocessing", "model-defaults-v1") != "model-defaults-v1":
         raise ValueError("embedding cache preprocessing mismatch")
+    if metadata.get("similarity_metric", "cosine") != similarity_metric:
+        raise ValueError("embedding cache similarity metric mismatch")
+    if dataset_revision is not None and metadata.get("dataset_revision") != dataset_revision:
+        raise ValueError("embedding cache dataset revision mismatch")
     if (
         model_name == "sentence-transformers/all-MiniLM-L6-v2"
         and embeddings.ndim == 2
@@ -167,6 +173,8 @@ def prepare_embedding_index(
                 metadata,
                 model_name=settings.retrieval.embedding_model,
                 revision=settings.retrieval.embedding_revision,
+                dataset_revision=settings.dataset.revision,
+                similarity_metric=settings.retrieval.similarity_metric,
             )
             logger.info("Using cached embedding index: %s", output)
             return False
@@ -204,6 +212,7 @@ def prepare_embedding_index(
                 "embedding_device": settings.retrieval.embedding_device,
                 "encoder_preprocessing": "model-defaults-v1",
                 "dataset_revision": settings.dataset.revision or "unspecified",
+                "similarity_metric": settings.retrieval.similarity_metric,
                 "evidence_count": str(len(evidence)),
                 "embedding_dimension": str(vectors.shape[1]),
                 "corpus_fingerprint": corpus_fingerprint(evidence),

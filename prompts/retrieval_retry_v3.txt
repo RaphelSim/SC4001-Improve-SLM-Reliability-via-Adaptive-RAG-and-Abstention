@@ -1,0 +1,7 @@
+Repair the previous response to the original retrieval-control task. Preserve the original question, supplied evidence, and previous queries. Correct the JSON format only; do not invent evidence or add explanations.
+
+Original task: {{original_prompt_json}}
+Invalid response: {{invalid_output_json}}
+Validation error: {{validation_error_json}}
+
+Return exactly one JSON object containing only search_query: {"search_query": null} if evidence is sufficient, or {"search_query": "<targeted query>"} if more evidence is needed. No other keys or prose.

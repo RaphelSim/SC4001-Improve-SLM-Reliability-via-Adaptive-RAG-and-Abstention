@@ -1,0 +1,14 @@
+Repair the previous JSON response to the original retrieval-controller task. This is a structured-output repair, not a new independent assessment. Preserve the task and correct only what is needed to satisfy its schema and validation error. Return one corrected JSON object only.
+
+Original task, including exact question ID, supplied paragraphs, and retrieval history:
+{{original_prompt_json}}
+
+Previous invalid response:
+{{invalid_output_json}}
+
+Validation error:
+{{validation_error_json}}
+
+Required keys exactly: question_id, required_information, established_facts, missing_information_items, status, missing_information, search_query, supporting_evidence_ids. Copy question_id exactly. Every established fact must have requirement, fact, and non-empty evidence_ids that explicitly support that exact relation; cite only IDs present in the original task. Do not put unsupported/unknown facts in established_facts; put those requirements in missing_information_items. Similar-topic evidence does not support an unstated relation. Use sufficient only when every listed requirement is grounded; otherwise use need_more_evidence with specific unresolved items and a targeted query. Do not add prose or unsupported facts.
+
+Mechanical correction: if an established_facts entry says a fact is absent/unknown or has an empty evidence_ids list, remove that entry from established_facts and list its requirement in missing_information_items. Keep the existing supported facts and the focused search_query.

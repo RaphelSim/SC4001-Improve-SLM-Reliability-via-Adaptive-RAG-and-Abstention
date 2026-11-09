@@ -140,6 +140,9 @@ def normalize_hotpotqa_example(
     metadata = {
         "source_dataset": "hotpotqa",
         "fixture_only": False,
+        "supporting_facts": [
+            {"title": title, "sent_id": sent_id} for title, sent_id in sorted(support_locations)
+        ],
     }
     if source_split is not None:
         metadata["source_split"] = source_split
@@ -151,6 +154,7 @@ def normalize_hotpotqa_example(
         gold_answer=gold_answer,
         split=split,
         gold_support_ids=support_ids,
+        gold_paragraph_ids=support_ids,
         candidate_evidence_ids=[chunk.evidence_id for chunk in evidence],
         metadata=metadata,
     )

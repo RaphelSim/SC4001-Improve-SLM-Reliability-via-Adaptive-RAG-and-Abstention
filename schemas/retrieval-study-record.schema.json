@@ -1,0 +1,540 @@
+{
+  "$defs": {
+    "EvidenceChunk": {
+      "additionalProperties": false,
+      "description": "A text unit with stable source identity and optional retrieval annotations.",
+      "properties": {
+        "document_id": {
+          "minLength": 1,
+          "title": "Document Id",
+          "type": "string"
+        },
+        "evidence_id": {
+          "minLength": 1,
+          "title": "Evidence Id",
+          "type": "string"
+        },
+        "retrieval_rank": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Rank"
+        },
+        "retrieval_score": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieval Score"
+        },
+        "retrieval_stage": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RetrievalStage"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "text": {
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        }
+      },
+      "required": [
+        "evidence_id",
+        "document_id",
+        "text"
+      ],
+      "title": "EvidenceChunk",
+      "type": "object"
+    },
+    "RetrievalResult": {
+      "additionalProperties": false,
+      "description": "Validated output from a retriever for one request.",
+      "properties": {
+        "evidence": {
+          "items": {
+            "$ref": "#/$defs/EvidenceChunk"
+          },
+          "title": "Evidence",
+          "type": "array"
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Query",
+          "type": "string"
+        },
+        "question_id": {
+          "minLength": 1,
+          "title": "Question Id",
+          "type": "string"
+        },
+        "stage": {
+          "$ref": "#/$defs/RetrievalStage"
+        },
+        "top_k": {
+          "minimum": 1,
+          "title": "Top K",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "question_id",
+        "query",
+        "stage",
+        "top_k"
+      ],
+      "title": "RetrievalResult",
+      "type": "object"
+    },
+    "RetrievalStage": {
+      "description": "Retrieval round label. Initial retrieval is round zero.",
+      "enum": [
+        "initial",
+        "follow_up"
+      ],
+      "title": "RetrievalStage",
+      "type": "string"
+    },
+    "StudyRound": {
+      "additionalProperties": false,
+      "properties": {
+        "cumulative_gold_evidence_percentage": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Cumulative Gold Evidence Percentage",
+          "type": "number"
+        },
+        "cumulative_gold_paragraph_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cumulative Gold Paragraph Ids",
+          "type": "array"
+        },
+        "cumulative_raw_paragraphs": {
+          "default": 0,
+          "title": "Cumulative Raw Paragraphs",
+          "type": "integer"
+        },
+        "cumulative_unique_noise_percentage": {
+          "default": 0,
+          "maximum": 100,
+          "minimum": 0,
+          "title": "Cumulative Unique Noise Percentage",
+          "type": "number"
+        },
+        "cumulative_unique_paragraph_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Cumulative Unique Paragraph Ids",
+          "type": "array"
+        },
+        "duplicate_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Duplicate Ids",
+          "type": "array"
+        },
+        "established_facts": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Established Facts",
+          "type": "array"
+        },
+        "gold_complete_after_round": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gold Complete After Round"
+        },
+        "loop_guard_activated": {
+          "default": false,
+          "title": "Loop Guard Activated",
+          "type": "boolean"
+        },
+        "missing_information": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Missing Information"
+        },
+        "missing_information_items": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing Information Items",
+          "type": "array"
+        },
+        "model_status_after_round": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/SufficiencyStatus"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "new_unique_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "New Unique Ids",
+          "type": "array"
+        },
+        "next_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Query"
+        },
+        "query_regeneration_used": {
+          "default": false,
+          "title": "Query Regeneration Used",
+          "type": "boolean"
+        },
+        "ranked_candidate_ids_considered": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ranked Candidate Ids Considered",
+          "type": "array"
+        },
+        "ranked_seen_ids_skipped": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Ranked Seen Ids Skipped",
+          "type": "array"
+        },
+        "raw_model_responses": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Raw Model Responses",
+          "type": "array"
+        },
+        "repair_used": {
+          "default": false,
+          "title": "Repair Used",
+          "type": "boolean"
+        },
+        "required_information": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Required Information",
+          "type": "array"
+        },
+        "retrieval": {
+          "$ref": "#/$defs/RetrievalResult"
+        },
+        "retrieval_stagnated": {
+          "default": false,
+          "title": "Retrieval Stagnated",
+          "type": "boolean"
+        },
+        "round_number": {
+          "minimum": 1,
+          "title": "Round Number",
+          "type": "integer"
+        },
+        "stop_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Stop Reason"
+        }
+      },
+      "required": [
+        "round_number",
+        "retrieval",
+        "new_unique_ids",
+        "duplicate_ids"
+      ],
+      "title": "StudyRound",
+      "type": "object"
+    },
+    "SufficiencyStatus": {
+      "description": "The model's structured assessment of the current evidence.",
+      "enum": [
+        "sufficient",
+        "need_more_evidence"
+      ],
+      "title": "SufficiencyStatus",
+      "type": "string"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "One baseline or adaptive observation, including raw and unique retrieval cost.",
+  "properties": {
+    "candidate_paragraph_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Candidate Paragraph Ids",
+      "type": "array"
+    },
+    "controller_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Controller Model Calls",
+      "type": "integer"
+    },
+    "controller_version": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Controller Version"
+    },
+    "duplicate_retrieval_count": {
+      "minimum": 0,
+      "title": "Duplicate Retrieval Count",
+      "type": "integer"
+    },
+    "error_message": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Message"
+    },
+    "error_type": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Error Type"
+    },
+    "final_model_status": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SufficiencyStatus"
+        },
+        {
+          "const": "ERROR",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Final Model Status"
+    },
+    "gold_evidence_percentage": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Gold Evidence Percentage",
+      "type": "number"
+    },
+    "gold_paragraph_ids": {
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1,
+      "title": "Gold Paragraph Ids",
+      "type": "array"
+    },
+    "gold_retrieved_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Gold Retrieved Ids",
+      "type": "array"
+    },
+    "noise_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Noise Ids",
+      "type": "array"
+    },
+    "noise_percentage": {
+      "maximum": 100,
+      "minimum": 0,
+      "title": "Noise Percentage",
+      "type": "number"
+    },
+    "query_regeneration_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Query Regeneration Model Calls",
+      "type": "integer"
+    },
+    "question": {
+      "title": "Question",
+      "type": "string"
+    },
+    "question_id": {
+      "title": "Question Id",
+      "type": "string"
+    },
+    "raw_paragraphs_retrieved": {
+      "minimum": 0,
+      "title": "Raw Paragraphs Retrieved",
+      "type": "integer"
+    },
+    "raw_retrieved_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Raw Retrieved Ids",
+      "type": "array"
+    },
+    "repair_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Repair Model Calls",
+      "type": "integer"
+    },
+    "retrieval_rounds": {
+      "minimum": 1,
+      "title": "Retrieval Rounds",
+      "type": "integer"
+    },
+    "rounds": {
+      "items": {
+        "$ref": "#/$defs/StudyRound"
+      },
+      "minItems": 1,
+      "title": "Rounds",
+      "type": "array"
+    },
+    "stop_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Stop Reason"
+    },
+    "system": {
+      "enum": [
+        "baseline",
+        "adaptive"
+      ],
+      "title": "System",
+      "type": "string"
+    },
+    "total_reasoning_model_calls": {
+      "default": 0,
+      "minimum": 0,
+      "title": "Total Reasoning Model Calls",
+      "type": "integer"
+    },
+    "unique_paragraphs_retrieved": {
+      "minimum": 0,
+      "title": "Unique Paragraphs Retrieved",
+      "type": "integer"
+    },
+    "unique_retrieved_ids": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unique Retrieved Ids",
+      "type": "array"
+    }
+  },
+  "required": [
+    "question_id",
+    "question",
+    "gold_paragraph_ids",
+    "candidate_paragraph_ids",
+    "system",
+    "rounds",
+    "raw_retrieved_ids",
+    "unique_retrieved_ids",
+    "gold_retrieved_ids",
+    "noise_ids",
+    "gold_evidence_percentage",
+    "noise_percentage",
+    "raw_paragraphs_retrieved",
+    "unique_paragraphs_retrieved",
+    "duplicate_retrieval_count",
+    "retrieval_rounds"
+  ],
+  "title": "RetrievalStudyRecord",
+  "type": "object"
+}
