@@ -1,0 +1,40 @@
+# MuSiQue variation study; retrieval and V3 controller settings match retrieval_study_v3.yaml.
+project_seed: 88
+data_root: data
+cache_root: cache
+output_root: outputs
+dataset:
+  dataset_name: StonyBrookNLP/musique
+  dataset_config: default
+  source_split: train
+  revision: null
+  subset_size: 100
+  project_split: development
+  input_path: null
+retrieval:
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  embedding_revision: 1110a243fdf4706b3f48f1d95db1a4f5529b4d41
+  embedding_device: cpu
+  initial_top_k: 5
+  followup_top_k: 2
+  max_total_retrieval_rounds: 5
+  similarity_metric: cosine
+slm:
+  model_id: Qwen/Qwen3-4B-MLX-4bit
+  revision: 52a5ab34fa604bc8af6d3ce0cac0cab10b7eb495
+  runtime: mlx
+  quantization: 4bit
+  max_input_tokens: 8192
+  max_new_tokens: 512
+  temperature: 0.0
+  do_sample: false
+  enable_thinking: false
+  prompt_version: retrieval-controller-v3
+  sufficiency_prompt_path: prompts/retrieval_controller_v3.txt
+  final_answer_prompt_path: prompts/final_answer_v1.txt
+  structured_retry_prompt_path: prompts/retrieval_retry_v3.txt
+  format_retry_limit: 1
+experiment:
+  system_variant: adaptive_retrieval
+  run_id: musique-n100-seed88-v3
+  sample_size: 100

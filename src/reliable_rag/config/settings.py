@@ -21,7 +21,7 @@ class StrictSettings(BaseModel):
 
 
 class DatasetSettings(StrictSettings):
-    """Pinned HotpotQA source, deterministic sample and project partition."""
+    """Pinned source, deterministic sample and project partition."""
 
     dataset_name: str = "hotpotqa/hotpot_qa"
     dataset_config: str = "distractor"
@@ -99,9 +99,20 @@ class Settings(StrictSettings):
     experiment: ExperimentSettings
 
     @property
+    def dataset_key(self) -> str:
+        if self.dataset.dataset_name == "hotpotqa/hotpot_qa":
+            return "hotpotqa"
+        return self.dataset.dataset_name.rsplit("/", 1)[-1].lower().replace("-", "_")
+
+    @property
     def dataset_dir(self) -> Path:
         size = self.dataset.subset_size if self.dataset.subset_size is not None else "all"
-        return self.data_root / "processed" / "hotpotqa" / f"subset-{size}-seed{self.project_seed}"
+        return (
+            self.data_root
+            / "processed"
+            / self.dataset_key
+            / f"subset-{size}-seed{self.project_seed}"
+        )
 
     @property
     def questions_path(self) -> Path:
@@ -118,7 +129,7 @@ class Settings(StrictSettings):
     @property
     def index_path(self) -> Path:
         size = self.dataset.subset_size if self.dataset.subset_size is not None else "all"
-        return self.cache_root / f"hotpotqa-subset-{size}-seed{self.project_seed}.npz"
+        return self.cache_root / f"{self.dataset_key}-subset-{size}-seed{self.project_seed}.npz"
 
 
 _ENV_PATH_FIELDS = {

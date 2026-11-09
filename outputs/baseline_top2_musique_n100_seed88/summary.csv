@@ -1,0 +1,14 @@
+system,metric,mean,median,std,min,max
+baseline,gold_evidence_percentage,40.25,33.333333333333336,25.523817852699423,0.0,100.0
+baseline,noise_percentage,43.0,50.0,32.41913015489465,0.0,100.0
+baseline,raw_paragraphs_retrieved,2,2.0,0.0,2,2
+baseline,unique_paragraphs_retrieved,2,2.0,0.0,2,2
+baseline,retrieval_rounds,1,1.0,0.0,1,1
+baseline,duplicate_retrievals,0,0.0,0.0,0,0
+baseline,full_gold_recovery_rate,0.07,,,,
+baseline,zero_gold_recovery_rate,0.15,,,,
+baseline,duplicate_percentage_raw,0.0,,,,
+baseline,attempted,100,,,,
+baseline,valid,100,,,,
+baseline,errors,0,,,,
+baseline,final_insufficient_rate,,,,,

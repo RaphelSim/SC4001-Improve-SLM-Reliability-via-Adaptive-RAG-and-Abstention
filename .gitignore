@@ -20,6 +20,9 @@ configs/local.yaml
 # Data, model weights, caches, and experiment output
 data/raw/**
 data/processed/**
+!data/processed/musique/
+!data/processed/musique/subset-100-seed88/
+!data/processed/musique/subset-100-seed88/**
 cache/**
 # Keep the seven small, audited same-100 experiment records in version control.
 outputs/*
@@ -30,6 +33,15 @@ outputs/*
 !outputs/adaptive_v1_top2_basic_controller_same100/
 !outputs/adaptive_v2_top2_evidence_chain_controller_same100/
 !outputs/adaptive_v3_top2_unseen_compact_controller_same100/
+!outputs/baseline_top2_musique_n100_seed88/
+!outputs/baseline_top3_musique_n100_seed88/
+!outputs/baseline_top4_musique_n100_seed88/
+!outputs/baseline_top5_musique_n100_seed88/
+!outputs/baseline_top6_musique_n100_seed88/
+!outputs/baseline_top7_musique_n100_seed88/
+!outputs/baseline_top8_musique_n100_seed88/
+!outputs/adaptive_v3_musique_n100_seed88/
+!outputs/musique_n100_seed88_comparison/
 *.safetensors
 *.gguf
 *.pt

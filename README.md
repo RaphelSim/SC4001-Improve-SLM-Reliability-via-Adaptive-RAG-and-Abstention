@@ -6,3 +6,4 @@ A reproducible HotpotQA study of paragraph-level evidence recovery, unique evide
 - [Architecture and metrics](documentation/SYSTEM_ARCHITECTURE.md) — data flow, records, duplicate counting, evaluation.
 - [Experiment history and seven-run results](documentation/EXPERIMENT_ARCHITECTURE_AND_RESULTS.md) — canonical folders, complete comparison, limitations, and cleanup.
 - [Canonical run registry](documentation/canonical_runs.json) — ordered sample IDs, source paths, and result hashes.
+- [MuSiQue evidence-complexity experiment](documentation/MUSIQUE_VARIATION_EXPERIMENT.md) — frozen variable-gold sample, Top-2–8 baselines, Adaptive V3, and reproduction commands.

@@ -1,0 +1,1 @@
+{"component": "reliable_rag.model.slm", "level": "INFO", "message": "Loaded MLX model model_id=Qwen/Qwen3-4B-MLX-4bit quantization=4bit project_seed=88", "timestamp": "2026-11-09T09:15:29.930864+00:00"}
