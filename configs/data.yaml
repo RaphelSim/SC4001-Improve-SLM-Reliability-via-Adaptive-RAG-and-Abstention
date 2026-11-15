@@ -1,0 +1,8 @@
+# Data preparation and index settings. Edit this file, then run scripts/prepare_data.py.
+# base_config supplies the unchanged dataset, embedding model and path defaults.
+base_config: configs/retrieval_study_v3.yaml
+subset_size: 500
+seed: 88
+input_path: null                 # Optional local HotpotQA JSON or MuSiQue JSONL
+source_repo: null                # MuSiQue provenance when input_path is local
+revision: null                   # MuSiQue source commit when input_path is local

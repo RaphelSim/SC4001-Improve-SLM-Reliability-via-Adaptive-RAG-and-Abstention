@@ -12,9 +12,9 @@
 
 ## Validation
 
-- [ ] `python -m pytest -q`
-- [ ] `ruff check src scripts tests`
-- [ ] `ruff format --check src scripts tests`
+- [ ] `ruff check src scripts`
+- [ ] `ruff format --check src scripts`
+- [ ] `python scripts/check_and_smoke.py --os mac` (or `windows` on Windows)
 - [ ] Updated docs and generated schemas if shared contracts changed
 - [ ] No datasets, model weights, credentials, cache, or run outputs added
 

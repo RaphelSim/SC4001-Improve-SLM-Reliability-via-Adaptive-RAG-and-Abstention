@@ -210,6 +210,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=Path("configs/retrieval_study.yaml"))
     parser.add_argument("--mode", choices=("baseline", "adaptive", "combined"), default="combined")
+    parser.add_argument("--os", choices=("mac", "windows"), help="Inference backend")
     parser.add_argument("--sample-size", type=int)
     parser.add_argument("--pool-size", type=int)
     parser.add_argument("--seed", type=int)
@@ -226,6 +227,21 @@ def main() -> int:
     )
     args = parser.parse_args()
     settings = load_settings(args.config)
+    # Keep the original MLX settings for Mac. Windows uses the matching full-weight
+    # Qwen checkpoint through Transformers; all retrieval and prompt settings stay put.
+    run_os = args.os
+    if run_os == "windows":
+        settings.slm.runtime = "transformers"
+        settings.slm.quantization = None
+        model_map = {
+            "Qwen/Qwen3-4B-MLX-4bit": "Qwen/Qwen3-4B",
+            "Qwen/Qwen3-1.7B-MLX-4bit": "Qwen/Qwen3-1.7B",
+        }
+        if settings.slm.model_id in model_map:
+            settings.slm.model_id = model_map[settings.slm.model_id]
+            settings.slm.revision = None
+        elif "MLX" in settings.slm.model_id and not args.model_id:
+            parser.error("Set --model-id to a Transformers checkpoint for Windows")
     sample_size = (
         args.sample_size if args.sample_size is not None else settings.experiment.sample_size or 100
     )

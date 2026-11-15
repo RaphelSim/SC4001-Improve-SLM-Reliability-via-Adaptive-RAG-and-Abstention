@@ -1,0 +1,14 @@
+# One run per invocation. Choose a new run_id to keep previous results intact.
+base_config: configs/retrieval_study_v3.yaml
+run_id: example_hotpot_v3_n100_pool500_seed88
+os: mac                        # mac (MLX) or windows (Transformers)
+mode: adaptive                 # baseline or adaptive
+sample_size: 100
+pool_size: 500
+seed: 88
+baseline_top_k: 5
+adaptive_top_k: 2
+max_rounds: 5
+model_id: null                 # Optional checkpoint override
+model_revision: null
+reuse_question_ids_from: null  # Optional earlier run_metadata.json for a paired sample
