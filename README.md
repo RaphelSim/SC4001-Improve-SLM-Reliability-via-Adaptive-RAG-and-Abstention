@@ -39,13 +39,6 @@ python -m zipfile -e Experiment_Data.zip .
 python -m zipfile -e outputs/Experiments_Output.zip outputs
 ```
 
-The archives do not contain downloaded model weights or MiniLM indexes. To rerun the default HotpotQA 500-question pool after extraction, download the configured models and build or verify its index:
-
-```bash
-python scripts/prepare_models.py --config configs/retrieval_study_v3.yaml
-python scripts/prepare_data.py
-```
-
 Then edit `configs/experiment.yaml`, choose a **new** `run_id`, and run `python scripts/run_study.py`. The default data and experiment configs use HotpotQA pool size 500 and seed 88. For the archived HotpotQA 1000-question pool or MuSiQue sample, set the corresponding `base_config`, `subset_size`, and `pool_size` before building its index and running an experiment. Extracting the output archive is sufficient to inspect recorded results; rerunning inference is optional.
 
 ## 2. Check dependencies and run one inference case
@@ -91,7 +84,6 @@ For a baseline series, run this command once per k value with a new `run_id`. Fo
 ## 5. Inspect results and notebooks
 
 Each `outputs/<run_id>/` contains `results.jsonl` (one record per question), `summary.json` and `summary.csv` (aggregate metrics), `run_metadata.json` (source, settings, hashes and timing), plus `errors.jsonl` and `events.jsonl`. For a rerun, edit the data and experiment configs, rerun steps 3–5, and use a new run ID.
-
 
 ## Architecture and directory layout
 
