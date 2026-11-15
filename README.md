@@ -104,7 +104,7 @@ schemas/        JSON schemas for the study records
 scripts/        Preparation, environment check, and experiment entry points
 src/reliable_rag/  Dataset adapters, retrieval, model clients, records, metrics
 outputs/        Saved experiment observations and summaries
-notebooks/      Presentation notebook and figures
+analysis/      Presentation notebook and figures
 ```
 
 The flow is `raw dataset → prepared records → MiniLM index → fixed or adaptive retrieval → per-question records → summaries → notebook`. Gold paragraph IDs are held for evaluation and are not supplied to the adaptive model.
