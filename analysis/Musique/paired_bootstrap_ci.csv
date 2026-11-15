@@ -1,0 +1,7 @@
+comparison,metric,mean_delta,ci_lower,ci_upper
+V3 - Top-4,Mean gold evidence,-1.2500000000000002,-6.25,3.8333333333333326
+V3 - Top-4,Mean unique noise,-4.916666666666666,-9.333333333333332,-0.5833333333333333
+V3 - Top-4,Mean paragraphs,-0.4,-0.66,-0.14
+V3 - Top-5,Mean gold evidence,-7.416666666666668,-12.416666666666668,-2.5000000000000004
+V3 - Top-5,Mean unique noise,-9.566666666666668,-14.05,-5.116666666666666
+V3 - Top-5,Mean paragraphs,-1.4,-1.66,-1.14

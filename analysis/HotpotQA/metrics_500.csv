@@ -1,0 +1,6 @@
+method,mean_gold_evidence_pct,full_gold_recovery_pct,zero_gold_recovery_pct,mean_noise_pct,mean_paragraphs,mean_rounds,mean_reasoning_calls
+Top-2,60.3,29.599999999999998,9.0,39.7,2,1,0
+Top-3,71.2,47.199999999999996,4.8,52.400000000000006,2.996,1,0
+Top-4,78.0,58.599999999999994,2.6,60.766666666666666,3.99,1,0
+Top-5,83.3,68.2,1.6,66.38666666666667,4.984,1,0
+Adaptive V3,84.1,71.8,3.5999999999999996,54.78,4.2,2.1,2.88
