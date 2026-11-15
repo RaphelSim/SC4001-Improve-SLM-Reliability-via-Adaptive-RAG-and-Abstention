@@ -112,13 +112,13 @@ improves evidence-chain checking, but the more complex output format led to
 V3 simplifies the controller output to one field:
 
 ```json
-{"search_query": null}
+{ "search_query": null }
 ```
 
 or:
 
 ```json
-{"search_query": "targeted follow-up query"}
+{ "search_query": "targeted follow-up query" }
 ```
 
 Python, rather than the model, owns the retrieval state. It:
@@ -142,15 +142,15 @@ For each question, let `G` be the set of frozen gold paragraph IDs, `U` the
 set of unique retrieved paragraph IDs, and `R` the complete raw retrieval
 history.
 
-| Metric | Definition | Preferred direction |
-|---|---|---|
-| Mean gold evidence | `100 × |G ∩ U| / |G|`, averaged over questions | Higher |
-| Full-gold recovery | Percentage of questions where `G ⊆ U` | Higher |
-| Zero-gold recovery | Percentage of questions where `G ∩ U = ∅` | Lower |
-| Mean unique noise | `100 × |U − G| / |U|`, averaged over questions | Lower |
-| Mean paragraphs | Average `|R|`, including returned instances | Lower if recovery is maintained |
-| Mean rounds | Average number of retrieval calls | Lower if recovery is maintained |
-| Reasoning calls | Controller, repair, and query-regeneration calls | Lower if recovery is maintained |
+| Metric             | Definition                                       | Preferred direction             |
+| ------------------ | ------------------------------------------------ | ------------------------------- | ------------------------------- | ------------------------------- | -------------------------- | ------ |
+| Mean gold evidence | `100 ×                                           | G ∩ U                           | /                               | G                               | `, averaged over questions | Higher |
+| Full-gold recovery | Percentage of questions where `G ⊆ U`            | Higher                          |
+| Zero-gold recovery | Percentage of questions where `G ∩ U = ∅`        | Lower                           |
+| Mean unique noise  | `100 ×                                           | U − G                           | /                               | U                               | `, averaged over questions | Lower  |
+| Mean paragraphs    | Average `                                        | R                               | `, including returned instances | Lower if recovery is maintained |
+| Mean rounds        | Average number of retrieval calls                | Lower if recovery is maintained |
+| Reasoning calls    | Controller, repair, and query-regeneration calls | Lower if recovery is maintained |
 
 Recovery and noise must be interpreted together. A system can increase
 recovery simply by retrieving more paragraphs, but this may also increase
@@ -160,13 +160,13 @@ trade-off.
 
 ## 4. Main 500-question results
 
-| System | Mean gold evidence | Full recovery | Zero recovery | Mean noise | Mean paragraphs | Mean rounds |
-|---|---:|---:|---:|---:|---:|---:|
-| Top-2 | 60.3% | 29.6% | 9.0% | 39.70% | 2.00 | 1.00 |
-| Top-3 | 71.2% | 47.2% | 4.8% | 52.40% | 3.00 | 1.00 |
-| Top-4 | 78.0% | 58.6% | 2.6% | 60.77% | 3.99 | 1.00 |
-| Top-5 | 83.3% | 68.2% | 1.6% | 66.39% | 4.98 | 1.00 |
-| **Adaptive V3** | **84.1%** | **71.8%** | 3.6% | **54.78%** | **4.20** | **2.10** |
+| System          | Mean gold evidence | Full recovery | Zero recovery | Mean noise | Mean paragraphs | Mean rounds |
+| --------------- | -----------------: | ------------: | ------------: | ---------: | --------------: | ----------: |
+| Top-2           |              60.3% |         29.6% |          9.0% |     39.70% |            2.00 |        1.00 |
+| Top-3           |              71.2% |         47.2% |          4.8% |     52.40% |            3.00 |        1.00 |
+| Top-4           |              78.0% |         58.6% |          2.6% |     60.77% |            3.99 |        1.00 |
+| Top-5           |              83.3% |         68.2% |          1.6% |     66.39% |            4.98 |        1.00 |
+| **Adaptive V3** |          **84.1%** |     **71.8%** |          3.6% | **54.78%** |        **4.20** |    **2.10** |
 
 The fixed baselines show a predictable pattern: increasing `k` improves
 evidence recovery, but noise increases at every step. V3 breaks this simple
@@ -234,13 +234,13 @@ This figure shows cumulative gold recovery and cumulative unique noise for
 questions reaching each V3 round. The `n=` annotations show the number of
 questions still active at that round.
 
-| Round | Questions reaching round | Gold recovery | Noise |
-|---:|---:|---:|---:|
-| 1 | 500 | 60.3% | 39.70% |
-| 2 | 389 | 84.3% | 57.84% |
-| 3 | 130 | 95.77% | 68.08% |
-| 4 | 28 | 100.0% | 75.0% |
-| 5 | 3 | 100.0% | 80.0% |
+| Round | Questions reaching round | Gold recovery |  Noise |
+| ----: | -----------------------: | ------------: | -----: |
+|     1 |                      500 |         60.3% | 39.70% |
+|     2 |                      389 |         84.3% | 57.84% |
+|     3 |                      130 |        95.77% | 68.08% |
+|     4 |                       28 |        100.0% |  75.0% |
+|     5 |                        3 |        100.0% |  80.0% |
 
 **Interpretation:** The largest gain occurs between rounds 1 and 2. Later
 rounds handle a much smaller set of difficult questions and add more noise
@@ -300,15 +300,33 @@ evidence.
 
 ## 7. Evolution from V1 to V3
 
-| Version | Main design | Observed issue | Design response |
-|---|---|---|---|
-| V1 | Basic sufficiency controller with adaptive Top-2 retrieval | Premature stopping and duplicate retrieval | Add explicit evidence-chain checks |
-| V2.1 | Requirements, established facts, citations, and retrieval history | Structured-output complexity and controller errors | Simplify controller output and enforce unseen retrieval |
-| V3 | Single search-query output, Top-2 unseen retrieval, cumulative unique context | Repeated-query termination and zero-gold tail remain | Future work should improve query regeneration and failure handling |
+| Version | Main design                                                                   | Observed issue                                       | Design response                                                    |
+| ------- | ----------------------------------------------------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------------ |
+| V1      | Basic sufficiency controller with adaptive Top-2 retrieval                    | Premature stopping and duplicate retrieval           | Add explicit evidence-chain checks                                 |
+| V2.1    | Requirements, established facts, citations, and retrieval history             | Structured-output complexity and controller errors   | Simplify controller output and enforce unseen retrieval            |
+| V3      | Single search-query output, Top-2 unseen retrieval, cumulative unique context | Repeated-query termination and zero-gold tail remain | Future work should improve query regeneration and failure handling |
 
 This progression should be interpreted as an architectural development story,
 not as an isolated causal ablation. V2.1 and V3 changed multiple components,
 including the prompt contract and duplicate-retrieval policy.
+
+### 7.1 Development results (100 questions)
+
+All seven systems were run on the same first 100 questions of the frozen
+pool. V2.1's 37 controller-error runs are kept, counting whatever they
+retrieved before the error, so every row is averaged over 100 questions.
+
+| System          | Mean gold evidence | Full recovery | Zero recovery | Mean noise | Mean paragraphs | Mean rounds |
+| --------------- | -----------------: | ------------: | ------------: | ---------: | --------------: | ----------: |
+| Top-2           |              57.5% |         27.0% |         12.0% |     42.50% |            2.00 |        1.00 |
+| Top-3           |              71.0% |         47.0% |          5.0% |     52.33% |            2.99 |        1.00 |
+| Top-4           |              78.0% |         59.0% |          3.0% |     60.50% |            3.98 |        1.00 |
+| Top-5           |              84.5% |         70.0% |          1.0% |     65.60% |            4.97 |        1.00 |
+| Adaptive V1     |              60.5% |         32.0% |         11.0% |     42.00% |            2.94 |        1.47 |
+| Adaptive V2.1   |              71.0% |         50.0% |          8.0% |     40.25% |            3.40 |        1.70 |
+| **Adaptive V3** |          **82.0%** |     **71.0%** |          7.0% |     54.80% |            4.16 |        2.08 |
+
+Source: `outputs/*_same100/results.jsonl`
 
 ## 8. Additional analyses
 
@@ -325,14 +343,14 @@ and [`stopping_quality.csv`](stopping_quality.csv).
 Each interval is based on 10,000 paired bootstrap resamples. The difference is
 calculated as V3 minus the corresponding fixed baseline.
 
-| Comparison | Metric | Mean difference | 95% CI |
-|---|---|---:|---:|
-| V3 - Top-4 | Mean gold evidence | +6.10 pp | [+3.40, +8.70] |
-| V3 - Top-4 | Mean unique noise | -5.99 pp | [-7.82, -4.11] |
-| V3 - Top-4 | Mean paragraphs | +0.21 | [+0.06, +0.35] |
-| V3 - Top-5 | Mean gold evidence | +0.80 pp | [-1.90, +3.50] |
-| V3 - Top-5 | Mean unique noise | -11.61 pp | [-13.48, -9.68] |
-| V3 - Top-5 | Mean paragraphs | -0.78 | [-0.93, -0.64] |
+| Comparison | Metric             | Mean difference |          95% CI |
+| ---------- | ------------------ | --------------: | --------------: |
+| V3 - Top-4 | Mean gold evidence |        +6.10 pp |  [+3.40, +8.70] |
+| V3 - Top-4 | Mean unique noise  |        -5.99 pp |  [-7.82, -4.11] |
+| V3 - Top-4 | Mean paragraphs    |           +0.21 |  [+0.06, +0.35] |
+| V3 - Top-5 | Mean gold evidence |        +0.80 pp |  [-1.90, +3.50] |
+| V3 - Top-5 | Mean unique noise  |       -11.61 pp | [-13.48, -9.68] |
+| V3 - Top-5 | Mean paragraphs    |           -0.78 |  [-0.93, -0.64] |
 
 **Interpretation:** V3's improvements over Top-4 are clearly positive for
 gold recovery and clearly negative for noise, because their intervals exclude
@@ -347,11 +365,11 @@ paragraphs versus Top-5 are much more decisive.
 
 The stopping reason can be compared with final annotated gold completeness:
 
-| Stop reason | Questions | Gold complete | Gold-complete rate |
-|---|---:|---:|---:|
-| `sufficient` | 146 | 87 | 59.6% |
-| `repeated_query` | 351 | 269 | 76.6% |
-| `max_rounds_reached` | 3 | 3 | 100.0% |
+| Stop reason          | Questions | Gold complete | Gold-complete rate |
+| -------------------- | --------: | ------------: | -----------------: |
+| `sufficient`         |       146 |            87 |              59.6% |
+| `repeated_query`     |       351 |           269 |              76.6% |
+| `max_rounds_reached` |         3 |             3 |             100.0% |
 
 **Interpretation:** Repeated-query termination is not equivalent to retrieval
 failure. Most repeated-query cases still contain all annotated gold evidence
@@ -365,6 +383,55 @@ mechanism that prevents unbounded looping, but its high activation rate shows
 that the controller often fails to find a new search direction. The stopping
 reason should therefore be reported separately from the evidence-quality
 metrics.
+
+### 8.3 Development versus held-out questions
+
+The 100 development questions are the first 100 of the 500 evaluation
+questions, and greedy decoding makes V3 retrieve the same paragraphs for them
+in both runs. The 400 questions never used during development are therefore
+the fair check that the V3 design was not tailored to the development set.
+
+| V3 on                    | Mean gold evidence | Full recovery | Zero recovery | Mean noise | Mean paragraphs | V3 − Top-4 gold | V3 − Top-5 gold |
+| ------------------------ | -----------------: | ------------: | ------------: | ---------: | --------------: | --------------: | --------------: |
+| First 100 (development)  |              82.0% |         71.0% |          7.0% |      54.8% |            4.16 |         +4.0 pp |         −2.5 pp |
+| Remaining 400 (held-out) |              84.6% |         72.0% |          2.8% |      54.8% |            4.21 |         +6.6 pp |         +1.6 pp |
+| All 500                  |              84.1% |         71.8% |          3.6% |      54.8% |            4.20 |         +6.1 pp |         +0.8 pp |
+
+**Interpretation:** Noise, paragraphs and full recovery on the held-out 400
+match development, and the gain over Top-4 is slightly larger, so the result
+generalises beyond the development questions. Zero recovery is the least
+stable because 7 zero-gold questions out of 100 is a small count. The V3 −
+Top-5 gold gap changes sign between the two subsets, which is why 100
+questions alone were not enough to compare V3 with Top-5.
+
+Source: computed from the saved per-question `results.jsonl` files of the
+500-question runs, split by question position.
+
+### 8.4 Zero-gold failure analysis
+
+V3 retrieved no annotated gold paragraph for 18 of 500 questions (3.6%),
+against 8 (1.6%) for Top-5. V3's Round 1 is Top-2, which had 45 zero-gold
+questions; V3 rescued 27 of them (9 fully) and failed on 18. In 14 of those
+18, Top-5 found at least one gold paragraph at rank 3 to 5 of the original
+question's ranking, which V3 does not revisit after Round 1. The 18 cases were
+inspected by hand:
+
+| Failure mode                                 | Cases | What happened                                                                                         | Example                                                                                                                               |
+| -------------------------------------------- | ----: | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| False `sufficient` on look-alike distractors |     6 | Stopped at Round 1 or 2 with no gold; the paragraphs shared the question's topic but not its subjects | "Are both the Kuchi and the West Siberian Laika certified breeds?" retrieved the East Siberian and Russo-European Laika, then stopped |
+| Follow-up query anchored on a distractor     |     6 | The next query was built around a wrong subject from a Round 1 distractor                             | "Will Champlin NBC singing competition", where the answer subject is Christina Grimmie                                                |
+| Query echoes the question                    |     2 | The query added no new information, so the ranking barely changed                                     | Repeated the original question and stopped at Round 1                                                                                 |
+| Reasonable query, retriever misses           |     2 | Sensible query, but MiniLM ranked other paragraphs higher                                             | "Mel Blanc character creator" did not surface Bugs Bunny                                                                              |
+| Valid evidence not annotated as gold         |     2 | The retrieved paragraphs answer the question, but HotpotQA annotates a different path                 | "A Very Harold & Kumar 3D Christmas is part of what series?" retrieved the film and the series article                                |
+
+**Interpretation:** Most failures start with a Round 1 miss. Greedy
+re-generation rarely escapes it: only 70 of 390 re-generations produced a
+different query. Separately, 97 queries across 45 questions contained a
+paragraph ID copied from the prompt's evidence list, including in two of the
+three runs that reached Round 5, all of which already had complete gold.
+
+Source: manual inspection of the saved `results.jsonl` files of the
+500-question V3, Top-2 and Top-5 runs.
 
 ## 8. Limitations
 
